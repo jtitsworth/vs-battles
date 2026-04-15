@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 const IMAGES = {
-  Goku: "https://images2.imgbox.com/x76EZ2v.png",
-  Luffy: "https://i.imgur.com/MEGAXtT.png",
-  Naruto: "https://i.imgur.com/gi5Py5r.png",
-  Superman: "https://i.imgur.com/zaR7KXy.png",
+  Goku: "/goku.png",
+  Luffy: "/luffy.png",
+  Naruto: "/naruto.png",
+  Superman: "/superman.png",
 };
 
 // Fallback: load images via fetch to bypass hotlink protection
