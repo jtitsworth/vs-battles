@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 const IMAGES = {
-  Goku: "goku.png",
-  Luffy: "luffy.png",
-  Naruto: "naruto.png",
-  Superman: "superman.png",
+  Goku: "https://images2.imgbox.com/x76EZ2v.png",
+  Luffy: "https://i.imgur.com/MEGAXtT.png",
+  Naruto: "https://i.imgur.com/gi5Py5r.png",
+  Superman: "https://i.imgur.com/zaR7KXy.png",
 };
 
 // Fallback: load images via fetch to bypass hotlink protection
@@ -145,7 +145,7 @@ function FighterCard({ fighter, color, showImage }) {
     <div style={{background:"#12121e", borderRadius:"var(--border-radius-md)", border:`1px solid ${color}44`, overflow:"hidden"}}>
       <div style={{height:"220px", background:`${color}08`, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", borderBottom:`1px solid ${color}22`}}>
         {showImage ? (
-          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{height:"220px", width:"100%", objectFit:"contain", objectPosition:"center"}} />
+          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{width:"100%", height:"220px", objectFit:"cover", objectPosition:"top center"}} />
         ) : (
           <div style={{width:"60px", height:"80px", borderRadius:"4px", background:`${color}22`, border:`2px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:"8px", fontSize:"18px", fontWeight:500, color}}>{fighter.name.slice(0,2).toUpperCase()}</div>
         )}
