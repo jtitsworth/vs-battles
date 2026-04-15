@@ -1,76 +1,138 @@
 import { useState } from "react";
 
-const MAX_FIGHTERS = 5;
+const IMAGES = {
+  Goku: "/goku.png",
+  Luffy: "/luffy.png",
+  Naruto: "/naruto.png",
+  Superman: "/superman.png",
+};
 
-const EXAMPLES = [
-  { label: "Goku vs Superman", urls: ["https://vsbattles.fandom.com/wiki/Goku", "https://vsbattles.fandom.com/wiki/Superman"] },
-  { label: "Naruto vs Luffy vs Ichigo", urls: ["https://vsbattles.fandom.com/wiki/Naruto_Uzumaki", "https://vsbattles.fandom.com/wiki/Monkey_D._Luffy", "https://vsbattles.fandom.com/wiki/Ichigo_Kurosaki"] },
+// Fallback: load images via fetch to bypass hotlink protection
+function ImgWithFallback({ src, alt, style, fallback }) {
+  const [imgSrc, setImgSrc] = React.useState(src);
+  return <img src={imgSrc} alt={alt} style={style} onError={() => setImgSrc(null)} />;
+}
+
+const TEAM_COLORS = ["#e8b800", "#4A90D9"];
+
+const MATCHUPS = [
+  {
+    id: "goku-superman",
+    label: "Goku vs Superman",
+    type: "1v1",
+    teams: [
+      [{ name: "Goku", wiki: "Dragon Ball Super", tier: "Universe level+", stats: { Strength: 95, Speed: 98, Durability: 93, Intelligence: 72 }, abilities: ["Ultra Instinct", "Super Saiyan Blue", "Kamehameha", "Ki Sensing", "Instant Transmission"] }],
+      [{ name: "Superman", wiki: "DC Comics", tier: "Universe level", stats: { Strength: 96, Speed: 95, Durability: 97, Intelligence: 80 }, abilities: ["Heat Vision", "Flight", "Invulnerability", "Solar Absorption", "Super Speed"] }],
+    ],
+    matchup_summary: "Both fighters operate at universe-level power, but Goku's Ultra Instinct gives him an edge in pure combat reflexes. Superman's solar-powered durability and heat vision make him a formidable opponent, but Goku's battle experience and transformations tip the scales.",
+    advantage: "Goku",
+    advantage_reason: "Ultra Instinct autonomous dodging neutralizes Superman's raw power advantage.",
+    match_title: "The Clash of Legends",
+    location: "The World of Void",
+    rounds: [
+      { title: "Opening Clash", narrative: "The two titans collide with earth-shattering force, their first exchange leveling mountains across the horizon. Superman rockets forward with a haymaker that Goku barely sidesteps, retaliating with a sharp ki blast to the midsection. Both fighters size each other up — the air between them crackling with raw energy.", winner: "Draw", winner_team: 0, reasoning: "Neither fighter gains a clear advantage in the opening exchange." },
+      { title: "Power Escalation", narrative: "Goku powers up to Super Saiyan Blue, his aura surging teal and golden. Superman absorbs ambient solar energy, his eyes glowing red as he unleashes a sustained heat vision beam. Goku deflects it with a Kamehameha, the beams colliding in a blinding explosion that shakes the arena.", winner: "Superman", winner_team: 1, reasoning: "Superman's heat vision overpowers Goku's Kamehameha at this power level, forcing Goku back." },
+      { title: "Ultra Instinct Awakens", narrative: "Pushed to his limit, Goku's hair turns silver — Ultra Instinct Sign activates. His movements become fluid and automatic, dodging Superman's barrage without conscious thought. Each of Goku's counterstrikes lands with surgical precision, sending Superman crashing through a series of crystalline pillars.", winner: "Goku", winner_team: 0, reasoning: "Ultra Instinct's autonomous dodging completely counters Superman's speed and strength." },
+      { title: "Final Exchange", narrative: "Superman summons every ounce of solar energy and charges a full-power punch while Goku winds up a Mastered Ultra Instinct Kamehameha. The two attacks meet — a blinding white explosion consumes the arena. When the light clears, Superman is on one knee, his cape torn.", winner: "Goku", winner_team: 0, reasoning: "Mastered Ultra Instinct's power output surpasses what Superman can absorb and redirect." },
+    ],
+    winning_team: "Goku",
+    winner_team_index: 0,
+    mvp: "Goku",
+    finish: "Mastered Ultra Instinct Kamehameha",
+    verdict: "Goku's Mastered Ultra Instinct proves to be the decisive factor in this legendary battle. While Superman's raw power and solar absorption make him nearly indestructible, Goku's autonomous combat reflexes allow him to consistently land clean hits while avoiding Superman's attacks entirely. The Saiyan warrior's lifelong dedication to surpassing his limits edges out the Man of Steel in a battle for the ages.",
+  },
+  {
+    id: "naruto-luffy",
+    label: "Naruto vs Luffy",
+    type: "1v1",
+    teams: [
+      [{ name: "Naruto", wiki: "Naruto (New Era)", tier: "Large Star level", stats: { Strength: 88, Speed: 90, Durability: 85, Intelligence: 78 }, abilities: ["Baryon Mode", "Six Paths Sage Mode", "Rasenshuriken", "Shadow Clones", "Kurama Chakra"] }],
+      [{ name: "Luffy", wiki: "One Piece", tier: "Star level", stats: { Strength: 85, Speed: 87, Durability: 82, Intelligence: 70 }, abilities: ["Gear Fifth", "Conqueror's Haki", "Advanced Armament Haki", "Rubber Body", "Sun God Nika"] }],
+    ],
+    matchup_summary: "Two of anime's most iconic protagonists clash in a battle of pure willpower and imagination. Naruto's Baryon Mode gives him a raw power edge while Luffy's Gear Fifth toon physics introduce unpredictability that even Naruto's combat experience struggles to account for.",
+    advantage: "Naruto",
+    advantage_reason: "Baryon Mode's life-force drain mechanic poses a unique threat Luffy's rubber body cannot negate.",
+    match_title: "Will of Fire vs Freedom of the Sea",
+    location: "Marineford Ruins",
+    rounds: [
+      { title: "Rival Energy", narrative: "Naruto opens with a barrage of shadow clones while Luffy stretches into Gear Third, his fist inflating to building size. The clones scatter as Luffy's punch pulverizes them, but the real Naruto appears above — crashing down with a Rasenshuriken that forces Luffy to coat himself in Armament Haki.", winner: "Naruto", winner_team: 0, reasoning: "Naruto's clone tactics create openings that Luffy's straightforward fighting style struggles to handle." },
+      { title: "Gear Fifth Awakens", narrative: "Luffy laughs and activates Gear Fifth — his hair turns white, his body warping with cartoon elasticity. He grabs the ground itself like rubber and slingshots Naruto into the sky, then inflates his fist to the size of an island for a thunderous downward slam.", winner: "Luffy", winner_team: 1, reasoning: "Gear Fifth's reality-warping toon physics completely upends Naruto's tactical planning." },
+      { title: "Baryon Mode", narrative: "Naruto's chakra flares into a deep crimson — Baryon Mode activates, burning Kurama's life force as fuel. His speed becomes incomprehensible, landing a dozen precise strikes in a fraction of a second. Each hit drains Luffy's vitality, the sun god's laugh growing slightly strained.", winner: "Naruto", winner_team: 0, reasoning: "Baryon Mode's life-drain bypasses Luffy's rubber durability entirely." },
+      { title: "Last Man Standing", narrative: "Both fighters are breathing hard — Baryon Mode's cost weighing on Naruto as Luffy grins through the pain. Luffy unleashes a Bajrang Gun wrapped in Conqueror's Haki, the colossal fist meeting Naruto's final Tailed Beast Ball. The collision levels half the battlefield.", winner: "Naruto", winner_team: 0, reasoning: "Naruto's sustained power output in Baryon Mode edges Luffy's Gear Fifth at the margin." },
+    ],
+    winning_team: "Naruto",
+    winner_team_index: 0,
+    mvp: "Naruto",
+    finish: "Baryon Mode Tailed Beast Ball",
+    verdict: "Naruto's Baryon Mode proves decisive — the life-drain mechanic bypasses Luffy's rubber constitution in a way no conventional attack could. Luffy's Gear Fifth kept him competitive through pure creativity and will, but Naruto's combination of raw power escalation and tactical clones gave him too many angles to defend. An incredibly close fight that could go differently on another day.",
+  },
+  {
+    id: "2v2",
+    label: "Goku + Naruto vs Superman + Luffy",
+    type: "2v2",
+    teams: [
+      [
+        { name: "Goku", wiki: "Dragon Ball Super", tier: "Universe level+", stats: { Strength: 95, Speed: 98, Durability: 93, Intelligence: 72 }, abilities: ["Ultra Instinct", "Super Saiyan Blue", "Kamehameha", "Instant Transmission", "Ki Sensing"] },
+        { name: "Naruto", wiki: "Naruto (New Era)", tier: "Large Star level", stats: { Strength: 88, Speed: 90, Durability: 85, Intelligence: 78 }, abilities: ["Baryon Mode", "Six Paths Sage Mode", "Rasenshuriken", "Shadow Clones", "Kurama Chakra"] },
+      ],
+      [
+        { name: "Superman", wiki: "DC Comics", tier: "Universe level", stats: { Strength: 96, Speed: 95, Durability: 97, Intelligence: 80 }, abilities: ["Heat Vision", "Flight", "Invulnerability", "Solar Absorption", "Super Speed"] },
+        { name: "Luffy", wiki: "One Piece", tier: "Star level", stats: { Strength: 85, Speed: 87, Durability: 82, Intelligence: 70 }, abilities: ["Gear Fifth", "Conqueror's Haki", "Advanced Armament Haki", "Rubber Body", "Sun God Nika"] },
+      ],
+    ],
+    matchup_summary: "A dream team battle — Goku and Naruto's synergy is exceptional given both are tactical fighters who elevate under pressure. Superman and Luffy are a more volatile pairing but their combined durability and unpredictability make them dangerous. The match hinges on whether Superman can neutralize Goku before Naruto's clones overwhelm Luffy.",
+    advantage: "Team 1",
+    advantage_reason: "Goku and Naruto's power ceiling and combat synergy edges Team 2's raw durability.",
+    match_title: "Infinite Convergence",
+    location: "Tournament of Power Arena",
+    rounds: [
+      { title: "Team Tactics", narrative: "Goku and Naruto split immediately — Goku engaging Superman head-on while Naruto floods the field with a thousand shadow clones aimed at Luffy. Superman and Luffy struggle to coordinate, Luffy laughing as he bats clones away while Superman trades ki blasts with Goku.", winner: "Team 1", winner_team: 0, reasoning: "Goku and Naruto's instinctive teamwork overwhelms Superman and Luffy's looser coordination." },
+      { title: "Gear Fifth Chaos", narrative: "Luffy activates Gear Fifth, turning the battlefield into a cartoon nightmare — grabbing lightning bolts and hurling them at Naruto, stretching the arena floor into a slingshot. Naruto switches to Sage Mode to read the nature energy, predicting Luffy's impossibly random movements.", winner: "Team 2", winner_team: 1, reasoning: "Luffy's Gear Fifth chaos disrupts Naruto's tactical plans and evens the field." },
+      { title: "Dual Transformation", narrative: "Goku hits Ultra Instinct while Naruto ignites Baryon Mode simultaneously — a blinding pulse of energy radiates outward. Superman flies directly into Goku's autonomous counter-strike while Naruto's life-drain touches reach Luffy, the sun god's laughter finally faltering.", winner: "Team 1", winner_team: 0, reasoning: "Simultaneous peak transformations overwhelm Team 2's ability to respond." },
+      { title: "Final Stand", narrative: "Superman pushes past his limits with a planetary-force punch aimed at both Goku and Naruto — Goku teleports them out via Instant Transmission while Naruto leaves a clone to absorb the blow. Reappearing behind Superman, Goku and Naruto unleash a combined Kamehameha-Rasenshuriken that Superman cannot absorb fast enough.", winner: "Team 1", winner_team: 0, reasoning: "Instant Transmission combined with Naruto's clone tactics creates an unstoppable coordinated finishing move." },
+    ],
+    winning_team: "Team 1 (Goku + Naruto)",
+    winner_team_index: 0,
+    mvp: "Goku",
+    finish: "Combined Kamehameha-Rasenshuriken",
+    verdict: "Goku and Naruto's synergy proves to be the decisive factor — two fighters who have spent their entire lives pushing past limits in team environments, their coordination feels almost telepathic. Superman's universe-level power kept Team 2 competitive but Luffy's unpredictability, while useful solo, created coordination problems when Superman needed a reliable partner. The dual transformation in Round 3 sealed it.",
+  },
 ];
 
-const ROUND_COLORS = ["#e8b800", "#C0202A", "#2250A8", "#1A6E3C", "#5A3A8A"];
-
-function validateUrl(url) {
-  try {
-    const u = new URL(url);
-    return u.hostname.endsWith("fandom.com") && u.pathname.startsWith("/wiki/") && u.pathname.length > 6;
-  } catch { return false; }
-}
-
-function extractCharName(url) {
-  try {
-    const parts = new URL(url).pathname.split("/");
-    return decodeURIComponent(parts[parts.length - 1] || parts[parts.length - 2]).replace(/_/g, " ");
-  } catch { return url; }
-}
-
-function extractWikiName(url) {
-  try { return new URL(url).hostname.split(".")[0]; }
-  catch { return "wiki"; }
-}
-
-function FighterInput({ index, url, onChange, onRemove, canRemove }) {
-  const isValid = url ? validateUrl(url) : null;
-  const color = ROUND_COLORS[index];
+function StatBar({ label, value, color }) {
+  const pct = Math.min(100, Math.max(0, value));
+  const tier = pct >= 90 ? "Max" : pct >= 70 ? "High" : pct >= 50 ? "Mid" : "Low";
   return (
-    <div style={{background:"#12121e", borderRadius:"var(--border-radius-md)", padding:"12px 14px", border:`1px solid ${url && isValid ? color+"55" : url && !isValid ? "#a32d2d" : "#2a2a40"}`, marginBottom:"8px"}}>
-      <div style={{display:"flex", alignItems:"center", gap:"8px", marginBottom:"7px", justifyContent:"space-between"}}>
-        <div style={{display:"flex", alignItems:"center", gap:"8px"}}>
-          <div style={{width:"22px", height:"22px", borderRadius:"50%", background:color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"11px", fontWeight:500, color: index === 0 ? "#0d0d14" : "#fff", flexShrink:0}}>{index + 1}</div>
-          <span style={{fontSize:"11px", fontWeight:500, color:color, textTransform:"uppercase", letterSpacing:"0.08em"}}>
-            {url && isValid ? extractCharName(url) : `Fighter ${index + 1}`}
-          </span>
-          {url && isValid && <span style={{fontSize:"10px", color:"rgba(255,255,255,0.35)"}}>· {extractWikiName(url)}</span>}
-        </div>
-        {canRemove && <button onClick={onRemove} style={{background:"transparent", border:"none", color:"rgba(255,255,255,0.25)", cursor:"pointer", fontSize:"16px", padding:"0 4px", lineHeight:1}}>×</button>}
+    <div style={{marginBottom:"6px"}}>
+      <div style={{display:"flex", justifyContent:"space-between", marginBottom:"2px"}}>
+        <span style={{fontSize:"11px", color:"rgba(255,255,255,0.55)"}}>{label}</span>
+        <span style={{fontSize:"11px", color, fontWeight:500}}>{tier}</span>
       </div>
-      <div style={{position:"relative"}}>
-        <input type="text" value={url} onChange={e => onChange(e.target.value)} placeholder="https://vsbattles.fandom.com/wiki/Character or any fandom wiki"
-          style={{width:"100%", boxSizing:"border-box", background:"#0d0d14", border:`1px solid ${url && isValid ? color+"66" : url && !isValid ? "#a32d2d55" : "#2a2a40"}`, color:"#fff", borderRadius:"var(--border-radius-md)", padding:"8px 32px 8px 10px", fontSize:"12px"}} />
-        {url && isValid && <span style={{position:"absolute", right:"10px", top:"50%", transform:"translateY(-50%)", color:"#1a6e3c", fontSize:"14px"}}>✓</span>}
-        {url && !isValid && <span style={{position:"absolute", right:"10px", top:"50%", transform:"translateY(-50%)", color:"#a32d2d", fontSize:"14px"}}>✕</span>}
+      <div style={{height:"4px", background:"rgba(255,255,255,0.08)", borderRadius:"3px", overflow:"hidden"}}>
+        <div style={{width:`${pct}%`, height:"100%", background:color, borderRadius:"3px"}} />
       </div>
     </div>
   );
 }
 
-function RoundCard({ round, index, fighterColors }) {
-  const [expanded, setExpanded] = useState(false);
-  const winnerColor = fighterColors[round.winner_index] || "#e8b800";
+function RoundCard({ round, index }) {
+  const [open, setOpen] = useState(false);
+  const color = round.winner === "Draw" ? "#888" : TEAM_COLORS[round.winner_team];
   return (
-    <div style={{border:`1px solid ${winnerColor}33`, borderRadius:"var(--border-radius-md)", marginBottom:"10px", overflow:"hidden"}}>
-      <div onClick={() => setExpanded(!expanded)} style={{display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", cursor:"pointer", background:"rgba(255,255,255,0.03)"}}>
+    <div style={{border:`1px solid ${color}33`, borderRadius:"var(--border-radius-md)", marginBottom:"8px", overflow:"hidden"}}>
+      <div onClick={()=>setOpen(!open)} style={{display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px", cursor:"pointer", background:"rgba(255,255,255,0.03)"}}>
         <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
-          <div style={{width:"24px", height:"24px", borderRadius:"50%", background:winnerColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"11px", fontWeight:500, color:"#0d0d14", flexShrink:0}}>{index + 1}</div>
+          <div style={{width:"22px", height:"22px", borderRadius:"50%", background:color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"11px", fontWeight:500, color:"#0d0d14"}}>{index+1}</div>
           <span style={{fontSize:"13px", fontWeight:500, color:"#fff"}}>{round.title}</span>
         </div>
         <div style={{display:"flex", alignItems:"center", gap:"8px"}}>
-          <span style={{fontSize:"11px", padding:"2px 8px", borderRadius:"8px", background:winnerColor+"22", color:winnerColor, border:`1px solid ${winnerColor}44`}}>{round.winner} wins</span>
-          <span style={{color:"rgba(255,255,255,0.3)", fontSize:"12px"}}>{expanded ? "▲" : "▼"}</span>
+          <span style={{fontSize:"11px", padding:"2px 8px", borderRadius:"8px", background:color+"22", color, border:`1px solid ${color}44`}}>{round.winner} wins</span>
+          <span style={{color:"rgba(255,255,255,0.3)", fontSize:"12px"}}>{open?"▲":"▼"}</span>
         </div>
       </div>
-      {expanded && (
-        <div style={{padding:"12px 14px", borderTop:`1px solid ${winnerColor}22`, background:"#0d0d14"}}>
-          <p style={{fontSize:"13px", color:"rgba(255,255,255,0.78)", margin:"0 0 8px", lineHeight:1.7}}>{round.narrative}</p>
+      {open && (
+        <div style={{padding:"12px 14px", borderTop:`1px solid ${color}22`, background:"#0d0d14"}}>
+          <p style={{fontSize:"13px", color:"rgba(255,255,255,0.8)", margin:"0 0 8px", lineHeight:1.7}}>{round.narrative}</p>
           <p style={{fontSize:"12px", color:"rgba(255,255,255,0.4)", margin:0, fontStyle:"italic"}}>{round.reasoning}</p>
         </div>
       )}
@@ -78,206 +140,188 @@ function RoundCard({ round, index, fighterColors }) {
   );
 }
 
-export default function VSBattles() {
-  const [urls, setUrls] = useState(["", ""]);
-  const [loading, setLoading] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState("");
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
+function FighterCard({ fighter, color, showImage }) {
+  return (
+    <div style={{background:"#12121e", borderRadius:"var(--border-radius-md)", border:`1px solid ${color}44`, overflow:"hidden"}}>
+      <div style={{height:"160px", background:`${color}11`, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", borderBottom:`1px solid ${color}22`}}>
+        {showImage ? (
+          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{width:"100%", height:"160px", objectFit:"cover", objectPosition:"top center"}} />
+        ) : (
+          <div style={{width:"60px", height:"80px", borderRadius:"4px", background:`${color}22`, border:`2px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:"8px", fontSize:"18px", fontWeight:500, color}}>{fighter.name.slice(0,2).toUpperCase()}</div>
+        )}
+      </div>
+      <div style={{padding:"10px 12px"}}>
+        <p style={{fontSize:"14px", fontWeight:500, color, margin:"0 0 1px"}}>{fighter.name}</p>
+        <div style={{display:"flex", gap:"5px", alignItems:"center", marginBottom:"8px"}}>
+          <span style={{fontSize:"10px", color:"rgba(255,255,255,0.3)"}}>{fighter.wiki}</span>
+          <span style={{fontSize:"9px", padding:"1px 5px", borderRadius:"4px", background:color+"22", color, border:`0.5px solid ${color}44`}}>{fighter.tier}</span>
+        </div>
+        {Object.entries(fighter.stats).map(([k,v])=><StatBar key={k} label={k} value={v} color={color} />)}
+        <div style={{marginTop:"8px"}}>
+          <p style={{fontSize:"9px", color:"rgba(255,255,255,0.25)", margin:"0 0 4px", textTransform:"uppercase", letterSpacing:"0.06em"}}>Abilities</p>
+          <div style={{display:"flex", flexWrap:"wrap", gap:"3px"}}>
+            {fighter.abilities.map(a=><span key={a} style={{fontSize:"10px", color:"rgba(255,255,255,0.6)", padding:"2px 6px", background:"rgba(255,255,255,0.04)", borderRadius:"4px"}}>{a}</span>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  const validUrls = urls.filter(u => u && validateUrl(u));
-  const canGenerate = validUrls.length >= 2 && !loading;
+export default function VSBattlesDemo() {
+  const [activeMatchup, setActiveMatchup] = useState(0);
+  const [stage, setStage] = useState("setup");
+  const m = MATCHUPS[activeMatchup];
+  const winColor = TEAM_COLORS[m.winner_team_index];
 
-  function updateUrl(i, val) { const n = [...urls]; n[i] = val; setUrls(n); setResult(null); }
-  function addFighter() { if (urls.length < MAX_FIGHTERS) setUrls([...urls, ""]); }
-  function removeFighter(i) { setUrls(urls.filter((_, idx) => idx !== i)); setResult(null); }
+  function selectMatchup(i) { setActiveMatchup(i); setStage("setup"); }
 
-  async function fetchCharData(url) {
-    const charName = extractCharName(url);
-    const wikiBase = url.match(/https?:\/\/[^/]+/)[0];
-    const wikiName = extractWikiName(url);
-    const apiUrl = `${wikiBase}/api/v1/Articles/AsSimpleJson?title=${encodeURIComponent(charName.replace(/ /g, "_"))}`;
-    let content = "";
-    try {
-      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`);
-      const data = await res.json();
-      const parsed = JSON.parse(data.contents);
-      if (parsed.sections) {
-        parsed.sections.slice(0, 8).forEach(s => {
-          if (s.title) content += `\n## ${s.title}\n`;
-          if (s.content) s.content.forEach(c => { if (c.text) content += c.text + " "; });
-        });
-      }
-    } catch(e) {}
-    return { name: charName, wiki: wikiName, content: content.trim().slice(0, 2000) };
-  }
-
-  async function generate() {
-    if (!canGenerate) return;
-    setLoading(true); setError(null); setResult(null);
-
-    const fighters = [];
-    for (let i = 0; i < validUrls.length; i++) {
-      setLoadingMsg(`Fetching ${extractCharName(validUrls[i])}'s data…`);
-      const data = await fetchCharData(validUrls[i]);
-      fighters.push(data);
-      await new Promise(r => setTimeout(r, 400));
-    }
-
-    setLoadingMsg("Analyzing power levels and abilities…");
-    await new Promise(r => setTimeout(r, 600));
-    setLoadingMsg("Scripting the battle…");
-
-    const fighterList = fighters.map((f, i) => `Fighter ${i+1}: ${f.name} from ${f.wiki}${f.content ? `\nLore: ${f.content}` : ""}`).join("\n\n");
-
-    const prompt = `You are a lore-accurate battle scripter. Based purely on each character's canonical abilities, feats, and power levels from their wiki pages, simulate a fight between these characters. Be fair and analytical — the winner must be determined by lore, not popularity.
-
-${fighterList}
-
-The fight should have 4-6 rounds. Each round focuses on a different aspect of the battle (opening clash, power escalation, tactical exchanges, finishing move, etc).
-
-Respond ONLY with valid JSON, no markdown, no backticks:
-{
-  "match_title": "dramatic title for this fight",
-  "location": "a fitting battle location",
-  "pre_fight_analysis": "2-3 sentences analyzing the matchup and power dynamics before the fight",
-  "rounds": [
-    {
-      "title": "round title e.g. 'Opening Clash'",
-      "narrative": "3-4 sentences of vivid fight narration for this round",
-      "winner": "name of who wins this round",
-      "winner_index": 0,
-      "reasoning": "1-2 sentences of lore-based reasoning for why they won this round"
-    }
-  ],
-  "winner": "name of overall winner",
-  "winner_index": 0,
-  "finish": "name of the finishing move or technique used",
-  "verdict": "3-4 sentences explaining the lore-accurate verdict and why this character won",
-  "power_rankings": [
-    { "name": "character name", "tier": "e.g. Planet level", "score": 95 }
-  ]
-}`;
-
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 2500, messages: [{ role: "user", content: prompt }] })
-      });
-      const data = await res.json();
-      const text = data.content.map(b => b.text || "").join("");
-      setResult(JSON.parse(text.replace(/```json|```/g, "").trim()));
-    } catch(e) { setError("Battle simulation failed — check the URLs and try again."); }
-    setLoading(false);
-  }
-
-  const fighterColors = validUrls.map((_, i) => ROUND_COLORS[i]);
+  const hasImage = (name) => !!IMAGES[name];
 
   return (
     <div style={{fontFamily:"var(--font-sans)", padding:"1.5rem 0"}}>
 
-      {/* Hero */}
-      <div style={{background:"#0d0d14", borderRadius:"var(--border-radius-lg)", padding:"28px 20px 20px", marginBottom:"1.25rem", border:"1px solid #1e1e30", position:"relative"}}>
-        {[["0","top","0","left"],["0","top","0","right"],["auto","bottom","0","left"],["auto","bottom","0","right"]].map(([t,vc,b,hc],i)=>(
-          <div key={i} style={{position:"absolute", top:vc==="top"?"0":"auto", bottom:vc==="bottom"?"0":"auto", left:hc==="left"?"0":"auto", right:hc==="right"?"0":"auto", width:"32px", height:"32px",
-            borderTop:vc==="top"?"2px solid #C0202A":"none", borderBottom:vc==="bottom"?"2px solid #C0202A":"none",
-            borderLeft:hc==="left"?"2px solid #C0202A":"none", borderRight:hc==="right"?"2px solid #C0202A":"none",
-            borderRadius:vc==="top"&&hc==="left"?"var(--border-radius-lg) 0 0 0":vc==="top"&&hc==="right"?"0 var(--border-radius-lg) 0 0":vc==="bottom"&&hc==="left"?"0 0 0 var(--border-radius-lg)":"0 0 var(--border-radius-lg) 0"}} />
+      {/* Header */}
+      <div style={{background:"#0d0d14", borderRadius:"var(--border-radius-lg)", padding:"20px", border:"1px solid #1e1e30", marginBottom:"1rem", position:"relative"}}>
+        {[[true,true],[false,true],[true,false],[false,false]].map(([top,left],i)=>(
+          <div key={i} style={{position:"absolute", top:top?"0":"auto", bottom:top?"auto":"0", left:left?"0":"auto", right:left?"auto":"0", width:"28px", height:"28px",
+            borderTop:top?"2px solid #C0202A":"none", borderBottom:top?"none":"2px solid #C0202A",
+            borderLeft:left?"2px solid #C0202A":"none", borderRight:left?"none":"2px solid #C0202A",
+            borderRadius:top&&left?"var(--border-radius-lg) 0 0 0":top&&!left?"0 var(--border-radius-lg) 0 0":!top&&left?"0 0 0 var(--border-radius-lg)":"0 0 var(--border-radius-lg) 0"}} />
         ))}
+        <p style={{fontSize:"10px", fontWeight:500, color:"#C0202A", letterSpacing:"0.16em", textTransform:"uppercase", margin:"0 0 4px", textAlign:"center"}}>Fandom · Lore Battle Simulator</p>
+        <h1 style={{fontSize:"26px", fontWeight:500, margin:"0 0 16px", color:"#fff", textAlign:"center"}}>VS Battles</h1>
 
-        <p style={{fontSize:"10px", fontWeight:500, color:"#C0202A", letterSpacing:"0.16em", textTransform:"uppercase", margin:"0 0 8px", textAlign:"center"}}>Fandom · Lore Battle Simulator</p>
-        <h1 style={{fontSize:"30px", fontWeight:500, margin:"0 0 4px", color:"#fff", textAlign:"center"}}>VS Battles</h1>
-        <p style={{fontSize:"13px", color:"rgba(255,255,255,0.35)", margin:"0 0 22px", textAlign:"center", lineHeight:1.5}}>Add up to 5 characters from any Fandom wiki. The lore decides who wins.</p>
-
-        {/* Fighter inputs */}
-        {urls.map((url, i) => (
-          <FighterInput key={i} index={i} url={url} onChange={v => updateUrl(i, v)} onRemove={() => removeFighter(i)} canRemove={urls.length > 2} />
-        ))}
-
-        {/* Add fighter */}
-        {urls.length < MAX_FIGHTERS && (
-          <button onClick={addFighter} style={{width:"100%", padding:"8px", fontSize:"12px", background:"transparent", border:"1px dashed #2a2a40", color:"rgba(255,255,255,0.3)", borderRadius:"var(--border-radius-md)", cursor:"pointer", marginBottom:"12px"}}>
-            + Add another fighter
-          </button>
-        )}
-
-        {/* Examples */}
-        <div style={{marginBottom:"16px"}}>
-          <p style={{fontSize:"10px", color:"rgba(255,255,255,0.2)", margin:"0 0 6px", textTransform:"uppercase", letterSpacing:"0.1em"}}>Try an example</p>
-          <div style={{display:"flex", gap:"6px", flexWrap:"wrap"}}>
-            {EXAMPLES.map(ex => (
-              <button key={ex.label} onClick={() => { setUrls([...ex.urls, ...Array(Math.max(0, urls.length - ex.urls.length)).fill("")]); setResult(null); }}
-                style={{fontSize:"11px", padding:"4px 10px", background:"transparent", border:"1px solid #2a2a40", color:"rgba(255,255,255,0.4)", borderRadius:"var(--border-radius-md)", cursor:"pointer"}}>{ex.label}</button>
-            ))}
-          </div>
+        {/* Matchup selector tabs */}
+        <div style={{display:"flex", gap:"8px", justifyContent:"center", flexWrap:"wrap"}}>
+          {MATCHUPS.map((m,i)=>(
+            <button key={m.id} onClick={()=>selectMatchup(i)}
+              style={{fontSize:"12px", padding:"7px 14px", background: activeMatchup===i ? "#C0202A" : "#1a1a2e", border:`1px solid ${activeMatchup===i ? "#C0202A" : "#3a3a55"}`, color: activeMatchup===i ? "#fff" : "rgba(255,255,255,0.55)", borderRadius:"var(--border-radius-md)", cursor:"pointer", fontWeight: activeMatchup===i ? 500 : 400}}>
+              {m.label}
+            </button>
+          ))}
         </div>
-
-        <button onClick={generate} disabled={!canGenerate}
-          style={{width:"100%", padding:"14px", fontSize:"15px", fontWeight:500, cursor:!canGenerate?"not-allowed":"pointer", opacity:!canGenerate?0.4:1,
-            background:canGenerate?"#C0202A":"#1a1a2e", color:"#fff", border:"none", borderRadius:"var(--border-radius-md)"}}>
-          {loading ? loadingMsg : "Simulate Battle"}
-        </button>
       </div>
 
-      {error && <p style={{color:"var(--color-text-danger)", fontSize:"13px", marginBottom:"1rem"}}>{error}</p>}
+      {/* Stage nav */}
+      <div style={{display:"flex", gap:"6px", marginBottom:"1rem"}}>
+        {["setup","matchup","result"].map(s=>(
+          <button key={s} onClick={()=>setStage(s)}
+            style={{flex:1, padding:"9px", fontSize:"12px", background: stage===s ? "#1a1a2e" : "transparent", border:`1px solid ${stage===s ? "#3a3a55" : "#1e1e30"}`, color: stage===s ? "#fff" : "rgba(255,255,255,0.3)", borderRadius:"var(--border-radius-md)", cursor:"pointer", textTransform:"capitalize", fontWeight: stage===s ? 500 : 400}}>
+            {s === "setup" ? "Fight Card" : s === "matchup" ? "Matchup Analysis" : "Battle Result"}
+          </button>
+        ))}
+      </div>
 
-      {/* Result */}
-      {result && (
-        <div style={{borderRadius:"var(--border-radius-lg)", overflow:"hidden", border:"1px solid #C0202A44"}}>
-
-          {/* Header */}
-          <div style={{background:"#C0202A", padding:"12px 16px", textAlign:"center"}}>
-            <p style={{fontSize:"11px", color:"rgba(255,255,255,0.7)", margin:"0 0 2px", textTransform:"uppercase", letterSpacing:"0.1em"}}>{result.location}</p>
-            <h2 style={{fontSize:"20px", fontWeight:500, color:"#fff", margin:0}}>{result.match_title}</h2>
+      {/* ── SETUP STAGE ── */}
+      {stage==="setup" && (
+        <div style={{background:"#0d0d14", borderRadius:"var(--border-radius-lg)", border:"1px solid #1e1e30", overflow:"hidden"}}>
+          <div style={{background:"#C0202A", padding:"8px 16px", textAlign:"center"}}>
+            <p style={{fontSize:"12px", fontWeight:500, color:"#fff", margin:0, letterSpacing:"0.06em"}}>{m.label}</p>
           </div>
-
-          <div style={{background:"#0d0d14", padding:"16px 20px"}}>
-
-            {/* Pre-fight */}
-            <div style={{marginBottom:"16px", paddingBottom:"16px", borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
-              <p style={{fontSize:"10px", color:"rgba(255,255,255,0.3)", margin:"0 0 6px", textTransform:"uppercase", letterSpacing:"0.08em"}}>Pre-fight analysis</p>
-              <p style={{fontSize:"13px", color:"rgba(255,255,255,0.75)", margin:0, lineHeight:1.7}}>{result.pre_fight_analysis}</p>
+          <div style={{padding:"16px", display:"grid", gridTemplateColumns: m.teams[0].length > 1 ? "1fr auto 1fr" : "1fr auto 1fr", gap:"12px", alignItems:"start"}}>
+            {/* Team 1 */}
+            <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
+              <p style={{fontSize:"10px", fontWeight:500, color:TEAM_COLORS[0], textTransform:"uppercase", letterSpacing:"0.1em", margin:"0 0 4px", textAlign:"center"}}>Team 1</p>
+              {m.teams[0].map((f,i)=><FighterCard key={i} fighter={f} color={TEAM_COLORS[0]} showImage={hasImage(f.name)} />)}
             </div>
 
-            {/* Power rankings */}
-            {result.power_rankings && (
-              <div style={{marginBottom:"16px", paddingBottom:"16px", borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
-                <p style={{fontSize:"10px", color:"rgba(255,255,255,0.3)", margin:"0 0 8px", textTransform:"uppercase", letterSpacing:"0.08em"}}>Power rankings</p>
-                <div style={{display:"flex", flexDirection:"column", gap:"6px"}}>
-                  {result.power_rankings.map((p, i) => (
-                    <div key={i} style={{display:"flex", alignItems:"center", gap:"10px"}}>
-                      <div style={{width:"20px", height:"20px", borderRadius:"50%", background:ROUND_COLORS[i]||"#888", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"10px", fontWeight:500, color:"#fff", flexShrink:0}}>{i+1}</div>
-                      <span style={{fontSize:"12px", color:"#fff", width:"120px", flexShrink:0}}>{p.name}</span>
-                      <div style={{flex:1, height:"6px", background:"rgba(255,255,255,0.08)", borderRadius:"3px", overflow:"hidden"}}>
-                        <div style={{width:`${p.score}%`, height:"100%", background:ROUND_COLORS[i]||"#888", borderRadius:"3px"}} />
+            {/* VS */}
+            <div style={{display:"flex", flexDirection:"column", alignItems:"center", paddingTop:"40px", gap:"8px"}}>
+              <div style={{width:"1px", height:"30px", background:"#2a2a40"}} />
+              <div style={{width:"40px", height:"40px", borderRadius:"50%", background:"#C0202A", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px", fontWeight:500, color:"#fff"}}>VS</div>
+              <div style={{width:"1px", height:"30px", background:"#2a2a40"}} />
+            </div>
+
+            {/* Team 2 */}
+            <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
+              <p style={{fontSize:"10px", fontWeight:500, color:TEAM_COLORS[1], textTransform:"uppercase", letterSpacing:"0.1em", margin:"0 0 4px", textAlign:"center"}}>Team 2</p>
+              {m.teams[1].map((f,i)=><FighterCard key={i} fighter={f} color={TEAM_COLORS[1]} showImage={hasImage(f.name)} />)}
+            </div>
+          </div>
+          <div style={{padding:"12px 16px", borderTop:"1px solid #1e1e30"}}>
+            <button onClick={()=>setStage("matchup")} style={{width:"100%", padding:"13px", fontSize:"14px", fontWeight:500, background:"#C0202A", color:"#fff", border:"none", borderRadius:"var(--border-radius-md)", cursor:"pointer"}}>
+              View Matchup Analysis →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── MATCHUP STAGE ── */}
+      {stage==="matchup" && (
+        <div style={{background:"#0d0d14", borderRadius:"var(--border-radius-lg)", border:"1px solid #2a2a40", overflow:"hidden"}}>
+          <div style={{background:"#C0202A", padding:"8px 16px", textAlign:"center"}}>
+            <p style={{fontSize:"11px", color:"rgba(255,255,255,0.8)", margin:0, textTransform:"uppercase", letterSpacing:"0.1em"}}>Lore Matchup Details</p>
+          </div>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr"}}>
+            {m.teams.map((team,ti)=>{
+              const color = TEAM_COLORS[ti];
+              return (
+                <div key={ti} style={{padding:"14px", borderRight:ti===0?"1px solid #1e1e30":"none"}}>
+                  <p style={{fontSize:"11px", fontWeight:500, color, textTransform:"uppercase", letterSpacing:"0.08em", margin:"0 0 10px"}}>Team {ti+1}</p>
+                  {team.map((f,fi)=>(
+                    <div key={fi} style={{marginBottom:"16px", paddingBottom:"16px", borderBottom: fi<team.length-1?"1px solid #1e1e30":"none"}}>
+                      <div style={{display:"flex", alignItems:"center", gap:"10px", marginBottom:"8px"}}>
+                        <div style={{width:"36px", height:"44px", borderRadius:"4px", overflow:"hidden", background:`${color}11`, border:`1px solid ${color}33`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center"}}>
+                          {hasImage(f.name) ? <img src={IMAGES[f.name]} alt={f.name} style={{width:"100%", height:"100%", objectFit:"cover", objectPosition:"top"}} /> : <span style={{fontSize:"10px", color, fontWeight:500}}>{f.name.slice(0,2).toUpperCase()}</span>}
+                        </div>
+                        <div>
+                          <p style={{fontSize:"13px", fontWeight:500, color, margin:0}}>{f.name}</p>
+                          <div style={{display:"flex", gap:"4px", marginTop:"2px"}}>
+                            <span style={{fontSize:"9px", color:"rgba(255,255,255,0.3)"}}>{f.wiki}</span>
+                            <span style={{fontSize:"9px", padding:"1px 5px", borderRadius:"4px", background:color+"22", color}}>{f.tier}</span>
+                          </div>
+                        </div>
                       </div>
-                      <span style={{fontSize:"11px", color:"rgba(255,255,255,0.4)", width:"80px", textAlign:"right", flexShrink:0}}>{p.tier}</span>
+                      {Object.entries(f.stats).map(([k,v])=><StatBar key={k} label={k} value={v} color={color} />)}
+                      <div style={{marginTop:"8px"}}>
+                        <p style={{fontSize:"9px", color:"rgba(255,255,255,0.25)", margin:"0 0 4px", textTransform:"uppercase", letterSpacing:"0.06em"}}>Abilities</p>
+                        <div style={{display:"flex", flexWrap:"wrap", gap:"3px"}}>
+                          {f.abilities.map(a=><span key={a} style={{fontSize:"10px", color:"rgba(255,255,255,0.6)", padding:"2px 6px", background:"rgba(255,255,255,0.04)", borderRadius:"4px"}}>{a}</span>)}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              );
+            })}
+          </div>
+          <div style={{padding:"12px 16px", borderTop:"1px solid #1e1e30", background:"rgba(255,255,255,0.02)", textAlign:"center"}}>
+            <p style={{fontSize:"13px", color:"rgba(255,255,255,0.7)", margin:"0 0 5px", lineHeight:1.65}}>{m.matchup_summary}</p>
+            <p style={{fontSize:"12px", color:"rgba(255,255,255,0.35)", margin:0, fontStyle:"italic"}}>Edge: <span style={{color:"#e8b800"}}>{m.advantage}</span> — {m.advantage_reason}</p>
+          </div>
+          <div style={{padding:"12px 16px", borderTop:"1px solid #1e1e30"}}>
+            <button onClick={()=>setStage("result")} style={{width:"100%", padding:"13px", fontSize:"14px", fontWeight:500, background:"#C0202A", color:"#fff", border:"none", borderRadius:"var(--border-radius-md)", cursor:"pointer"}}>
+              Simulate Battle →
+            </button>
+          </div>
+        </div>
+      )}
 
-            {/* Rounds */}
-            <div style={{marginBottom:"16px"}}>
-              <p style={{fontSize:"10px", color:"rgba(255,255,255,0.3)", margin:"0 0 8px", textTransform:"uppercase", letterSpacing:"0.08em"}}>Round by round</p>
-              {result.rounds.map((r, i) => (
-                <RoundCard key={i} round={r} index={i} fighterColors={ROUND_COLORS} />
-              ))}
-            </div>
-
-            {/* Winner */}
-            <div style={{background:"#C0202A11", border:"1px solid #C0202A44", borderRadius:"var(--border-radius-md)", padding:"16px"}}>
-              <p style={{fontSize:"10px", color:"rgba(255,255,255,0.3)", margin:"0 0 4px", textTransform:"uppercase", letterSpacing:"0.08em"}}>Lore verdict</p>
-              <div style={{display:"flex", alignItems:"center", gap:"10px", marginBottom:"10px"}}>
-                <div style={{width:"32px", height:"32px", borderRadius:"50%", background:ROUND_COLORS[result.winner_index]||"#C0202A", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"12px", fontWeight:500, color:"#fff"}}>{(result.winner||"?").slice(0,2).toUpperCase()}</div>
+      {/* ── RESULT STAGE ── */}
+      {stage==="result" && (
+        <div style={{background:"#0d0d14", borderRadius:"var(--border-radius-lg)", border:`1px solid ${winColor}44`, overflow:"hidden"}}>
+          <div style={{background:"#C0202A", padding:"10px 16px", textAlign:"center"}}>
+            <p style={{fontSize:"11px", color:"rgba(255,255,255,0.7)", margin:"0 0 2px", textTransform:"uppercase", letterSpacing:"0.1em"}}>{m.location}</p>
+            <h2 style={{fontSize:"18px", fontWeight:500, color:"#fff", margin:0}}>{m.match_title}</h2>
+          </div>
+          <div style={{padding:"16px 20px"}}>
+            <p style={{fontSize:"10px", color:"rgba(255,255,255,0.3)", margin:"0 0 8px", textTransform:"uppercase", letterSpacing:"0.08em"}}>Round by round</p>
+            {m.rounds.map((r,i)=><RoundCard key={i} round={r} index={i} />)}
+            <div style={{marginTop:"16px", background:`${winColor}11`, border:`1px solid ${winColor}33`, borderRadius:"var(--border-radius-md)", padding:"16px"}}>
+              <p style={{fontSize:"10px", color:"rgba(255,255,255,0.3)", margin:"0 0 8px", textTransform:"uppercase", letterSpacing:"0.08em", textAlign:"center"}}>Winner</p>
+              <div style={{display:"flex", alignItems:"center", gap:"16px", marginBottom:"12px"}}>
+                {hasImage(m.mvp) && (
+                  <div style={{width:"60px", height:"80px", borderRadius:"var(--border-radius-md)", overflow:"hidden", border:`2px solid ${winColor}`, flexShrink:0}}>
+                    <img src={IMAGES[m.mvp]} alt={m.mvp} style={{width:"100%", height:"100%", objectFit:"cover", objectPosition:"top"}} />
+                  </div>
+                )}
                 <div>
-                  <p style={{fontSize:"16px", fontWeight:500, color:"#fff", margin:0}}>{result.winner}</p>
-                  <p style={{fontSize:"11px", color:"rgba(255,255,255,0.4)", margin:0}}>wins via {result.finish}</p>
+                  <p style={{fontSize:"22px", fontWeight:500, color:winColor, margin:"0 0 2px"}}>{m.winning_team}</p>
+                  <p style={{fontSize:"12px", color:"rgba(255,255,255,0.4)", margin:0}}>MVP: <span style={{color:winColor}}>{m.mvp}</span> · via {m.finish}</p>
                 </div>
               </div>
-              <p style={{fontSize:"13px", color:"rgba(255,255,255,0.75)", margin:0, lineHeight:1.7}}>{result.verdict}</p>
+              <p style={{fontSize:"13px", color:"rgba(255,255,255,0.75)", margin:0, lineHeight:1.7}}>{m.verdict}</p>
             </div>
           </div>
         </div>
