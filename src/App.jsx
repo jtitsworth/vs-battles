@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 const IMAGES = {
-  Goku: "/goku.png",
-  Luffy: "/luffy.png",
-  Naruto: "/naruto.png",
-  Superman: "/superman.png",
+  Goku: "https://images2.imgbox.com/x76EZ2v.png",
+  Luffy: "https://i.imgur.com/MEGAXtT.png",
+  Naruto: "https://i.imgur.com/gi5Py5r.png",
+  Superman: "https://i.imgur.com/zaR7KXy.png",
 };
 
 // Fallback: load images via fetch to bypass hotlink protection
@@ -143,9 +143,9 @@ function RoundCard({ round, index }) {
 function FighterCard({ fighter, color, showImage }) {
   return (
     <div style={{background:"#12121e", borderRadius:"var(--border-radius-md)", border:`1px solid ${color}44`, overflow:"hidden"}}>
-      <div style={{height:"160px", background:`${color}11`, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", borderBottom:`1px solid ${color}22`}}>
+      <div style={{height:"220px", background:`${color}08`, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", borderBottom:`1px solid ${color}22`}}>
         {showImage ? (
-          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{width:"100%", height:"160px", objectFit:"cover", objectPosition:"top center"}} />
+          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{height:"220px", width:"100%", objectFit:"contain", objectPosition:"center"}} />
         ) : (
           <div style={{width:"60px", height:"80px", borderRadius:"4px", background:`${color}22`, border:`2px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:"8px", fontSize:"18px", fontWeight:500, color}}>{fighter.name.slice(0,2).toUpperCase()}</div>
         )}
@@ -262,8 +262,8 @@ export default function VSBattlesDemo() {
                   {team.map((f,fi)=>(
                     <div key={fi} style={{marginBottom:"16px", paddingBottom:"16px", borderBottom: fi<team.length-1?"1px solid #1e1e30":"none"}}>
                       <div style={{display:"flex", alignItems:"center", gap:"10px", marginBottom:"8px"}}>
-                        <div style={{width:"36px", height:"44px", borderRadius:"4px", overflow:"hidden", background:`${color}11`, border:`1px solid ${color}33`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center"}}>
-                          {hasImage(f.name) ? <img src={IMAGES[f.name]} alt={f.name} style={{width:"100%", height:"100%", objectFit:"cover", objectPosition:"top"}} /> : <span style={{fontSize:"10px", color, fontWeight:500}}>{f.name.slice(0,2).toUpperCase()}</span>}
+                        <div style={{width:"44px", height:"54px", borderRadius:"4px", overflow:"hidden", background:`${color}11`, border:`1px solid ${color}33`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center"}}>
+                          {hasImage(f.name) ? <img src={IMAGES[f.name]} alt={f.name} style={{width:"100%", height:"100%", objectFit:"contain", objectPosition:"center"}} /> : <span style={{fontSize:"10px", color, fontWeight:500}}>{f.name.slice(0,2).toUpperCase()}</span>}
                         </div>
                         <div>
                           <p style={{fontSize:"13px", fontWeight:500, color, margin:0}}>{f.name}</p>
