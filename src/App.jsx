@@ -145,7 +145,7 @@ function FighterCard({ fighter, color, showImage }) {
     <div style={{background:"#12121e", borderRadius:"var(--border-radius-md)", border:`1px solid ${color}44`, overflow:"hidden"}}>
       <div style={{height:"220px", background:`${color}08`, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", borderBottom:`1px solid ${color}22`}}>
         {showImage ? (
-          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{width:"100%", height:"220px", objectFit:"cover", objectPosition:"top center"}} />
+          <img src={IMAGES[fighter.name]} alt={fighter.name} style={{width:"100%", height:"220px", objectFit:"contain", objectPosition:"top center"}} />
         ) : (
           <div style={{width:"60px", height:"80px", borderRadius:"4px", background:`${color}22`, border:`2px solid ${color}`, display:"flex", alignItems:"center", justifyContent:"center", marginBottom:"8px", fontSize:"18px", fontWeight:500, color}}>{fighter.name.slice(0,2).toUpperCase()}</div>
         )}
@@ -313,7 +313,7 @@ export default function VSBattlesDemo() {
               <div style={{display:"flex", alignItems:"center", gap:"16px", marginBottom:"12px"}}>
                 {hasImage(m.mvp) && (
                   <div style={{width:"60px", height:"80px", borderRadius:"var(--border-radius-md)", overflow:"hidden", border:`2px solid ${winColor}`, flexShrink:0}}>
-                    <img src={IMAGES[m.mvp]} alt={m.mvp} style={{width:"100%", height:"100%", objectFit:"cover", objectPosition:"top"}} />
+                    <img src={IMAGES[m.mvp]} alt={m.mvp} style={{width:"100%", height:"100%", objectFit:"contain", objectPosition:"top"}} />
                   </div>
                 )}
                 <div>
