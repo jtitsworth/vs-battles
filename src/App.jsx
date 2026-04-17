@@ -407,7 +407,7 @@ function AddFighterSlot({ side }) {
   );
 }
 
-
+function ArenaPage() {
   const [tab, setTab] = useState("1v1");
   const b = BATTLES[tab];
   return (
