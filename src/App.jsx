@@ -199,7 +199,7 @@ const TABLE_PAGE = 10;
 ───────────────────────────────────────────── */
 function TopNav({ page, setPage }) {
   const links = ["ARENA","RECENT BATTLES","RANKINGS"];
-  const map = { "ARENA":"arena","RECENT BATTLES":"recent","RANKINGS":"rankings" };
+  const map = { "ARENA":"arena", "RECENT BATTLES":"recent", "RANKINGS":"rankings" };
   return (
     <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:50, background:C.bg, height:64, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 24px" }}>
       <div onClick={()=>setPage("arena")} style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:22, fontWeight:900, fontStyle:"italic", color:"#FF003C", textTransform:"uppercase", letterSpacing:"-0.04em", cursor:"pointer" }}>KINETIC CONFLICT</div>
@@ -218,7 +218,7 @@ function TopNav({ page, setPage }) {
 }
 
 function SideNav({ page, setPage }) {
-  const items=[{key:"arena",label:"ARENA",icon:"⚔"},{key:"recent",label:"RECENT BATTLES",icon:"⏱"},{key:"rankings",label:"RANKINGS",icon:"▲"},{key:"labs",label:"LABS",icon:"⬡"}];
+  const items=[{key:"arena",label:"ARENA",icon:"⚔"},{key:"recent",label:"RECENT BATTLES",icon:"⏱"},{key:"rankings",label:"RANKINGS",icon:"▲"}];
   return (
     <aside style={{ position:"fixed", left:0, top:64, bottom:0, width:256, background:C.bg, display:"flex", flexDirection:"column", paddingTop:32, zIndex:40 }}>
       <div style={{ padding:"0 24px 24px" }}>
@@ -325,7 +325,89 @@ function FighterCard({ fighter, side, height=240 }) {
   );
 }
 
-function ArenaPage() {
+function AddFighterSlot({ side }) {
+  const [url, setUrl] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const color = side === "alpha" ? C.primary : C.secondary;
+  const onColor = side === "alpha" ? C.onPrimary : C.onSecondary;
+
+  function handleSubmit() {
+    if (!url.trim()) return;
+    setSubmitted(true);
+  }
+
+  function handleReset() {
+    setUrl("");
+    setSubmitted(false);
+  }
+
+  if (submitted) {
+    // Parse a display name from the URL for visual feedback
+    const slug = url.split("/").filter(Boolean).pop() || "UNKNOWN";
+    const displayName = slug.replace(/_/g, " ").toUpperCase();
+    return (
+      <div style={{ background:C.surfLow, border:`2px solid ${color}`, padding:20, display:"flex", flexDirection:"column", gap:12, marginTop:12 }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+          <div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:9, textTransform:"uppercase", letterSpacing:"0.16em", color, marginBottom:4 }}>FIGHTER QUEUED</div>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:18, fontWeight:900, textTransform:"uppercase", color, lineHeight:1 }}>{displayName}</div>
+          </div>
+          <div style={{ width:10, height:10, borderRadius:"50%", background:color, boxShadow:`0 0 8px ${color}`, animation:"pulse 1.5s infinite" }} />
+        </div>
+        <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, color:C.onSurfVar, wordBreak:"break-all", opacity:0.6 }}>{url}</div>
+        <div style={{ display:"flex", gap:8 }}>
+          <div style={{ flex:1, height:2, background:`${color}33`, position:"relative", overflow:"hidden" }}>
+            <div style={{ position:"absolute", inset:0, background:color, width:"60%", animation:"scan 2s ease-in-out infinite" }} />
+          </div>
+        </div>
+        <div style={{ display:"flex", gap:8 }}>
+          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, textTransform:"uppercase", letterSpacing:"0.1em", color:C.onSurfVar, flex:1 }}>SCRAPING FANDOM DATA...</div>
+          <button onClick={handleReset}
+            style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:10, fontWeight:700, textTransform:"uppercase", color:C.onSurfVar, background:"none", border:`1px solid ${C.outlineVar}`, padding:"3px 10px", cursor:"pointer" }}>
+            CLEAR
+          </button>
+        </div>
+        <style>{`
+          @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+          @keyframes scan  { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
+        `}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ background:C.surfLow, border:`2px dashed ${C.outlineVar}`, padding:20, display:"flex", flexDirection:"column", gap:12, marginTop:12, transition:"border-color 0.2s" }}
+      onMouseEnter={e=>e.currentTarget.style.borderColor=color}
+      onMouseLeave={e=>e.currentTarget.style.borderColor=C.outlineVar}
+    >
+      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+        <div style={{ width:28, height:28, border:`2px dashed ${C.outlineVar}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+          <span style={{ color:C.onSurfVar, fontSize:18, lineHeight:1 }}>+</span>
+        </div>
+        <div>
+          <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:13, fontWeight:700, textTransform:"uppercase", color:C.onSurface }}>ADD FIGHTER</div>
+          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, color:C.onSurfVar, marginTop:1 }}>Paste a Fandom character URL</div>
+        </div>
+      </div>
+      <div style={{ display:"flex", gap:8 }}>
+        <input
+          value={url}
+          onChange={e=>setUrl(e.target.value)}
+          onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
+          placeholder="https://dragonball.fandom.com/wiki/..."
+          style={{ flex:1, background:C.surfHighest, border:`1px solid ${C.outlineVar}`, borderBottom:`2px solid ${color}`, color:C.onSurface, fontFamily:"'Inter',sans-serif", fontSize:12, padding:"10px 12px", outline:"none", transition:"border-color 0.2s" }}
+          onFocus={e=>e.target.style.borderBottomColor=color}
+        />
+        <button onClick={handleSubmit}
+          style={{ background:color, color:onColor, fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:12, textTransform:"uppercase", padding:"0 16px", border:"none", cursor:"pointer", letterSpacing:"0.06em", flexShrink:0 }}>
+          ADD
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
   const [tab, setTab] = useState("1v1");
   const b = BATTLES[tab];
   return (
@@ -360,6 +442,7 @@ function ArenaPage() {
                 ? <FighterCard fighter={team} side={side} height={240} />
                 : <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>{team.fighters.map(f=><FighterCard key={f.name} fighter={f} side={side} height={180} />)}</div>
               }
+              <AddFighterSlot side={side} />
             </div>
           );
         })}
@@ -680,18 +763,8 @@ function RankingsPage() {
 }
 
 /* ─────────────────────────────────────────────
-   LABS + NAV
-───────────────────────────────────────────── */
-function LabsPage() {
-  return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"50vh", gap:16, opacity:0.4 }}>
-      <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:64, fontWeight:900, fontStyle:"italic", color:C.outlineVar }}>LABS</div>
-      <div style={{ fontFamily:"'Inter',sans-serif", fontSize:11, textTransform:"uppercase", letterSpacing:"0.2em", color:C.onSurfVar }}>COMING SOON — SECTOR CLASSIFIED</div>
-    </div>
-  );
-}
-
-function BottomNav({ page, setPage }) {
+   NAV
+───────────────────────────────────────────── */function BottomNav({ page, setPage }) {
   const items=[{key:"arena",label:"BATTLE",icon:"⚔"},{key:"recent",label:"RECORDS",icon:"⏱"},{key:"rankings",label:"ROSTER",icon:"▲"}];
   return (
     <nav style={{ position:"fixed", bottom:0, left:0, right:0, zIndex:50, height:70, background:C.bg, display:"flex", boxShadow:"0 -10px 30px rgba(0,0,0,0.5)" }}>
@@ -728,7 +801,6 @@ export default function App() {
         {page==="arena"    && <ArenaPage />}
         {page==="recent"   && <RecentBattlesPage />}
         {page==="rankings" && <RankingsPage />}
-        {page==="labs"     && <LabsPage />}
       </main>
 
       <div className="bottom-nav"><BottomNav page={page} setPage={setPage} /></div>
