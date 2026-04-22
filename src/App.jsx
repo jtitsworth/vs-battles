@@ -824,7 +824,7 @@ function ArenaPage() {
 
         {/* Team headers — click to set active side */}
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:8 }}>
-          <div>
+          <div style={{ display:"flex", justifyContent:"flex-start" }}>
             <div onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
               style={sideIndicatorStyle("alpha")}>
               <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
