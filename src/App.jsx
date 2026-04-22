@@ -963,7 +963,7 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
         "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-image-1",
+        model: "gpt-image-2",
         prompt,
         n: 1,
         size: "1024x1024",
@@ -975,7 +975,7 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
     const url = data.data?.[0]?.url || null;
     if (!url) return null;
     // Convert to base64 so the URL never expires
-    // gpt-image-1 returns base64 directly, no URL fetching needed
+    // gpt-image-2 returns base64 directly in response
     const base64data = data.data?.[0]?.b64_json || null;
     if (base64data) {
       const dataUrl = `data:image/png;base64,${base64data}`;
