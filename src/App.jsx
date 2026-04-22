@@ -977,12 +977,15 @@ Rules:
 - The predicted overall winner (${winner}) should win rounds 3 and 4
 - Make the narrative feel like a real VS Battles wiki debate come to life`;
 
+  const apiKey = import.meta.env.VITE_OPENAI_KEY;
+  console.log("[VS-Battles] API key present:", !!apiKey, "| length:", apiKey?.length);
+
   try {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+        "Authorization": `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
@@ -991,14 +994,21 @@ Rules:
         messages: [{ role: "user", content: prompt }],
       }),
     });
+    console.log("[VS-Battles] API status:", res.status);
     const data = await res.json();
+    console.log("[VS-Battles] API response:", JSON.stringify(data).slice(0, 200));
+    if (!res.ok) {
+      console.error("[VS-Battles] API error:", data);
+      return null;
+    }
     const text = data.choices?.[0]?.message?.content || "";
+    console.log("[VS-Battles] Raw narrative:", text.slice(0, 200));
     const clean = text.replace(/```json|```/g, "").trim();
     const parsed = JSON.parse(clean);
     NARRATIVE_CACHE[cacheKey] = parsed;
     return parsed;
   } catch(e) {
-    console.error("Narrative fetch failed:", e);
+    console.error("[VS-Battles] Narrative fetch failed:", e);
     return null;
   }
 }
