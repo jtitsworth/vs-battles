@@ -827,8 +827,8 @@ function ArenaPage() {
           <div>
             <div onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
               style={sideIndicatorStyle("alpha")}>
-              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:20, fontWeight:400, fontStyle:"normal",
-                textTransform:"uppercase", letterSpacing:"0.06em", color:C.alpha }}>
+              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
+                textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff" }}>
                 <span style={{ marginRight:8, fontSize:16, opacity:0.8 }}>»»</span>TEAM ALPHA
               </span>
               {activeSide==="alpha" && (
@@ -844,8 +844,8 @@ function ArenaPage() {
                 <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
                   color:C.bravoBorder, letterSpacing:"0.1em" }}>SELECTING →</span>
               )}
-              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:20, fontWeight:400, fontStyle:"normal",
-                textTransform:"uppercase", letterSpacing:"0.06em", color:C.bravoBorder }}>
+              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
+                textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff" }}>
                 TEAM BRAVO<span style={{ marginLeft:8, fontSize:16, opacity:0.8 }}>«««</span>
               </span>
             </div>
