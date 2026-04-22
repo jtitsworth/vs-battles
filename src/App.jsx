@@ -583,9 +583,9 @@ function HeroPortrait({ rosterKey, name, side, selected = true }) {
 
       {/* Name label */}
       <div style={{ position:"absolute", bottom:16, [nameAlign]:16, zIndex:2 }}>
-        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
-          textTransform:"uppercase", letterSpacing:"0.04em", color:C.onSurface,
-          textShadow:"0 2px 12px rgba(0,0,0,0.9)" }}>
+        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:48, fontWeight:400,
+          textTransform:"uppercase", letterSpacing:"0.02em", color:"#fff",
+          textShadow:"0 2px 12px rgba(0,0,0,0.9)", lineHeight:1 }}>
           {name}
         </span>
       </div>
@@ -702,11 +702,11 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
           textTransform:"uppercase", letterSpacing:"0.02em", color:"#fff", lineHeight:1.1 }}>
           {rosterKey.replace(/_/g," ")}
         </div>
-        {/* Hover subtitle — franchise shown below name on hover */}
-        {hovered && !isSelAlpha && !isSelBravo && (
+        {/* Franchise label — always visible */}
+        {r.franchise && (
           <div style={{ fontFamily:"'Inter',sans-serif", fontSize:9, color:"#DAD9D9",
             textTransform:"uppercase", marginTop:1, opacity:0.8 }}>
-            {r.franchise||""}
+            {r.franchise}
           </div>
         )}
       </div>
@@ -991,7 +991,7 @@ function ArenaPage() {
         <div style={{ display:"flex", justifyContent:"flex-end", padding:"16px 0 0" }}>
           <button onClick={handleReset}
             style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, fontWeight:700,
-              letterSpacing:"0.12em", color:C.mutedLight, background:"none", border:"none",
+              letterSpacing:"0.12em", color:"#FFFFFF", background:"none", border:"none",
               cursor:"pointer", textTransform:"uppercase" }}>
             RESET BATTLE
           </button>
@@ -1092,7 +1092,7 @@ function ArenaPage() {
         </div>
 
         {/* Hint text */}
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:C.muted,
+        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:"#DAD9D9",
           textAlign:"center", marginBottom:12, letterSpacing:"0.08em", textTransform:"uppercase" }}>
           Click a portrait or team label to select a side, then pick from the grid below
         </p>
@@ -1399,8 +1399,8 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
         </div>
 
         {/* Final narrative line */}
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.mutedLight, fontSize:15,
-          maxWidth:640, margin:"0 auto 32px", lineHeight:1.6 }}>
+        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:"#fff", fontSize:18,
+          maxWidth:640, margin:"0 auto 32px", lineHeight:1.7 }}>
           {aiProjection || battle.projection.reason} Predicted outcome is {battle.projection.reliability} reliable.
         </p>
 
@@ -1490,7 +1490,7 @@ function StatBar({ label, alphaVal, bravoVal, alpha, bravo, winner }) {
 }
 
 function RoundRow({ round, idx }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(idx === 0);
   const bc = round.winTeam==="alpha" ? C.alphaBorder : round.winTeam==="bravo" ? C.bravoBorder : C.muted;
   return (
     <div style={{ borderLeft:`3px solid ${bc}`, background:C.surf, marginBottom:3 }}>
@@ -1501,8 +1501,8 @@ function RoundRow({ round, idx }) {
           <div style={{ width:22, height:22, background:bc, display:"flex", alignItems:"center",
             justifyContent:"center", fontFamily:"'Barlow Condensed',sans-serif",
             fontSize:12, fontWeight:900, color:"#000", flexShrink:0 }}>{idx+1}</div>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
-            color:C.onSurface, textTransform:"uppercase", letterSpacing:"0.06em" }}>{round.title}</span>
+          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:16, fontWeight:700,
+            color:"#fff", textTransform:"uppercase", letterSpacing:"0.06em" }}>{round.title}</span>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
@@ -1514,10 +1514,10 @@ function RoundRow({ round, idx }) {
       </button>
       {open && (
         <div style={{ padding:"10px 16px 14px", background:C.bgDeep }}>
-          <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, color:C.mutedLight,
-            margin:"0 0 8px", lineHeight:1.6 }}>{round.narrative}</p>
-          <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:C.muted,
-            margin:0, fontStyle:"italic" }}>{round.reasoning}</p>
+          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:16, fontWeight:400, color:"#fff",
+            margin:"0 0 10px", lineHeight:1.65 }}>{round.narrative}</p>
+          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:16, fontWeight:400, color:"#fff",
+            margin:0, fontStyle:"italic", opacity:0.8 }}>{round.reasoning}</p>
         </div>
       )}
     </div>
