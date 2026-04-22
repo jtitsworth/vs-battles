@@ -461,14 +461,14 @@ function NavBar({ page, setPage }) {
       background:"rgba(6,6,8,0.95)", backdropFilter:"blur(12px)",
       borderBottom:"1px solid rgba(255,255,255,0.06)",
       height:52, display:"flex", alignItems:"center", padding:"0 24px", gap:24 }}>
-      {/* Logo — VS BATTLES in Zen Dots with skew */}
-      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:4, cursor:"pointer", flexShrink:0 }}>
+      {/* Logo — fixed width so nav stays truly centered */}
+      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:4, cursor:"pointer", flexShrink:0, width:160 }}>
         <span style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:22, fontWeight:400,
           color:"#fff", transform:"matrix(1,0,-0.23,0.97,0,0)", display:"inline-block",
           lineHeight:"38px", whiteSpace:"nowrap" }}>VS BATTLES</span>
       </div>
 
-      {/* Nav links — centered */}
+      {/* Nav links — truly centered between equal-width sides */}
       <div style={{ flex:1, display:"flex", justifyContent:"center", gap:44 }}>
         {links.map(l=>{
           const active = page===l.key;
@@ -485,7 +485,7 @@ function NavBar({ page, setPage }) {
         })}
       </div>
 
-      <div style={{ width:80 }} />
+      <div style={{ width:160, flexShrink:0 }} />
     </nav>
   );
 }
