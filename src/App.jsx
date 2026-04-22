@@ -989,7 +989,7 @@ Rules:
       },
       body: JSON.stringify({
         model: "gpt-5.4-mini",
-        max_tokens: 900,
+        max_completion_tokens: 900,
         temperature: 0.85,
         messages: [{ role: "user", content: prompt }],
       }),
