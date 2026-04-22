@@ -461,39 +461,31 @@ function NavBar({ page, setPage }) {
       background:"rgba(6,6,8,0.95)", backdropFilter:"blur(12px)",
       borderBottom:"1px solid rgba(255,255,255,0.06)",
       height:52, display:"flex", alignItems:"center", padding:"0 24px", gap:24 }}>
-      {/* Logo */}
-      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", flexShrink:0 }}>
-        <div style={{ width:32, height:32, background:C.alpha, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:900, color:"#fff", letterSpacing:"-0.02em" }}>VS</span>
-        </div>
-        <div style={{ display:"flex", flexDirection:"column", lineHeight:1 }}>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, fontWeight:900, color:C.onSurface, letterSpacing:"0.18em" }}>BATTLES</span>
-        </div>
-      </div>
-
-      {/* Hamburger */}
-      <div style={{ display:"flex", flexDirection:"column", gap:4, cursor:"pointer", flexShrink:0 }}>
-        {[0,1,2].map(i=><div key={i} style={{ width:18, height:2, background:C.mutedLight }}/>)}
+      {/* Logo — VS BATTLES in Zen Dots with skew */}
+      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:4, cursor:"pointer", flexShrink:0 }}>
+        <span style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:22, fontWeight:400,
+          color:"#fff", transform:"matrix(1,0,-0.23,0.97,0,0)", display:"inline-block",
+          lineHeight:"38px", whiteSpace:"nowrap" }}>VS BATTLES</span>
       </div>
 
       {/* Nav links — centered */}
-      <div style={{ flex:1, display:"flex", justifyContent:"center", gap:40 }}>
+      <div style={{ flex:1, display:"flex", justifyContent:"center", gap:44 }}>
         {links.map(l=>{
           const active = page===l.key;
           return (
             <button key={l.key} onClick={()=>setPage(l.key)}
-              style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13, fontWeight:700,
-                letterSpacing:"0.1em", background:"none", border:"none", cursor:"pointer",
-                color: active ? C.onSurface : C.muted,
-                borderBottom: active ? `2px solid ${C.alpha}` : "2px solid transparent",
-                paddingBottom:2, transition:"color 0.2s" }}>
+              style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:16, fontWeight:400,
+                lineHeight:"19px", background:"none", border:"none", cursor:"pointer",
+                color: active ? "#fff" : "#DAD9D9",
+                borderBottom: active ? "2px solid #FF003C" : "2px solid transparent",
+                paddingBottom:4, paddingTop:22, transition:"color 0.2s" }}>
               {l.label}
             </button>
           );
         })}
       </div>
 
-      <div style={{ width:80 }} /> {/* spacer to center nav */}
+      <div style={{ width:80 }} />
     </nav>
   );
 }
@@ -1101,20 +1093,269 @@ function RoundRow({ round, idx }) {
 /* ─────────────────────────────────────────────
    RECENT BATTLES PAGE
 ───────────────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   RECENT BATTLES — Card components
+───────────────────────────────────────────── */
+function Card1v1({ b }) {
+  const isAlpha = b.winnerColor === "alpha";
+  const borderColor = isAlpha ? "#FB0130" : "#006EB7";
+  const victoryBg   = isAlpha ? "#B50022" : "#006EB7";
+  const barColor    = isAlpha ? "#FB0130" : "#006EB7";
+  const r = ROSTER[b.winner.rosterKey] || {};
+
+  return (
+    <div style={{ display:"flex", background:"#000", borderLeft:`4px solid ${borderColor}` }}>
+      {/* Main content */}
+      <div style={{ flex:1, padding:"24px", display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
+        {/* Top row */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            <div style={{ position:"relative" }}>
+              <div style={{ background:victoryBg, padding:"2px 10px", display:"inline-block" }}>
+                <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:700,
+                  letterSpacing:"0.18px", textTransform:"uppercase", color:"#fff" }}>VICTORY</span>
+              </div>
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
+              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:36, fontWeight:500,
+                lineHeight:"24px", textTransform:"uppercase", color:"#fff", letterSpacing:"0.18px" }}>
+                {b.winner.name}
+              </span>
+              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:14, fontWeight:400,
+                lineHeight:"26px", textTransform:"uppercase", color:"#DAD9D9", letterSpacing:"0.18px" }}>
+                {b.winner.sub}
+              </span>
+            </div>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:400,
+              textTransform:"uppercase", color:"#fff", letterSpacing:"0.18px" }}>1V1 DUEL</span>
+            <span style={{ fontFamily:"'Teko',sans-serif", fontSize:16, fontWeight:700,
+              lineHeight:"26px", color:"#FAF8FE", letterSpacing:"0.18px" }}>{b.time}</span>
+          </div>
+        </div>
+
+        {/* Win bar */}
+        <div style={{ background:"#2A2A29", padding:12, display:"flex", alignItems:"center", gap:12 }}>
+          <div style={{ width:48, height:48, overflow:"hidden", flexShrink:0 }}>
+            {r.img
+              ? <img src={r.img} alt={b.winner.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+              : <div style={{ width:"100%", height:"100%", background:r.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:900, color:"#fff" }}>{r.abbr}</span>
+                </div>
+            }
+          </div>
+          <div style={{ flex:1, height:8, background:"#24252B", position:"relative", overflow:"hidden" }}>
+            <div style={{ position:"absolute", inset:0, width:`${b.winner.pct||90}%`, background:barColor }} />
+          </div>
+          <span style={{ fontFamily:"'Teko',sans-serif", fontSize:24, fontWeight:500,
+            lineHeight:"26px", color:"#fff", letterSpacing:"0.18px", minWidth:36, textAlign:"center" }}>
+            {b.winner.pct}%
+          </span>
+        </div>
+      </div>
+
+      {/* Loser panel */}
+      <div style={{ width:148, background:"#18191E", borderLeft:"1px solid #47484C",
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:10, padding:20 }}>
+        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:36, fontWeight:500,
+          color:"#DAD9D9", letterSpacing:"0.18px", opacity:0.4 }}>VS</span>
+        <div style={{ width:72, height:72, overflow:"hidden", filter:"grayscale(1)", opacity:0.4 }}>
+          {(() => { const lr = ROSTER[b.loser.rosterKey]||{}; return lr.img
+            ? <img src={lr.img} alt={b.loser.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+            : <div style={{ width:"100%", height:"100%", background:lr.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:18, fontWeight:900, color:"#fff" }}>{lr.abbr}</span>
+              </div>;
+          })()}
+        </div>
+        <span style={{ fontFamily:"'Inter',sans-serif", fontSize:11, fontWeight:700,
+          textTransform:"uppercase", color:"#ABAAB0", letterSpacing:"0.18px", textAlign:"center" }}>
+          {b.loser.name}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function Card2v2({ b }) {
+  const isAlpha = b.winnerColor === "alpha";
+  const borderColor = isAlpha ? "#FB0130" : "#006EB7";
+  const victoryBg   = isAlpha ? "#B50022" : "#006EB7";
+
+  return (
+    <div style={{ display:"flex", background:"#000", borderLeft:`4px solid ${borderColor}` }}>
+      <div style={{ flex:1, padding:"24px", display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:20 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            <div style={{ background:victoryBg, padding:"2px 10px", display:"inline-block" }}>
+              <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:700,
+                letterSpacing:"0.18px", textTransform:"uppercase", color:"#fff" }}>VICTORY</span>
+            </div>
+            <div>
+              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:28, fontWeight:500,
+                textTransform:"uppercase", color:"#fff", letterSpacing:"0.18px", lineHeight:1 }}>{b.winner.name}</div>
+              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:14, color:"#DAD9D9",
+                textTransform:"uppercase", letterSpacing:"0.18px" }}>{b.winner.sub}</div>
+            </div>
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, color:"#fff", textTransform:"uppercase" }}>2V2 SKIRMISH</div>
+            <div style={{ fontFamily:"'Teko',sans-serif", fontSize:16, fontWeight:700, color:"#FAF8FE" }}>{b.time}</div>
+          </div>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+          {b.fighters.map(f => {
+            const fr = ROSTER[f.rosterKey]||{};
+            return (
+              <div key={f.name} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <div style={{ width:36, height:36, overflow:"hidden", flexShrink:0 }}>
+                  {fr.img
+                    ? <img src={fr.img} alt={f.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                    : <div style={{ width:"100%", height:"100%", background:fr.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:900, color:"#fff" }}>{fr.abbr}</span>
+                      </div>
+                  }
+                </div>
+                <span style={{ fontFamily:"'Inter',sans-serif", fontSize:11, fontWeight:700,
+                  textTransform:"uppercase", color:"#fff" }}>{f.name}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div style={{ width:148, background:"#18191E", borderLeft:"1px solid #47484C",
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:8, padding:20 }}>
+        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:36, fontWeight:500, color:"#DAD9D9", opacity:0.4 }}>VS</span>
+        <div style={{ display:"flex" }}>
+          {b.losers.map((l,i) => {
+            const lr = ROSTER[l.rosterKey]||{};
+            return (
+              <div key={i} style={{ marginLeft:i>0?-8:0, width:36, height:36, overflow:"hidden",
+                filter:"grayscale(1)", opacity:0.4, border:"2px solid #18191E" }}>
+                {lr.img
+                  ? <img src={lr.img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                  : <div style={{ width:"100%", height:"100%", background:lr.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, fontWeight:900, color:"#fff" }}>{lr.abbr}</span>
+                    </div>
+                }
+              </div>
+            );
+          })}
+        </div>
+        <span style={{ fontFamily:"'Inter',sans-serif", fontSize:9, fontWeight:700,
+          textTransform:"uppercase", color:"#ABAAB0", textAlign:"center" }}>{b.loserName}</span>
+      </div>
+    </div>
+  );
+}
+
+function FeaturedCard({ teamName, fighters, losers, loserName, location, timestamp }) {
+  return (
+    <div style={{ gridColumn:"span 2", background:"#121318", borderLeft:"4px solid #DC012A", padding:32 }}>
+      {/* Header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:28 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          <div style={{ background:"#B50022", padding:"2px 10px", display:"inline-block" }}>
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:700,
+              letterSpacing:"1.32px", textTransform:"uppercase", color:"#fff" }}>MAJOR VICTORY</span>
+          </div>
+          <h2 style={{ fontFamily:"'Teko',sans-serif", fontSize:44, fontWeight:500, lineHeight:"52px",
+            textTransform:"uppercase", letterSpacing:"-1.76px", color:"#fff", margin:0 }}>{teamName}</h2>
+        </div>
+        <div style={{ background:"#18191E", border:"1px solid #47484C", padding:20,
+          display:"flex", flexDirection:"column", alignItems:"center", gap:4, minWidth:140 }}>
+          <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, textTransform:"uppercase",
+            color:"#fff", letterSpacing:"0.18px" }}>MATCH TYPE</span>
+          <span style={{ fontFamily:"'Teko',sans-serif", fontSize:32, fontWeight:700,
+            color:"#fff", letterSpacing:"0.18px" }}>2v2</span>
+        </div>
+      </div>
+
+      {/* Fighters grid */}
+      <div style={{ display:"flex", gap:28, alignItems:"center", marginBottom:28 }}>
+        {/* Winners */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, flex:1 }}>
+          {fighters.map(f => {
+            const fr = ROSTER[f.rosterKey]||{};
+            return (
+              <div key={f.name} style={{ background:"#1E1F25", borderBottom:"4px solid #B50022",
+                aspectRatio:"1", position:"relative", overflow:"hidden", display:"flex",
+                alignItems:"center", justifyContent:"center" }}>
+                {fr.img
+                  ? <img src={fr.img} alt={f.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                  : <div style={{ width:"100%", height:"100%", background:fr.color||"#1E1F25", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"rgba(255,255,255,0.4)" }}>{fr.abbr}</span>
+                    </div>
+                }
+                <div style={{ position:"absolute", bottom:0, left:0, background:"#B50022", padding:"3px 10px" }}>
+                  <span style={{ fontFamily:"'Teko',sans-serif", fontSize:24, fontWeight:500,
+                    color:"#fff", letterSpacing:"0.18px" }}>{f.name}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* VS */}
+        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:28, fontWeight:700,
+          color:"#DAD9D9", letterSpacing:"0.18px", opacity:0.5, flexShrink:0 }}>VS</span>
+
+        {/* Losers */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, flex:1,
+          opacity:0.4, filter:"grayscale(1)" }}>
+          {losers.map((l,i) => {
+            const lr = ROSTER[l.rosterKey]||{};
+            return (
+              <div key={i} style={{ background:"#24252B", borderBottom:"4px solid #47484C",
+                aspectRatio:"1", overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                {lr.img
+                  ? <img src={lr.img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                  : <div style={{ width:"100%", height:"100%", background:lr.color||"#24252B", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"rgba(255,255,255,0.4)" }}>{lr.abbr}</span>
+                    </div>
+                }
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ borderTop:"1px solid rgba(71,72,76,0.267)", paddingTop:20,
+        display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ display:"flex", gap:28 }}>
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, textTransform:"uppercase",
+              color:"#DAD9D9", letterSpacing:"0.18px" }}>DURATION</span>
+            <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:18, fontWeight:900,
+              color:"#FAF8FE", letterSpacing:"0.18px" }}>28:44</span>
+          </div>
+        </div>
+        <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, textTransform:"uppercase",
+          letterSpacing:"1.2px", color:"#DAD9D9" }}>TIMESTAMP: {timestamp}</span>
+      </div>
+    </div>
+  );
+}
+
 function RecentBattlesPage() {
   const [showMore, setShowMore] = useState(false);
   return (
-    <div style={{ paddingTop:52, background:C.bg, minHeight:"100vh" }}>
-      <div style={{ maxWidth:1140, margin:"0 auto", padding:"40px 24px 80px" }}>
-        <header style={{ marginBottom:40 }}>
-          <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"clamp(40px,7vw,72px)",
-            fontWeight:900, textTransform:"uppercase", letterSpacing:"-0.02em",
-            color:C.onSurface, margin:"0 0 6px", lineHeight:1 }}>Recent Battles</h1>
-          <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, fontWeight:700,
-            textTransform:"uppercase", letterSpacing:"0.2em", color:C.muted, margin:0 }}>
-            LIVE SIMULATION LOG / SECTOR 7-G
-          </p>
+    <div style={{ paddingTop:52, background:"#000", minHeight:"100vh" }}>
+      {/* Ambient glows */}
+      <div style={{ position:"fixed", top:0, left:52, width:750, height:991, pointerEvents:"none", zIndex:0,
+        background:"radial-gradient(56.54% 56.54% at 53.44% 50%, #BE0729 0%, #580313 100%)",
+        filter:"blur(250px)", borderRadius:5000, opacity:0.35 }} />
+      <div style={{ position:"fixed", top:0, right:0, width:816, height:998, pointerEvents:"none", zIndex:0,
+        background:"radial-gradient(56.54% 56.54% at 53.44% 50%, #0710BE 0%, #08005C 100%)",
+        filter:"blur(250px)", borderRadius:5000, opacity:0.35 }} />
+
+      <div style={{ maxWidth:1140, margin:"0 auto", padding:"40px 24px 80px", position:"relative", zIndex:1 }}>
+        <header style={{ textAlign:"center", marginBottom:48 }}>
+          <h1 style={{ fontFamily:"'Teko',sans-serif", fontSize:64, fontWeight:400, lineHeight:"92px",
+            color:"#fff", margin:0 }}>RECENT BATTLES</h1>
         </header>
+
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, maxWidth:1100 }}>
           <Card1v1 b={RECENT_P1[0]} />
           <Card2v2 b={RECENT_P1[1]} />
@@ -1127,15 +1368,16 @@ function RecentBattlesPage() {
           <Card1v1 b={RECENT_P1[2]} />
           <Card1v1 b={RECENT_P1[3]} />
         </div>
+
         {showMore && (
           <div style={{ marginTop:12 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:16, margin:"24px 0 16px", maxWidth:1100 }}>
-              <div style={{ flex:1, height:1, background:C.surfHigh }}/>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, fontWeight:700,
-                textTransform:"uppercase", letterSpacing:"0.2em", color:C.muted, whiteSpace:"nowrap" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:16, margin:"28px 0 16px" }}>
+              <div style={{ flex:1, height:1, background:"#1E1F25" }}/>
+              <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:700,
+                textTransform:"uppercase", letterSpacing:"0.2em", color:"#6b6b80", whiteSpace:"nowrap" }}>
                 PREVIOUS RECORDS — SECTOR_ARCHIVE
               </span>
-              <div style={{ flex:1, height:1, background:C.surfHigh }}/>
+              <div style={{ flex:1, height:1, background:"#1E1F25" }}/>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, maxWidth:1100 }}>
               <Card1v1 b={RECENT_P2[0]} />
@@ -1153,158 +1395,17 @@ function RecentBattlesPage() {
             </div>
           </div>
         )}
-        <div style={{ marginTop:40, display:"flex", justifyContent:"center" }}>
+
+        <div style={{ marginTop:48, display:"flex", justifyContent:"center" }}>
           <button onClick={()=>setShowMore(s=>!s)}
-            style={{ background:C.surfHigh, color:C.onSurface, fontFamily:"'Barlow Condensed',sans-serif",
-              fontWeight:900, fontSize:14, textTransform:"uppercase", letterSpacing:"0.08em",
-              padding:"16px 48px", border:`2px solid ${showMore?C.alphaBorder:C.surfHigh}`,
+            style={{ background:"#1E1F25", color:"#FAF8FE", fontFamily:"'Inter',sans-serif",
+              fontWeight:700, fontSize:13, textTransform:"uppercase", letterSpacing:"1.04px",
+              padding:"20px 48px", border:"none", borderRight:`3.6px solid #FF8D8D`,
               cursor:"pointer", display:"flex", alignItems:"center", gap:12 }}>
-            {showMore?"COLLAPSE_RECORDS":"FETCH_PREVIOUS_RECORDS"}
+            {showMore ? "COLLAPSE RECORDS" : "FETCH PREVIOUS RECORDS"}
             <span style={{ fontSize:16, display:"inline-block", transform:showMore?"rotate(180deg)":"none", transition:"transform 0.2s" }}>↓</span>
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function Card1v1({ b }) {
-  const wc = b.winnerColor==="alpha" ? C.alphaBorder : C.bravoBorder;
-  return (
-    <div style={{ background:C.surf, display:"flex", borderLeft:`3px solid ${wc}` }}>
-      <div style={{ flex:1, padding:20, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", marginBottom:16 }}>
-          <div>
-            <span style={{ background:wc, padding:"2px 8px", fontFamily:"'Barlow Condensed',sans-serif",
-              fontSize:10, fontWeight:900, color:"#000", textTransform:"uppercase" }}>VICTORY</span>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:22, fontWeight:900,
-              textTransform:"uppercase", color:wc, marginTop:4, lineHeight:1 }}>{b.winner.name}</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, color:C.muted, marginTop:2 }}>{b.winner.sub}</div>
-          </div>
-          <div style={{ textAlign:"right" }}>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, color:C.muted, textTransform:"uppercase" }}>1V1 DUEL</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13, fontWeight:900, marginTop:4, color:C.onSurface }}>{b.time}</div>
-          </div>
-        </div>
-        <div style={{ display:"flex", alignItems:"center", gap:10, background:C.bgDeep, padding:10 }}>
-          <Avatar rosterKey={b.winner.rosterKey} size={40} />
-          <div style={{ flex:1, height:6, background:C.surfHigh, position:"relative", overflow:"hidden" }}>
-            <div style={{ position:"absolute", inset:0, width:`${b.winner.pct}%`, background:wc }}/>
-          </div>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, color:wc, fontSize:14 }}>{b.winner.pct}%</span>
-        </div>
-      </div>
-      <div style={{ width:120, background:C.bgDeep, padding:16, display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center", borderLeft:`1px solid ${C.surfHigh}` }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
-          color:`${C.muted}44`, marginBottom:8 }}>VS</div>
-        <Avatar rosterKey={b.loser.rosterKey} size={60} grayscale />
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, fontWeight:700,
-          textTransform:"uppercase", color:C.muted, marginTop:6 }}>{b.loser.name}</div>
-      </div>
-    </div>
-  );
-}
-
-function Card2v2({ b }) {
-  const wc = b.winnerColor==="alpha" ? C.alphaBorder : C.bravoBorder;
-  return (
-    <div style={{ background:C.surf, display:"flex", borderLeft:`3px solid ${wc}` }}>
-      <div style={{ flex:1, padding:20, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", marginBottom:16 }}>
-          <div>
-            <span style={{ background:wc, padding:"2px 8px", fontFamily:"'Barlow Condensed',sans-serif",
-              fontSize:10, fontWeight:900, color:"#000", textTransform:"uppercase" }}>VICTORY</span>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
-              textTransform:"uppercase", color:wc, marginTop:4, lineHeight:1 }}>{b.winner.name}</div>
-          </div>
-          <div style={{ textAlign:"right" }}>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, color:C.muted, textTransform:"uppercase" }}>2V2 SKIRMISH</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13, fontWeight:900, marginTop:4, color:C.onSurface }}>{b.time}</div>
-          </div>
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-          {b.fighters.map(f=>(
-            <div key={f.name} style={{ display:"flex", alignItems:"center", gap:8 }}>
-              <Avatar rosterKey={f.rosterKey} size={32} />
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
-                fontWeight:700, textTransform:"uppercase", color:C.onSurface }}>{f.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ width:120, background:C.bgDeep, padding:16, display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center", borderLeft:`1px solid ${C.surfHigh}` }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
-          color:`${C.muted}44`, marginBottom:8 }}>VS</div>
-        <div style={{ display:"flex" }}>
-          {b.losers.map((l,i)=>(
-            <div key={i} style={{ marginLeft:i>0?-8:0, border:`2px solid ${C.surf}` }}>
-              <Avatar rosterKey={l.rosterKey} size={36} grayscale />
-            </div>
-          ))}
-        </div>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:9, fontWeight:700,
-          textTransform:"uppercase", color:C.muted, marginTop:6, textAlign:"center" }}>{b.loserName}</div>
-      </div>
-    </div>
-  );
-}
-
-function FeaturedCard({ teamName, fighters, losers, loserName, location, timestamp }) {
-  return (
-    <div style={{ gridColumn:"span 2", background:C.surf, borderLeft:`3px solid ${C.alphaBorder}`, padding:28 }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24 }}>
-        <div>
-          <span style={{ background:C.alphaBorder, padding:"4px 12px", fontFamily:"'Barlow Condensed',sans-serif",
-            fontSize:11, fontWeight:900, color:"#000", textTransform:"uppercase", letterSpacing:"0.12em" }}>MAJOR VICTORY</span>
-          <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"clamp(24px,4vw,40px)",
-            fontWeight:900, textTransform:"uppercase", letterSpacing:"-0.02em", margin:"8px 0 0",
-            color:C.onSurface }}>{teamName}</h2>
-        </div>
-        <div style={{ background:C.bgDeep, padding:16, border:`1px solid ${C.surfHigh}`, textAlign:"center", minWidth:120 }}>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, textTransform:"uppercase", color:C.muted, marginBottom:4 }}>MATCH TYPE</div>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:18, fontWeight:900, color:"#ffe792" }}>2v2</div>
-        </div>
-      </div>
-      <div style={{ display:"flex", gap:24, alignItems:"center" }}>
-        <div style={{ flex:1, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-          {fighters.map(f=>(
-            <div key={f.name} style={{ background:C.bgDeep, borderBottom:`3px solid ${C.alphaBorder}`,
-              aspectRatio:"1", position:"relative", overflow:"hidden", display:"flex",
-              alignItems:"center", justifyContent:"center" }}>
-              <Avatar rosterKey={f.rosterKey} size={120} style={{ width:"100%", height:"100%" }} />
-              <div style={{ position:"absolute", bottom:0, left:0, background:C.alphaBorder, padding:"3px 8px" }}>
-                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:900, color:"#000" }}>{f.name}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:24, fontWeight:900,
-          color:`${C.muted}55`, flexShrink:0 }}>VS</div>
-        <div style={{ flex:1, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, opacity:0.35, filter:"grayscale(1)" }}>
-          {losers.map((l,i)=>(
-            <div key={i} style={{ background:C.surfHigh, borderBottom:`3px solid ${C.muted}`,
-              aspectRatio:"1", overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <Avatar rosterKey={l.rosterKey} size={120} style={{ width:"100%", height:"100%" }} />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ marginTop:20, paddingTop:16, borderTop:`1px solid ${C.surfHigh}`,
-        display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <div style={{ display:"flex", gap:24 }}>
-          <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, textTransform:"uppercase", color:C.muted }}>LOCATION</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, marginTop:2, color:C.onSurface }}>{location}</div>
-          </div>
-          <div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, textTransform:"uppercase", color:C.muted }}>DURATION</div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, marginTop:2, color:C.onSurface }}>28:44</div>
-          </div>
-        </div>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, textTransform:"uppercase",
-          letterSpacing:"0.1em", color:C.muted }}>TIMESTAMP: {timestamp}</div>
       </div>
     </div>
   );
@@ -1317,51 +1418,104 @@ function RankingsPage() {
   const [page, setPage] = useState(0);
   const visible = TABLE_ROWS.slice(0, (page+1)*TABLE_PAGE);
   const hasMore = visible.length < TABLE_ROWS.length;
+
+  const podiumOrder = [PODIUM[1], PODIUM[0], PODIUM[2]]; // 2nd, 1st, 3rd
+  const podiumColors = {
+    0: { accent:"#BE0729", tag:"RUNNER UP",  tagBg:"#BE0729",  numColor:"#fff",    barFill:"#BE0729",  winColor:"#FF8589" },
+    1: { accent:"#C8A84B", tag:"CHAMPION",   tagBg:"#F0C040",  numColor:"#fff",    barFill:"#C8A84B",  winColor:"#C8A84B" },
+    2: { accent:"#38B2D8", tag:"CONTENDER",  tagBg:"#38B2D8",  numColor:"#fff",    barFill:"#38B2D8",  winColor:"#38B2D8" },
+  };
+
   return (
-    <div style={{ paddingTop:52, background:C.bg, minHeight:"100vh" }}>
-      <div style={{ maxWidth:1140, margin:"0 auto", padding:"40px 24px 80px" }}>
-        <header style={{ marginBottom:40 }}>
-          <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"clamp(40px,7vw,72px)",
-            fontWeight:900, textTransform:"uppercase", letterSpacing:"-0.02em", lineHeight:1,
-            color:C.onSurface, margin:"0 0 8px" }}>
-            Global <span style={{ color:C.alphaBorder }}>Rankings</span>
-          </h1>
-          <div style={{ display:"flex", alignItems:"center", gap:12, color:C.muted,
-            fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, textTransform:"uppercase", letterSpacing:"0.2em" }}>
-            <span>SEASON_04: REVENANT_STRIKE</span>
-            <span style={{ width:5, height:5, background:C.alphaBorder, display:"inline-block" }}/>
-            <span>LIVE DATA FEED</span>
+    <div style={{ paddingTop:52, background:"#000", minHeight:"100vh" }}>
+      {/* Ambient glows */}
+      <div style={{ position:"fixed", top:155, left:0, width:750, height:991, pointerEvents:"none", zIndex:0,
+        background:"radial-gradient(56.54% 56.54% at 53.44% 50%, #BE0729 0%, #580313 100%)",
+        filter:"blur(250px)", borderRadius:5000, opacity:0.4 }} />
+      <div style={{ position:"fixed", top:155, right:0, width:816, height:998, pointerEvents:"none", zIndex:0,
+        background:"radial-gradient(56.54% 56.54% at 53.44% 50%, #0710BE 0%, #08005C 100%)",
+        filter:"blur(250px)", borderRadius:5000, opacity:0.4 }} />
+
+      <div style={{ maxWidth:1140, margin:"0 auto", padding:"40px 24px 80px", position:"relative", zIndex:1 }}>
+
+        {/* Header */}
+        <header style={{ textAlign:"center", marginBottom:48 }}>
+          <h1 style={{ fontFamily:"'Teko',sans-serif", fontSize:64, fontWeight:400, lineHeight:"92px",
+            color:"#fff", margin:"0 0 4px" }}>GLOBAL RANKINGS</h1>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:12 }}>
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:16, color:"#fff", letterSpacing:"0.18px" }}>
+              SEASON_04: REVENANT_STRIKE
+            </span>
+            <div style={{ width:9, height:9, background:"#FF0030", borderRadius:"50%" }} />
+            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:16, color:"#fff", letterSpacing:"0.18px" }}>
+              LIVE DATA FEED
+            </span>
           </div>
         </header>
 
         {/* Podium */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginBottom:28, alignItems:"end" }}>
-          {[PODIUM[1],PODIUM[0],PODIUM[2]].map((p,idx)=>{
-            const isFirst = idx===1;
-            const bc = isFirst ? C.alphaBorder : idx===0 ? C.bravoBorder : "#ffe792";
-            const h = isFirst ? 360 : idx===0 ? 280 : 240;
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:0, marginBottom:48, alignItems:"end" }}>
+          {podiumOrder.map((p, idx) => {
+            const pc = podiumColors[idx];
+            const isFirst = idx === 1;
+            const cardH = isFirst ? 480 : idx===0 ? 380 : 340;
+            const r = ROSTER[p.rosterKey]||{};
+            const imgH = isFirst ? 188 : 160;
+
             return (
-              <div key={p.rank} style={{ background: isFirst ? C.surfMid : C.surf, padding: isFirst?28:20,
-                borderBottom:`${isFirst?6:3}px solid ${bc}`, height:h,
-                display:"flex", flexDirection:"column", justifyContent:"flex-end", position:"relative", overflow:"hidden" }}>
-                {isFirst && <div style={{ position:"absolute", top:12, right:12, fontSize:24, color:"#ffe792" }}>★</div>}
-                <div style={{ marginBottom:10 }}>
-                  <span style={{ fontFamily:"'Barlow Condensed',sans-serif",
-                    fontSize:isFirst?52:36, fontWeight:900, color:`${bc}33` }}>{p.rank}</span>
+              <div key={p.rank} style={{ position:"relative", height:cardH, background:"#2A2A29",
+                display:"flex", flexDirection:"column", overflow:"hidden" }}>
+
+                {/* Star watermark for #1 */}
+                {isFirst && (
+                  <div style={{ position:"absolute", top:"14%", left:"50%", transform:"translateX(-50%)",
+                    fontFamily:"'Arial',sans-serif", fontSize:177, color:"#F0C040", opacity:0.11,
+                    lineHeight:1, userSelect:"none", pointerEvents:"none" }}>★</div>
+                )}
+
+                {/* Rank number */}
+                <div style={{ textAlign:"center", paddingTop:isFirst?20:16 }}>
+                  <span style={{ fontFamily:"'Teko',sans-serif", fontSize:isFirst?110:100, fontWeight:500,
+                    lineHeight:1, color:"#fff", letterSpacing:"0.18px" }}>{p.rank}</span>
                 </div>
-                <div style={{ position:"relative", marginBottom:12 }}>
-                  <Avatar rosterKey={p.rosterKey} size={isFirst?110:80} />
-                  <div style={{ position:"absolute", bottom:-4, right:-4, background:bc, padding:"2px 7px" }}>
-                    <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:9, fontWeight:900, color:"#000" }}>{p.badge}</span>
+
+                {/* Fighter image */}
+                <div style={{ width:imgH, height:imgH, margin:"0 auto", overflow:"hidden", position:"relative" }}>
+                  {r.img
+                    ? <img src={r.img} alt={p.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                    : <div style={{ width:"100%", height:"100%", background:r.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:40, fontWeight:900, color:"rgba(255,255,255,0.5)" }}>{r.abbr}</span>
+                      </div>
+                  }
+                </div>
+
+                {/* Tag */}
+                <div style={{ textAlign:"center", marginTop:8 }}>
+                  <span style={{ fontFamily:"'Teko',sans-serif", fontSize:20, fontWeight:500,
+                    lineHeight:"24px", color: idx===1?"#000":"#fff", letterSpacing:"0.18px",
+                    background:pc.tagBg, padding:"6px 14px 4px", display:"inline-block" }}>
+                    {pc.tag}
+                  </span>
+                </div>
+
+                {/* Name */}
+                <div style={{ textAlign:"center", marginTop:6 }}>
+                  <div style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:700,
+                    lineHeight:"57px", color:"#fff", textAlign:"center" }}>{p.name}</div>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:isFirst?16:15, fontWeight:700,
+                    color:pc.winColor, textAlign:"center", marginBottom:8 }}>
+                    {p.wins.toLocaleString()} WINS / {p.losses} LOSSES
                   </div>
                 </div>
-                <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:isFirst?24:16,
-                  fontWeight:900, textTransform:"uppercase", lineHeight:1, margin:"0 0 4px", color:C.onSurface }}>{p.name}</h3>
-                <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
-                  textTransform:"uppercase", color:bc, margin:"0 0 10px" }}>{p.wins.toLocaleString()} W / {p.losses} L</p>
-                <div style={{ height:isFirst?6:3, background:C.surfHigh, overflow:"hidden" }}>
-                  <div style={{ width:`${p.pct}%`, height:"100%", background:bc }}/>
+
+                {/* Win bar */}
+                <div style={{ position:"relative", height:4, background:"#8B8B8A", margin:"0 16px 16px" }}>
+                  <div style={{ position:"absolute", left:0, top:0, bottom:0,
+                    width:`${p.pct}%`, background:pc.barFill }} />
                 </div>
+
+                {/* Bottom accent line */}
+                <div style={{ position:"absolute", bottom:0, left:0, right:0, height:4, background:pc.accent }} />
               </div>
             );
           })}
@@ -1371,67 +1525,100 @@ function RankingsPage() {
         <div style={{ overflowX:"auto" }}>
           <table style={{ width:"100%", borderCollapse:"collapse", textAlign:"left" }}>
             <thead>
-              <tr style={{ background:C.surfHigh }}>
-                {["RANK","OPERATOR","TOTAL STATS","1V1 RECORD","TEAM RECORD","RATING"].map((h,i)=>(
-                  <th key={h} style={{ padding:"12px 16px", fontFamily:"'Barlow Condensed',sans-serif",
-                    fontSize:10, fontWeight:900, textTransform:"uppercase", letterSpacing:"0.2em",
-                    color:C.muted, textAlign:i===5?"right":"left" }}>{h}</th>
+              <tr style={{ background:"#1E1F25" }}>
+                {["RANK","FIGHTER","TOTAL STATS","1V1 RECORD","TEAM RECORD","RATING"].map((h,i)=>(
+                  <th key={h} style={{ padding:"13px 20px", fontFamily:"'Inter',sans-serif",
+                    fontSize:12, fontWeight:900, textTransform:"uppercase", letterSpacing:"2px",
+                    color:"#fff", textAlign:i===5?"right":"left" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {visible.map((r,i)=>(
-                <tr key={r.rank+i}
-                  style={{ background:i%2===0?C.surf:C.bg, borderBottom:`1px solid ${C.surfMid}`,
-                    transition:"background 0.15s", cursor:"pointer" }}
-                  onMouseEnter={e=>e.currentTarget.style.background=C.surfMid}
-                  onMouseLeave={e=>e.currentTarget.style.background=i%2===0?C.surf:C.bg}>
-                  <td style={{ padding:"14px 16px", fontFamily:"'Barlow Condensed',sans-serif",
-                    fontSize:20, fontWeight:900, color:C.surfHigh }}>{r.rank}</td>
-                  <td style={{ padding:"14px 16px" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                      <Avatar rosterKey={r.rosterKey} size={40} grayscale />
-                      <div>
-                        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:15, fontWeight:900,
-                          textTransform:"uppercase", lineHeight:1, margin:"0 0 3px", color:C.onSurface }}>{r.name}</p>
-                        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, color:C.muted, margin:0 }}>{r.sub}</p>
+              {visible.map((r,i)=>{
+                const rr = ROSTER[r.rosterKey]||{};
+                return (
+                  <tr key={r.rank+i}
+                    style={{ background:"#000", borderBottom:"0.9px solid #18191E", cursor:"pointer",
+                      transition:"background 0.15s" }}
+                    onMouseEnter={e=>e.currentTarget.style.background="#111"}
+                    onMouseLeave={e=>e.currentTarget.style.background="#000"}>
+
+                    {/* Rank */}
+                    <td style={{ padding:"26px 20px" }}>
+                      <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:22, fontWeight:700,
+                        letterSpacing:"0.18px", color:"#fff" }}>{r.rank}</span>
+                    </td>
+
+                    {/* Fighter */}
+                    <td style={{ padding:"0 20px" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                        <div style={{ width:44, height:44, overflow:"hidden", flexShrink:0,
+                          background:"#fff", mixBlendMode:"saturation" }}>
+                          {rr.img
+                            ? <img src={rr.img} alt={r.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top", filter:"grayscale(1)" }} />
+                            : <div style={{ width:"100%", height:"100%", background:rr.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:900, color:"#fff", filter:"grayscale(1)" }}>{rr.abbr}</span>
+                              </div>
+                          }
+                        </div>
+                        <div>
+                          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:16, fontWeight:700,
+                            textTransform:"uppercase", letterSpacing:"0.18px", color:"#fff" }}>{r.name}</div>
+                          <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:400,
+                            letterSpacing:"0.18px", color:"#DAD9D9" }}>{r.sub}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td style={{ padding:"14px 16px" }}>
-                    <div style={{ display:"flex", justifyContent:"space-between", fontFamily:"'Barlow Condensed',sans-serif",
-                      fontSize:10, fontWeight:900, textTransform:"uppercase", marginBottom:4, color:C.mutedLight }}>
-                      <span>W: {r.wins}</span><span>L: {r.losses}</span>
-                    </div>
-                    <div style={{ height:3, background:C.surfHigh, width:100 }}>
-                      <div style={{ height:"100%", width:`${r.rating}%`, background:r.barColor }}/>
-                    </div>
-                  </td>
-                  <td style={{ padding:"14px 16px", fontFamily:"'Barlow Condensed',sans-serif",
-                    fontSize:13, fontWeight:700, color:"#ffe792" }}>{r.oneV}</td>
-                  <td style={{ padding:"14px 16px", fontFamily:"'Barlow Condensed',sans-serif",
-                    fontSize:13, fontWeight:700, color:C.bravoBorder }}>{r.team}</td>
-                  <td style={{ padding:"14px 16px", textAlign:"right", fontFamily:"'Barlow Condensed',sans-serif",
-                    fontSize:16, fontWeight:900,
-                    color: r.rating>=75?"#ffe792":r.rating>=55?C.onSurface:C.muted }}>
-                    {r.rating}%
-                  </td>
-                </tr>
-              ))}
+                    </td>
+
+                    {/* Total stats */}
+                    <td style={{ padding:"23px 20px 23px 40px" }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4,
+                        fontFamily:"'Inter',sans-serif", fontSize:10, fontWeight:900,
+                        textTransform:"uppercase", letterSpacing:"0.18px", color:"#fff", width:115 }}>
+                        <span>W: {r.wins}</span><span>L: {r.losses}</span>
+                      </div>
+                      <div style={{ width:110, height:4, background:"#8B8B8A", position:"relative" }}>
+                        <div style={{ position:"absolute", left:0, top:0, bottom:0,
+                          width:`${r.rating}%`, background:r.barColor }} />
+                      </div>
+                    </td>
+
+                    {/* 1v1 record */}
+                    <td style={{ padding:"26px 20px" }}>
+                      <span style={{ fontFamily:"'Manrope',sans-serif", fontSize:13, fontWeight:700,
+                        letterSpacing:"0.18px", color:"#fff" }}>{r.oneV}</span>
+                    </td>
+
+                    {/* Team record */}
+                    <td style={{ padding:"26px 20px" }}>
+                      <span style={{ fontFamily:"'Manrope',sans-serif", fontSize:13, fontWeight:700,
+                        letterSpacing:"0.18px", color:r.barColor }}>{r.team}</span>
+                    </td>
+
+                    {/* Rating */}
+                    <td style={{ padding:"26px 20px", textAlign:"right" }}>
+                      <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:18, fontWeight:700,
+                        letterSpacing:"0.18px", color:"#fff" }}>{r.rating}%</span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
 
+        {/* Load more */}
         <div style={{ marginTop:32, display:"flex", justifyContent:"center" }}>
           {hasMore
             ? <button onClick={()=>setPage(p=>p+1)}
-                style={{ background:C.surfHigh, color:C.onSurface, fontFamily:"'Barlow Condensed',sans-serif",
-                  fontWeight:900, fontSize:14, textTransform:"uppercase", letterSpacing:"0.08em",
-                  padding:"18px 48px", border:"none", borderRight:`3px solid ${C.alphaBorder}`, cursor:"pointer" }}>
-                LOAD NEXT {Math.min(TABLE_PAGE, TABLE_ROWS.length-visible.length)} OPERATORS
+                style={{ background:"#1E1F25", color:"#FAF8FE", fontFamily:"'Inter',sans-serif",
+                  fontWeight:700, fontSize:13, textTransform:"uppercase", letterSpacing:"1.04px",
+                  padding:"20px 48px", border:"none", borderRight:"3.6px solid #FF8D8D",
+                  cursor:"pointer" }}>
+                LOAD NEXT {Math.min(TABLE_PAGE, TABLE_ROWS.length-visible.length)} FIGHTERS
               </button>
-            : <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, textTransform:"uppercase",
-                letterSpacing:"0.16em", color:C.muted, padding:"18px 0" }}>
+            : <div style={{ fontFamily:"'Inter',sans-serif", fontSize:11, textTransform:"uppercase",
+                letterSpacing:"0.16em", color:"#6b6b80", padding:"20px 0" }}>
                 ALL OPERATORS LOADED — END OF SEASON_04 RECORD
               </div>
           }
@@ -1441,15 +1628,13 @@ function RankingsPage() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   ROOT APP
-───────────────────────────────────────────── */
+
 export default function App() {
   const [page, setPage] = useState("arena");
   return (
     <div style={{ fontFamily:"'Barlow Condensed',sans-serif", background:C.bg, color:C.onSurface, minHeight:"100vh" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,900;1,700;1,900&family=Barlow:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,900;1,700;1,900&family=Barlow:wght@400;500;600;700&family=Teko:wght@400;500;600;700&family=Zen+Dots&family=Inter:wght@400;500;600;700;900&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;900&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         button { transition: opacity 0.15s, transform 0.1s; }
         button:active { transform: scale(0.98); }
