@@ -967,7 +967,7 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
         prompt,
         n: 1,
         size: "1024x1024",
-        quality: "standard",
+        quality: "medium",
       }),
     });
     const data = await res.json();
