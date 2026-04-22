@@ -968,20 +968,31 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
         n: 1,
         size: "1024x1024",
         quality: "standard",
-        response_format: "b64_json",
       }),
     });
     const data = await res.json();
+    console.log("[VS-Battles] Image response keys:", Object.keys(data), data.data?.[0] ? Object.keys(data.data[0]) : "no data");
+    // gpt-image-2 returns base64 in b64_json, or a url — handle both
+    const b64 = data.data?.[0]?.b64_json || null;
     const url = data.data?.[0]?.url || null;
-    if (!url) return null;
-    // Convert to base64 so the URL never expires
-    // gpt-image-2 returns base64 directly in response
-    const base64data = data.data?.[0]?.b64_json || null;
-    if (base64data) {
-      const dataUrl = `data:image/png;base64,${base64data}`;
+    if (b64) {
+      const dataUrl = `data:image/png;base64,${b64}`;
       IMAGE_CACHE[cacheKey] = dataUrl;
       return dataUrl;
     }
+    if (url) {
+      // Fetch and convert to base64 so it never expires
+      const imgRes = await fetch(url);
+      const blob = await imgRes.blob();
+      const dataUrl = await new Promise(res => {
+        const r = new FileReader();
+        r.onloadend = () => res(r.result);
+        r.readAsDataURL(blob);
+      });
+      IMAGE_CACHE[cacheKey] = dataUrl;
+      return dataUrl;
+    }
+    console.error("[VS-Battles] No image data in response:", JSON.stringify(data).slice(0,300));
     return null;
   } catch(e) {
     console.error("[VS-Battles] Image gen failed:", e);
