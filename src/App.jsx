@@ -945,14 +945,106 @@ function ArenaPage() {
   );
 }
 
+/* Cache so the same matchup doesn't re-fetch */
+const NARRATIVE_CACHE = {};
+
+async function fetchBattleNarrative(alphaName, bravoName, alphaStats, bravoStats, winner, tab) {
+  const cacheKey = `${alphaName}|${bravoName}|${tab}`;
+  if (NARRATIVE_CACHE[cacheKey]) return NARRATIVE_CACHE[cacheKey];
+
+  const alphaFlavor = alphaStats.flavor || "";
+  const bravoFlavor = bravoStats.flavor || "";
+  const alphaTitle  = alphaStats.title  || "";
+  const bravoTitle  = bravoStats.title  || "";
+
+  const prompt = `You are the narrator for VS Battles, a fighting simulation app. Write a dramatic 4-round battle breakdown for ${alphaName} (${alphaTitle} — ${alphaFlavor}) vs ${bravoName} (${bravoTitle} — ${bravoFlavor}) in a ${tab} match. The predicted winner is ${winner}.
+
+Return ONLY a JSON object with this exact shape, no markdown, no extra text:
+{
+  "rounds": [
+    { "title": "ROUND TITLE IN CAPS", "winner": "FIGHTER NAME OR DRAW", "winTeam": "alpha|bravo|draw", "narrative": "2-3 sentence vivid combat description referencing each fighter's specific abilities", "reasoning": "1 sentence tactical explanation" },
+    { "title": "...", "winner": "...", "winTeam": "...", "narrative": "...", "reasoning": "..." },
+    { "title": "...", "winner": "...", "winTeam": "...", "narrative": "...", "reasoning": "..." },
+    { "title": "...", "winner": "...", "winTeam": "...", "narrative": "...", "reasoning": "..." }
+  ],
+  "projection": "2-3 sentence final analysis explaining why ${winner} wins, referencing their key abilities and what tipped the balance."
+}
+
+Rules:
+- Round titles should be dramatic and specific to this matchup (e.g. "ULTRA INSTINCT AWAKENS", "HELLFIRE CHAINS", "DIVINE ARMAMENT")
+- winTeam must be "alpha" if ${alphaName} wins that round, "bravo" if ${bravoName} wins, "draw" if tied
+- winner field should be the fighter's name (or "DRAW")
+- The predicted overall winner (${winner}) should win rounds 3 and 4
+- Make the narrative feel like a real VS Battles wiki debate come to life`;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        max_tokens: 900,
+        temperature: 0.85,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || "";
+    const clean = text.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(clean);
+    NARRATIVE_CACHE[cacheKey] = parsed;
+    return parsed;
+  } catch(e) {
+    console.error("Narrative fetch failed:", e);
+    return null;
+  }
+}
+
 function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
-  // Use the dynamic engine for all matchups
   const battle = tab==="1v1"
     ? computeBattle1v1(alpha1v1, bravo1v1)
     : computeBattle2v2(alpha2v2, bravo2v2);
 
   const alphaName = tab==="1v1" ? alpha1v1.replace(/_/g," ") : (alpha2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
   const bravoName = tab==="1v1" ? bravo1v1.replace(/_/g," ") : (bravo2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
+
+  const alphaStats = FIGHTER_STATS[alpha1v1] || FIGHTER_STATS[alpha2v2?.[0]] || {};
+  const bravoStats = FIGHTER_STATS[bravo1v1] || FIGHTER_STATS[bravo2v2?.[0]] || {};
+
+  const [aiRounds, setAiRounds]         = useState(null);
+  const [aiProjection, setAiProjection] = useState(null);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(false);
+    setAiRounds(null);
+    setAiProjection(null);
+
+    fetchBattleNarrative(alphaName, bravoName, alphaStats, bravoStats, battle.projection.winner, tab)
+      .then(result => {
+        if (result?.rounds) {
+          setAiRounds(result.rounds);
+          setAiProjection(result.projection);
+        } else {
+          setError(true);
+        }
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [alpha1v1, bravo1v1, alpha2v2?.join(","), bravo2v2?.join(","), tab]);
+
+  // Merge AI rounds with computed stat data
+  const displayRounds = aiRounds
+    ? battle.rounds.map((r, i) => ({
+        ...r,
+        ...(aiRounds[i] || {}),
+      }))
+    : battle.rounds;
 
   return (
     <div>
@@ -1001,11 +1093,28 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
 
       {/* Rounds */}
       <section style={{ marginBottom:32 }}>
-        <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
-          textTransform:"uppercase", letterSpacing:"0.12em", color:C.muted, margin:"0 0 10px" }}>
-          ROUND BY ROUND
-        </h3>
-        {battle.rounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:10 }}>
+          <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
+            textTransform:"uppercase", letterSpacing:"0.12em", color:C.muted, margin:0 }}>
+            ROUND BY ROUND
+          </h3>
+          {loading && (
+            <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+              <div style={{ width:8, height:8, borderRadius:"50%", background:C.alphaBorder,
+                animation:"pulse 1s infinite" }} />
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
+                color:C.muted, letterSpacing:"0.1em" }}>GENERATING NARRATIVE...</span>
+            </div>
+          )}
+          {!loading && aiRounds && (
+            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
+              color:"#ffe792", letterSpacing:"0.1em", background:"#ffe79222", padding:"2px 8px" }}>
+              ✦ AI GENERATED
+            </span>
+          )}
+        </div>
+        <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }`}</style>
+        {displayRounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
       </section>
 
       {/* Projection */}
@@ -1021,7 +1130,7 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
         </div>
         <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.muted, fontSize:15,
           maxWidth:560, margin:"0 auto", lineHeight:1.6 }}>
-          {battle.projection.reason} Predicted outcome is {battle.projection.reliability} reliable.
+          {aiProjection || battle.projection.reason} Predicted outcome is {battle.projection.reliability} reliable.
         </p>
       </div>
     </div>
