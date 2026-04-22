@@ -963,7 +963,7 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
         "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
       },
       body: JSON.stringify({
-        model: "dall-e-3",
+        model: "gpt-image-1",
         prompt,
         n: 1,
         size: "1024x1024",
