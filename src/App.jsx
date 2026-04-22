@@ -972,8 +972,17 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
     });
     const data = await res.json();
     const url = data.data?.[0]?.url || null;
-    if (url) IMAGE_CACHE[cacheKey] = url;
-    return url;
+    if (!url) return null;
+    // Convert to base64 so the URL never expires
+    const imgRes = await fetch(url);
+    const blob = await imgRes.blob();
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+    IMAGE_CACHE[cacheKey] = base64;
+    return base64;
   } catch(e) {
     console.error("[VS-Battles] Image gen failed:", e);
     return null;
