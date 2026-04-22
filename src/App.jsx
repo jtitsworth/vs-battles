@@ -804,7 +804,7 @@ function ArenaPage() {
         {/* Header */}
         <header style={{ textAlign:"center", padding:"24px 0 24px" }}>
           <h1 style={{ fontFamily:"'Teko',sans-serif", fontSize:"clamp(36px,6vw,64px)",
-            fontWeight:900, textTransform:"uppercase", color:C.onSurface, margin:"0 0 20px", lineHeight:1 }}>
+            fontWeight:400, textTransform:"uppercase", color:C.onSurface, margin:"0 0 20px", lineHeight:1 }}>
             CHOOSE YOUR FIGHTERS
           </h1>
           <div style={{ display:"inline-flex", background:C.surf, borderRadius:999,
