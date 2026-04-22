@@ -968,21 +968,21 @@ async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) 
         n: 1,
         size: "1024x1024",
         quality: "standard",
+        response_format: "b64_json",
       }),
     });
     const data = await res.json();
     const url = data.data?.[0]?.url || null;
     if (!url) return null;
     // Convert to base64 so the URL never expires
-    const imgRes = await fetch(url);
-    const blob = await imgRes.blob();
-    const base64 = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-    IMAGE_CACHE[cacheKey] = base64;
-    return base64;
+    // gpt-image-1 returns base64 directly, no URL fetching needed
+    const base64data = data.data?.[0]?.b64_json || null;
+    if (base64data) {
+      const dataUrl = `data:image/png;base64,${base64data}`;
+      IMAGE_CACHE[cacheKey] = dataUrl;
+      return dataUrl;
+    }
+    return null;
   } catch(e) {
     console.error("[VS-Battles] Image gen failed:", e);
     return null;
