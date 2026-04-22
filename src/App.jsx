@@ -5,6 +5,19 @@ import { useState, useEffect, useRef } from "react";
 ───────────────────────────────────────────── */
 const IMG_CACHE = {};
 
+/* ─── Mobile breakpoint hook ─── */
+function useIsMobile() {
+  const [mobile, setMobile] = React.useState(
+    typeof window !== 'undefined' && window.innerWidth < 768
+  );
+  React.useEffect(() => {
+    const fn = () => setMobile(window.innerWidth < 768);
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+  return mobile;
+}
+
 async function fetchFandomImg(wiki, pageTitle) {
   const key = `${wiki}::${pageTitle}`;
   if (IMG_CACHE[key] !== undefined) return IMG_CACHE[key];
@@ -451,11 +464,55 @@ function useFandomImg(rosterKey) {
    NAVBAR
 ───────────────────────────────────────────── */
 function NavBar({ page, setPage }) {
+  const isMobile = useIsMobile();
   const links = [
     { key:"arena",    label:"ARENA" },
     { key:"recent",   label:"RECENT BATTLES" },
     { key:"rankings", label:"RANKINGS" },
   ];
+
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile top nav — logo only */}
+        <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100,
+          background:"#000", borderBottom:"1px solid #8B8B8A",
+          height:64, display:"flex", alignItems:"center", padding:"0 20px", gap:8 }}>
+          {/* Hamburger */}
+          <div style={{ display:"flex", flexDirection:"column", gap:4, cursor:"pointer", marginRight:4 }}>
+            {[0,1,2].map(i=><div key={i} style={{ width:18, height:2, background:"#fff" }}/>)}
+          </div>
+          <div onClick={()=>setPage("arena")} style={{ cursor:"pointer" }}>
+            <span style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:22, fontWeight:400,
+              color:"#fff", transform:"matrix(1,0,-0.23,0.97,0,0)", display:"inline-block",
+              lineHeight:"38px", whiteSpace:"nowrap" }}>VS BATTLES</span>
+          </div>
+        </nav>
+        {/* Mobile bottom nav */}
+        <nav style={{ position:"fixed", bottom:0, left:0, right:0, zIndex:100,
+          background:"#000", borderTop:"1px solid #8B8B8A", height:72,
+          display:"flex", alignItems:"center", justifyContent:"space-around", padding:"0 16px" }}>
+          {links.map(l => {
+            const active = page===l.key;
+            const icons = { arena:"⚔", recent:"⏱", rankings:"▲" };
+            return (
+              <button key={l.key} onClick={()=>setPage(l.key)}
+                style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3,
+                  background:"none", border:"none", cursor:"pointer",
+                  color: active ? "#FF003C" : "#6b6b80",
+                  borderTop: active ? "2px solid #FF003C" : "2px solid transparent",
+                  padding:"8px 16px", fontFamily:"'Barlow Condensed',sans-serif",
+                  fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em" }}>
+                <span style={{ fontSize:18 }}>{icons[l.key]}</span>
+                {l.label}
+              </button>
+            );
+          })}
+        </nav>
+      </>
+    );
+  }
+
   return (
     <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100,
       background:"rgba(6,6,8,0.95)", backdropFilter:"blur(12px)",
@@ -782,6 +839,145 @@ function ArenaPage() {
   const selAlpha = tab==="1v1" ? alpha1v1 : null;
   const selBravo = tab==="1v1" ? bravo1v1 : null;
 
+  const isMobile = useIsMobile();
+
+  /* ─── MOBILE LAYOUT ─── */
+  if (isMobile) {
+    const mAlpha = tab==="1v1" ? alpha1v1 : alpha2v2[activeSlot];
+    const mBravo = tab==="1v1" ? bravo1v1 : bravo2v2[activeSlot];
+    return (
+      <div style={{ paddingTop:64, paddingBottom:100, minHeight:"100vh", background:"#000" }}>
+        {/* Header */}
+        <div style={{ textAlign:"center", padding:"16px 16px 8px" }}>
+          <h1 style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400,
+            color:"#fff", textTransform:"uppercase", lineHeight:1.2, marginBottom:12 }}>
+            CHOOSE YOUR FIGHTERS
+          </h1>
+          {/* 1v1 / 2v2 toggle */}
+          <div style={{ display:"inline-flex", borderRadius:40, overflow:"hidden" }}>
+            {[["1v1","1 VS 1"],["2v2","2 VS 2"]].map(([key,label])=>(
+              <button key={key} onClick={()=>{ setTab(key); setBattle(false); }}
+                style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:15, fontWeight:400,
+                  padding:"10px 20px", border:"none", cursor:"pointer",
+                  background: tab===key ? "#BE0729" : "#4D4D4C",
+                  color:"#fff", lineHeight:"18px" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Team headers + gradient bar */}
+        <div style={{ padding:"12px 16px 0" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:0 }}>
+            <button onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
+              style={{ fontFamily:"'Teko',sans-serif", fontSize:32, fontWeight:400,
+                textTransform:"uppercase", background:"none", border:"none", cursor:"pointer",
+                color: activeSide==="alpha" ? "#fff" : "#8B8B8A",
+                lineHeight:"46px", padding:0 }}>
+              TEAM ALPHA
+            </button>
+            <button onClick={()=>{ setActiveSide("bravo"); setActiveSlot(0); }}
+              style={{ fontFamily:"'Teko',sans-serif", fontSize:32, fontWeight:400,
+                textTransform:"uppercase", background:"none", border:"none", cursor:"pointer",
+                color: activeSide==="bravo" ? "#fff" : "#8B8B8A",
+                lineHeight:"46px", padding:0 }}>
+              TEAM BRAVO
+            </button>
+          </div>
+          {/* Gradient bar */}
+          <div style={{ height:10, background:"linear-gradient(90deg, #77C9FF 0%, #0004FF 100%)",
+            marginBottom:16 }} />
+        </div>
+
+        {/* Fighter list */}
+        <div style={{ padding:"0 16px", display:"flex", flexDirection:"column", gap:12 }}>
+          {FIGHTER_GRID.filter(k => k !== "__FIND__" && k !== "__RANDOM__").map((key) => {
+            const r = ROSTER[key] || {};
+            const isAlphaSelected = tab==="1v1" ? alpha1v1===key : alpha2v2.includes(key);
+            const isBravoSelected = tab==="1v1" ? bravo1v1===key : bravo2v2.includes(key);
+            const isSelected = isAlphaSelected || isBravoSelected;
+            const selColor = isAlphaSelected ? "#FB0130" : isBravoSelected ? "#4D9ED9" : "transparent";
+            return (
+              <div key={key} onClick={()=>handleGridSelect(key)}
+                style={{ display:"flex", alignItems:"center", height:80,
+                  border: isSelected ? `2px solid ${selColor}` : "2px solid #2A2A29",
+                  boxShadow: isSelected ? `0 0 20px ${selColor}88` : "none",
+                  cursor:"pointer", background:"#000", transition:"all 0.15s", overflow:"hidden" }}>
+                {/* Image thumbnail */}
+                <div style={{ width:137, height:80, flexShrink:0, position:"relative", overflow:"hidden",
+                  background:"#2A2A29" }}>
+                  {r.img
+                    ? <img src={r.img} alt={key}
+                        style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
+                    : <div style={{ width:"100%", height:"100%", background:r.color||"#2A2A29",
+                        display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:24,
+                          fontWeight:900, color:"rgba(255,255,255,0.3)" }}>{r.abbr}</span>
+                      </div>
+                  }
+                  {/* Gradient overlay */}
+                  <div style={{ position:"absolute", inset:0,
+                    background:"linear-gradient(180deg, transparent 53%, #000 100%)" }} />
+                  {/* Franchise tag */}
+                  {r.franchise && (
+                    <div style={{ position:"absolute", bottom:4, left:0,
+                      background:"#2A2A29", padding:"2px 8px" }}>
+                      <span style={{ fontFamily:"'Inter',sans-serif", fontSize:9,
+                        fontWeight:600, color:"#fff", textTransform:"uppercase" }}>
+                        {r.franchise}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Name + franchise */}
+                <div style={{ padding:"0 12px", flex:1 }}>
+                  <div style={{ fontFamily:"'Teko',sans-serif", fontSize:27, fontWeight:400,
+                    color:"#fff", textTransform:"uppercase", lineHeight:1.1 }}>
+                    {key.replace(/_/g," ")}
+                  </div>
+                  <div style={{ fontFamily:"'Inter',sans-serif", fontSize:12, fontWeight:400,
+                    color:"#DAD9D9", textTransform:"uppercase", marginTop:2 }}>
+                    {r.franchise || ""}
+                  </div>
+                </div>
+                {/* Selected indicator */}
+                {isAlphaSelected && <div style={{ width:4, alignSelf:"stretch", background:"#FB0130", flexShrink:0 }} />}
+                {isBravoSelected && <div style={{ width:4, alignSelf:"stretch", background:"#4D9ED9", flexShrink:0 }} />}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Battle results on mobile */}
+        {battleStarted && (
+          <div style={{ padding:"24px 16px" }}>
+            <BattleResults tab={tab}
+              alpha1v1={alpha1v1} bravo1v1={bravo1v1}
+              alpha2v2={alpha2v2} bravo2v2={bravo2v2} />
+          </div>
+        )}
+
+        {/* Fixed bottom START BATTLE button */}
+        <div style={{ position:"fixed", bottom:72, left:0, right:0, zIndex:50, padding:"8px 42px" }}>
+          <button onClick={()=>setBattle(true)}
+            style={{ width:"100%", height:66,
+              background:"linear-gradient(90deg, #FF0030 0.97%, #700015 99.3%)",
+              border:"none", cursor:"pointer",
+              fontFamily:"'Teko',sans-serif", fontSize:32, fontWeight:600,
+              textTransform:"uppercase", color:"#fff", letterSpacing:"0.04em" }}>
+            START BATTLE
+          </button>
+        </div>
+
+        {showModal && (
+          <SummonModal onClose={()=>setShowModal(false)} onAdd={handleAddFighter} />
+        )}
+      </div>
+    );
+  }
+
+  /* ─── DESKTOP LAYOUT ─── */
   return (
     <div style={{ paddingTop:52, minHeight:"100vh", background:C.bg }}>
       <div style={{ position:"fixed", top:0, left:0, width:400, height:400, pointerEvents:"none", zIndex:0,
