@@ -947,6 +947,38 @@ function ArenaPage() {
 
 /* Cache so the same matchup doesn't re-fetch */
 const NARRATIVE_CACHE = {};
+const IMAGE_CACHE = {};
+
+async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) {
+  const cacheKey = `${winnerName}|${loserName}`;
+  if (IMAGE_CACHE[cacheKey]) return IMAGE_CACHE[cacheKey];
+
+  const prompt = `Epic fantasy battle artwork, cinematic wide shot: ${winnerName} standing triumphant over the defeated ${loserName}. ${winnerName} delivers the final blow — ${finalBlow || "a devastating strike"}. Dynamic action pose, dramatic lighting with red and blue energy, dark arena background with smoke and debris. High detail, painterly style, no text, no watermarks.`;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "dall-e-3",
+        prompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+      }),
+    });
+    const data = await res.json();
+    const url = data.data?.[0]?.url || null;
+    if (url) IMAGE_CACHE[cacheKey] = url;
+    return url;
+  } catch(e) {
+    console.error("[VS-Battles] Image gen failed:", e);
+    return null;
+  }
+}
 
 async function fetchBattleNarrative(alphaName, bravoName, alphaStats, bravoStats, winner, tab) {
   const cacheKey = `${alphaName}|${bravoName}|${tab}`;
@@ -1026,20 +1058,36 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
 
   const [aiRounds, setAiRounds]         = useState(null);
   const [aiProjection, setAiProjection] = useState(null);
+  const [aiFinalBlow, setAiFinalBlow]   = useState(null);
   const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState(false);
+  const [battleImg, setBattleImg]       = useState(null);
+  const [imgLoading, setImgLoading]     = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setError(false);
     setAiRounds(null);
     setAiProjection(null);
+    setAiFinalBlow(null);
+    setBattleImg(null);
 
     fetchBattleNarrative(alphaName, bravoName, alphaStats, bravoStats, battle.projection.winner, tab)
       .then(result => {
         if (result?.rounds) {
           setAiRounds(result.rounds);
           setAiProjection(result.projection);
+          // Extract final blow from last round narrative for image prompt
+          const finalRound = result.rounds[result.rounds.length - 1];
+          const blow = finalRound?.narrative?.slice(0, 120) || "";
+          setAiFinalBlow(blow);
+          // Kick off image generation in parallel
+          setImgLoading(true);
+          const winnerName = battle.projection.winner.replace(" WINS","").replace(" WIN","").trim();
+          const loserName  = battle.projection.winner.includes(alphaName) ? bravoName : alphaName;
+          fetchBattleImage(winnerName, loserName, alphaStats.flavor || bravoStats.flavor || "", blow)
+            .then(url => { if (url) setBattleImg(url); })
+            .finally(() => setImgLoading(false));
         } else {
           setError(true);
         }
@@ -1133,15 +1181,55 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
           letterSpacing:"0.2em", color:C.muted, textTransform:"uppercase", marginBottom:12 }}>
           SYNCHRONIZATION PROJECTION
         </div>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
-          fontSize:"clamp(48px,10vw,88px)", fontWeight:900, color:"#ffe792",
-          lineHeight:1, marginBottom:16, textTransform:"uppercase" }}>
-          {battle.projection.winner}
-        </div>
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.muted, fontSize:15,
-          maxWidth:560, margin:"0 auto", lineHeight:1.6 }}>
+
+        {/* Final narrative line */}
+        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.mutedLight, fontSize:15,
+          maxWidth:640, margin:"0 auto 32px", lineHeight:1.6 }}>
           {aiProjection || battle.projection.reason} Predicted outcome is {battle.projection.reliability} reliable.
         </p>
+
+        {/* AI Battle Image */}
+        <div style={{ maxWidth:480, margin:"0 auto 36px", position:"relative" }}>
+          {imgLoading && (
+            <div style={{ background:C.surf, height:220, display:"flex", flexDirection:"column",
+              alignItems:"center", justifyContent:"center", gap:16,
+              border:`1px solid ${C.surfHigh}` }}>
+              <div style={{ display:"flex", gap:6 }}>
+                {[0,1,2].map(i=>(
+                  <div key={i} style={{ width:8, height:8, borderRadius:"50%", background:"#ffe792",
+                    animation:`imgPulse 1.2s ${i*0.2}s infinite ease-in-out` }} />
+                ))}
+              </div>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12,
+                color:C.muted, letterSpacing:"0.15em", textTransform:"uppercase" }}>
+                RENDERING FINAL BLOW...
+              </span>
+              <style>{`@keyframes imgPulse { 0%,100%{opacity:0.2;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }`}</style>
+            </div>
+          )}
+          {battleImg && !imgLoading && (
+            <div style={{ position:"relative" }}>
+              <img src={battleImg} alt="Battle result"
+                style={{ width:"100%", display:"block", borderTop:`3px solid #ffe792`,
+                  borderBottom:`3px solid ${C.alphaBorder}` }} />
+              <div style={{ position:"absolute", bottom:0, left:0, right:0,
+                background:"linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)",
+                padding:"24px 20px 12px", display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
+                  color:"rgba(255,255,255,0.4)", letterSpacing:"0.12em", textTransform:"uppercase" }}>
+                  ✦ AI GENERATED — DALL·E 3
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Winner name */}
+        <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
+          fontSize:"clamp(48px,10vw,88px)", fontWeight:900, color:"#ffe792",
+          lineHeight:1, textTransform:"uppercase" }}>
+          {battle.projection.winner}
+        </div>
       </div>
     </div>
   );
