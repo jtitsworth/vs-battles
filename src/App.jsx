@@ -828,7 +828,7 @@ function ArenaPage() {
             <div onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
               style={sideIndicatorStyle("alpha")}>
               <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
-                textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff" }}>
+                textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff", textAlign:"left" }}>
                 <span style={{ marginRight:8, fontSize:16, opacity:0.8 }}>»»</span>TEAM ALPHA
               </span>
               {activeSide==="alpha" && (
