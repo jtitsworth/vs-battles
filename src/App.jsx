@@ -51,41 +51,40 @@ const C = {
 ───────────────────────────────────────────── */
 // wiki: fandom subdomain, page: wiki page title
 const ROSTER = {
-  GOKU:         { img: "/goku.png",          franchise: "DBZ",         abbr: "GK", color: "#8c5200", wiki: "dragonball",    page: "Goku" },
-  NARUTO:       { img: "/naruto.png",        franchise: "NARUTO",      abbr: "NT", color: "#b05a00", wiki: "naruto",        page: "Naruto_Uzumaki" },
-  SUPERMAN:     { img: "/superman.png",      franchise: "DC",          abbr: "SM", color: "#0a2a7a", wiki: "dc",            page: "Superman" },
-  LUFFY:        { img: "/luffy.png",         franchise: "ONE PIECE",   abbr: "LF", color: "#8a1010", wiki: "onepiece",      page: "Monkey_D._Luffy" },
-  KRATOS:       { img: "/kratos.png",        franchise: "GOW",         abbr: "KR", color: "#5a1010", wiki: "godofwar",      page: "Kratos" },
-  DANTE:        { img: "/dante.png",         franchise: "CAPCOM",      abbr: "DT", color: "#8a0000", wiki: "devilmaycry",   page: "Dante" },
-  DOOM_SLAYER:  { img: "/doom slayer.png",   franchise: "DOOM",        abbr: "DS", color: "#1a3a0a", wiki: "doom",          page: "Doom_Slayer" },
-  MASTER_CHIEF: { img: "/master chief.png",  franchise: "HALO",        abbr: "MC", color: "#0a3a1a", wiki: "halo",          page: "Master_Chief" },
-  RYU:          { img: "/ryu.png",           franchise: "CAPCOM",      abbr: "RY", color: "#0a2040", wiki: "streetfighter", page: "Ryu" },
-  JIN_KAZAMA:   { img: "/jin kazama.png",    franchise: "TEKKEN",      abbr: "JK", color: "#0a0a30", wiki: "tekken",        page: "Jin_Kazama" },
-  SOL_BADGUY:   { img: "/sol badguy.png",    franchise: "GUILTY GEAR", abbr: "SB", color: "#5a1000", wiki: "guiltygear",    page: "Sol_Badguy" },
-  KIRBY:        { img: "/kirby.png",         franchise: "NINTENDO",    abbr: "KB", color: "#7a1a50", wiki: "kirby",         page: "Kirby" },
-  SCORPION:     { img: "/scorpion.png",      franchise: "MK",          abbr: "SC", color: "#5a4000", wiki: "mortalkombat",  page: "Scorpion" },
-  SHAGGY:       { img: "/shaggy rogers.png", franchise: "WB",          abbr: "SH", color: "#1a3a00", wiki: "scooby-doo",   page: "Shaggy_Rogers" },
-  // Grid-only fighters — no local image, fetch from fandom
-  BROLY:        { img: null, franchise: "DBZ",          abbr: "BL", color: "#2a0a3a", wiki: "dragonball",    page: "Broly" },
-  PSYLOCKE:     { img: null, franchise: "MARVEL",       abbr: "PL", color: "#4a0a6a", wiki: "marvel",        page: "Psylocke" },
-  WOLVERINE:    { img: null, franchise: "MARVEL",       abbr: "WV", color: "#3a1000", wiki: "marvel",        page: "Wolverine" },
-  VEGETA:       { img: null, franchise: "DBZ",          abbr: "VG", color: "#1a0a3a", wiki: "dragonball",    page: "Vegeta" },
-  CAP_AMERICA:  { img: null, franchise: "MARVEL",       abbr: "CA", color: "#0a1a4a", wiki: "marvel",        page: "Captain_America" },
-  CHUN_LI:      { img: null, franchise: "CAPCOM",       abbr: "CL", color: "#0a2a5a", wiki: "streetfighter", page: "Chun-Li" },
-  MOON_KNIGHT:  { img: null, franchise: "MARVEL",       abbr: "MK", color: "#2a2a2a", wiki: "marvel",        page: "Moon_Knight" },
-  PICCOLO:      { img: null, franchise: "DBZ",          abbr: "PC", color: "#0a2a0a", wiki: "dragonball",    page: "Piccolo" },
-  STORM:        { img: null, franchise: "MARVEL",       abbr: "ST", color: "#0a1a3a", wiki: "marvel",        page: "Storm" },
-  SIEGFRIED:    { img: null, franchise: "SOULCALIBUR",  abbr: "SG", color: "#1a1a3a", wiki: "soulcalibur",   page: "Siegfried_Schtauffen" },
-  BATMAN:       { img: null, franchise: "DC",           abbr: "BM", color: "#0a0a1a", wiki: "dc",            page: "Batman" },
-  CAMMY:        { img: null, franchise: "CAPCOM",       abbr: "CM", color: "#0a2a1a", wiki: "streetfighter", page: "Cammy" },
-  AKUMA:        { img: null, franchise: "CAPCOM",       abbr: "AK", color: "#3a0a0a", wiki: "streetfighter", page: "Akuma" },
-  AMATERASU:    { img: null, franchise: "CAPCOM",       abbr: "AM", color: "#3a1a00", wiki: "okami",         page: "Amaterasu" },
-  VOLDO:        { img: null, franchise: "SOULCALIBUR",  abbr: "VO", color: "#1a0a2a", wiki: "soulcalibur",   page: "Voldo" },
-  HARLEY_QUINN: { img: null, franchise: "DC",           abbr: "HQ", color: "#3a0a2a", wiki: "dc",            page: "Harley_Quinn" },
-  GOHAN:        { img: null, franchise: "DBZ",          abbr: "GH", color: "#0a1a3a", wiki: "dragonball",    page: "Gohan" },
-  IVY:          { img: null, franchise: "SOULCALIBUR",  abbr: "IV", color: "#1a0a1a", wiki: "soulcalibur",   page: "Ivy_Valentine" },
-  LEX_LUTHOR:   { img: null, franchise: "DC",           abbr: "LL", color: "#1a1a00", wiki: "dc",            page: "Lex_Luthor" },
-  VENOM:        { img: null, franchise: "MARVEL",       abbr: "VN", color: "#0a1a0a", wiki: "marvel",        page: "Venom" },
+  GOKU:         { img: "/goku.png",               franchise: "DBZ",         abbr: "GK", color: "#8c5200", wiki: "dragonball",    page: "Goku" },
+  NARUTO:       { img: "/naruto.png",             franchise: "NARUTO",      abbr: "NT", color: "#b05a00", wiki: "naruto",        page: "Naruto_Uzumaki" },
+  SUPERMAN:     { img: "/superman.png",           franchise: "DC",          abbr: "SM", color: "#0a2a7a", wiki: "dc",            page: "Superman" },
+  LUFFY:        { img: "/luffy.png",              franchise: "ONE PIECE",   abbr: "LF", color: "#8a1010", wiki: "onepiece",      page: "Monkey_D._Luffy" },
+  KRATOS:       { img: "/kratos.png",             franchise: "GOW",         abbr: "KR", color: "#5a1010", wiki: "godofwar",      page: "Kratos" },
+  DANTE:        { img: "/dante.png",              franchise: "CAPCOM",      abbr: "DT", color: "#8a0000", wiki: "devilmaycry",   page: "Dante" },
+  DOOM_SLAYER:  { img: "/doom slayer.png",        franchise: "DOOM",        abbr: "DS", color: "#1a3a0a", wiki: "doom",          page: "Doom_Slayer" },
+  MASTER_CHIEF: { img: "/master chief.png",       franchise: "HALO",        abbr: "MC", color: "#0a3a1a", wiki: "halo",          page: "Master_Chief" },
+  RYU:          { img: "/ryu.png",                franchise: "CAPCOM",      abbr: "RY", color: "#0a2040", wiki: "streetfighter", page: "Ryu" },
+  JIN_KAZAMA:   { img: "/jin kazama.png",         franchise: "TEKKEN",      abbr: "JK", color: "#0a0a30", wiki: "tekken",        page: "Jin_Kazama" },
+  SOL_BADGUY:   { img: "/sol badguy.png",         franchise: "GUILTY GEAR", abbr: "SB", color: "#5a1000", wiki: "guiltygear",    page: "Sol_Badguy" },
+  KIRBY:        { img: "/kirby.png",              franchise: "NINTENDO",    abbr: "KB", color: "#7a1a50", wiki: "kirby",         page: "Kirby" },
+  SCORPION:     { img: "/scorpion.png",           franchise: "MK",          abbr: "SC", color: "#5a4000", wiki: "mortalkombat",  page: "Scorpion" },
+  SHAGGY:       { img: "/shaggy rogers.png",      franchise: "WB",          abbr: "SH", color: "#1a3a00", wiki: "scooby-doo",   page: "Shaggy_Rogers" },
+  BROLY:        { img: "/broly.png",              franchise: "DBZ",         abbr: "BL", color: "#2a0a3a", wiki: "dragonball",    page: "Broly" },
+  PSYLOCKE:     { img: "/Psylocke.png",           franchise: "MARVEL",      abbr: "PL", color: "#4a0a6a", wiki: "marvel",        page: "Psylocke" },
+  WOLVERINE:    { img: "/Wolverine.png",          franchise: "MARVEL",      abbr: "WV", color: "#3a1000", wiki: "marvel",        page: "Wolverine" },
+  VEGETA:       { img: "/Vegeta.png",             franchise: "DBZ",         abbr: "VG", color: "#1a0a3a", wiki: "dragonball",    page: "Vegeta" },
+  CAP_AMERICA:  { img: "/Captain America.png",    franchise: "MARVEL",      abbr: "CA", color: "#0a1a4a", wiki: "marvel",        page: "Captain_America" },
+  CHUN_LI:      { img: "/Chun-Li.png",            franchise: "CAPCOM",      abbr: "CL", color: "#0a2a5a", wiki: "streetfighter", page: "Chun-Li" },
+  MOON_KNIGHT:  { img: "/Moon Knight.png",        franchise: "MARVEL",      abbr: "MK", color: "#2a2a2a", wiki: "marvel",        page: "Moon_Knight" },
+  PICCOLO:      { img: "/Piccolo.png",            franchise: "DBZ",         abbr: "PC", color: "#0a2a0a", wiki: "dragonball",    page: "Piccolo" },
+  STORM:        { img: "/Storm.png",              franchise: "MARVEL",      abbr: "ST", color: "#0a1a3a", wiki: "marvel",        page: "Storm" },
+  SIEGFRIED:    { img: "/Siegfried.png",          franchise: "SOULCALIBUR", abbr: "SG", color: "#1a1a3a", wiki: "soulcalibur",   page: "Siegfried_Schtauffen" },
+  BATMAN:       { img: "/Batman.png",             franchise: "DC",          abbr: "BM", color: "#0a0a1a", wiki: "dc",            page: "Batman" },
+  CAMMY:        { img: "/Cammy.png",              franchise: "CAPCOM",      abbr: "CM", color: "#0a2a1a", wiki: "streetfighter", page: "Cammy" },
+  AKUMA:        { img: "/Akuma.png",              franchise: "CAPCOM",      abbr: "AK", color: "#3a0a0a", wiki: "streetfighter", page: "Akuma" },
+  AMATERASU:    { img: "/Amaterasu.png",          franchise: "CAPCOM",      abbr: "AM", color: "#3a1a00", wiki: "okami",         page: "Amaterasu" },
+  VOLDO:        { img: "/Voldo.png",              franchise: "SOULCALIBUR", abbr: "VO", color: "#1a0a2a", wiki: "soulcalibur",   page: "Voldo" },
+  HARLEY_QUINN: { img: "/Harley Quinn.png",       franchise: "DC",          abbr: "HQ", color: "#3a0a2a", wiki: "dc",            page: "Harley_Quinn" },
+  GOHAN:        { img: "/Gohan.png",              franchise: "DBZ",         abbr: "GH", color: "#0a1a3a", wiki: "dragonball",    page: "Gohan" },
+  IVY:          { img: "/Ivy.png",                franchise: "SOULCALIBUR", abbr: "IV", color: "#1a0a1a", wiki: "soulcalibur",   page: "Ivy_Valentine" },
+  LEX_LUTHOR:   { img: "/Lex Luthor.png",         franchise: "DC",          abbr: "LL", color: "#1a1a00", wiki: "dc",            page: "Lex_Luthor" },
+  VENOM:        { img: "/Venom.png",              franchise: "MARVEL",      abbr: "VN", color: "#0a1a0a", wiki: "marvel",        page: "Venom" },
 };
 
 // Fighter grid roster (order matters for display)
@@ -96,7 +95,209 @@ const FIGHTER_GRID = [
 ];
 
 /* ─────────────────────────────────────────────
-   BATTLE DATA (unchanged from original)
+   FIGHTER STATS — power ratings for every fighter
+   str=strength, spd=speed, dur=durability, int=intelligence, ver=versatility
+   Each 0-100. These drive the dynamic battle engine.
+───────────────────────────────────────────── */
+const FIGHTER_STATS = {
+  GOKU:         { str:99, spd:99, dur:95, int:72, ver:97, title:"Ultra Instinct", flavor:"The Saiyan God whose power transcends mortal limits." },
+  BROLY:        { str:100,spd:88, dur:99, int:45, ver:72, title:"Legendary Super Saiyan", flavor:"Unbridled berserker energy with near-infinite stamina." },
+  VEGETA:       { str:96, spd:95, dur:93, int:82, ver:90, title:"Super Saiyan Blue", flavor:"Royal pride and tactical brilliance in equal measure." },
+  GOHAN:        { str:94, spd:90, dur:91, int:90, ver:88, title:"Ultimate Gohan", flavor:"Latent power that rivals the gods when fully unleashed." },
+  PICCOLO:      { str:82, spd:80, dur:84, int:90, ver:85, title:"Namekian Warrior", flavor:"Strategic genius with regenerative durability and ki mastery." },
+  NARUTO:       { str:90, spd:92, dur:88, int:78, ver:94, title:"Seventh Hokage", flavor:"Sage of Six Paths chakra and an army of shadow clones." },
+  LUFFY:        { str:91, spd:88, dur:89, int:65, ver:92, title:"Sun God Nika", flavor:"Gear Fifth reality warping makes him a wildcard in any fight." },
+  SUPERMAN:     { str:97, spd:96, dur:98, int:80, ver:85, title:"Man of Steel", flavor:"Solar-powered godhood with near-invincible durability." },
+  BATMAN:       { str:72, spd:78, dur:70, int:99, ver:97, title:"World's Greatest Detective", flavor:"Peak human with gear and tactics that defeat near-gods." },
+  LEX_LUTHOR:   { str:60, spd:55, dur:65, int:100,ver:90, title:"Apex Intellect", flavor:"The most dangerous human alive — planning wins wars." },
+  HARLEY_QUINN: { str:68, spd:74, dur:65, int:80, ver:82, title:"Clown Princess", flavor:"Unpredictable chaos and gymnastic lethality in a mallet swing." },
+  WOLVERINE:    { str:80, spd:78, dur:95, int:74, ver:78, title:"Adamantium Berserker", flavor:"Regeneration and adamantium claws make him nearly unkillable." },
+  CAP_AMERICA:  { str:76, spd:78, dur:78, int:88, ver:85, title:"Super Soldier", flavor:"Peak human enhanced by serum — leadership and shield mastery." },
+  PSYLOCKE:     { str:72, spd:85, dur:70, int:82, ver:85, title:"Psi-Blade Assassin", flavor:"Telepathic strikes that bypass physical defenses entirely." },
+  STORM:        { str:70, spd:82, dur:72, int:80, ver:90, title:"Omega-Level Mutant", flavor:"Weather manipulation on a planetary scale — lightning made flesh." },
+  MOON_KNIGHT:  { str:74, spd:76, dur:74, int:78, ver:80, title:"Avatar of Khonshu", flavor:"Moon-powered resilience and multiple personalities as tactical assets." },
+  VENOM:        { str:85, spd:80, dur:86, int:72, ver:84, title:"Lethal Protector", flavor:"Symbiote bonding grants strength, stealth and spider-sense immunity." },
+  KRATOS:       { str:96, spd:82, dur:94, int:78, ver:88, title:"God of War", flavor:"Godslayer. Has killed Zeus, Ares, and entire pantheons." },
+  DANTE:        { str:88, spd:90, dur:86, int:74, ver:95, title:"Son of Sparda", flavor:"Half-demon stylishness meets demon-slaying firepower." },
+  DOOM_SLAYER:  { str:90, spd:86, dur:92, int:76, ver:88, title:"Doom Eternal", flavor:"Rage incarnate — literally too angry to die." },
+  MASTER_CHIEF: { str:78, spd:76, dur:82, int:86, ver:86, title:"Spartan-117", flavor:"MJOLNIR armor, tactical genius, and two lucky feet." },
+  RYU:          { str:78, spd:82, dur:78, int:80, ver:82, title:"Street Fighter", flavor:"Hadoken discipline and Satsui no Hado in perfect balance." },
+  JIN_KAZAMA:   { str:82, spd:84, dur:80, int:76, ver:80, title:"Devil Gene", flavor:"Tekken mastery fused with demonic transformation." },
+  SOL_BADGUY:   { str:86, spd:85, dur:84, int:78, ver:88, title:"Guilty Gear Strive", flavor:"Prototype Gear with raw magical power and Fireseal mastery." },
+  AKUMA:        { str:88, spd:88, dur:84, int:78, ver:86, title:"Master of the Fist", flavor:"Satsui no Hado at its purest — seeks only to fight and die." },
+  CAMMY:        { str:70, spd:90, dur:68, int:78, ver:78, title:"Delta Red Operative", flavor:"Fastest strikes in street fighting — Spiral Arrow never misses." },
+  CHUN_LI:      { str:72, spd:90, dur:70, int:80, ver:80, title:"Strongest Woman", flavor:"Lightning kicks and Interpol tactical training combined." },
+  SIEGFRIED:    { str:84, spd:74, dur:86, int:72, ver:76, title:"Soul Calibur Knight", flavor:"Soul Calibur chosen wielder — holy blade that purifies evil." },
+  IVY:          { str:76, spd:78, dur:74, int:84, ver:88, title:"Ivy Valentine", flavor:"Snake Sword alchemy and centuries of alchemical knowledge." },
+  VOLDO:        { str:74, spd:86, dur:74, int:50, ver:82, title:"Hell Guard", flavor:"Blindfolded contortionist whose unpredictability is his armor." },
+  AMATERASU:    { str:72, spd:88, dur:76, int:82, ver:90, title:"Origin of All Things", flavor:"Solar deity with celestial brush techniques and divine weapons." },
+  SCORPION:     { str:80, spd:82, dur:80, int:72, ver:80, title:"Hellfire Ninja", flavor:"Undead vengeance with hellfire chains and GET OVER HERE." },
+  KIRBY:        { str:70, spd:72, dur:88, int:78, ver:99, title:"Copy Ability", flavor:"Absorbs any power — theoretically limitless adaptability." },
+  SHAGGY:       { str:99, spd:99, dur:99, int:60, ver:99, title:"Ultra Instinct Shaggy", flavor:"0.01% of his power casually reshapes reality. Zoinks." },
+};
+
+/* ─────────────────────────────────────────────
+   DYNAMIC BATTLE ENGINE
+   Computes any 1v1 or 2v2 matchup from stats
+───────────────────────────────────────────── */
+const STAT_LABELS = ["STRENGTH","SPEED / REFLEXES","DURABILITY","INT / TACTICS","VERSATILITY"];
+const STAT_KEYS   = ["str","spd","dur","int","ver"];
+
+// Specific narrative lines for key matchups
+const MATCH_LORE = {
+  "GOKU|SUPERMAN":    { rounds:["OPENING CLASH","POWER ESCALATION","ULTRA INSTINCT AWAKENS","FINAL EXCHANGE"], alphaWinLine:"Ultra Instinct's autonomous reflexes outpace solar-powered durability.", bravoWinLine:"Superman's nigh-infinite stamina outlasts Goku's transformation windows." },
+  "GOKU|BROLY":       { rounds:["SAIYAN CLASH","BERSERKER SURGE","LIMITS BROKEN","FINAL KAMEHAMEHA"],          alphaWinLine:"Goku's mastered forms give him the edge in technical precision.", bravoWinLine:"Broly's legendary power has no ceiling — raw output overwhelms." },
+  "GOKU|VEGETA":      { rounds:["RIVAL OPENING","BLUE EVOLUTION","PRIDE OF SAIYANS","FINAL LIMIT"],            alphaWinLine:"Ultra Instinct is a wall Vegeta's pride alone cannot break.", bravoWinLine:"Ultra Ego's destruction-fueled growth finally surpasses the limit." },
+  "NARUTO|SASUKE":    { rounds:["RIVAL CLASH","POWER SURGE","FINAL VALLEY","LAST JUTSU"],                      alphaWinLine:"Six Paths Sage Mode edges out in the final exchange.", bravoWinLine:"Rinnegan precision and Indra's arrow tip the scales." },
+  "BATMAN|SUPERMAN":  { rounds:["PREP TIME","KRYPTONITE","BATTLE OF WILLS","FINAL GAMBIT"],                    alphaWinLine:"Prep time and kryptonite neutralize Superman's power advantage.", bravoWinLine:"No amount of prep survives solar-powered fists at full output." },
+  "KRATOS|DANTE":     { rounds:["GODSLAYER VS DEMON SLAYER","DIVINE FURY","STYLISH RAMPAGE","FINAL STRIKE"],   alphaWinLine:"Godslayer experience and divine rage overwhelm Dante's style.", bravoWinLine:"Devil Trigger firepower and regeneration outlast Kratos's stamina." },
+  "SHAGGY|GOKU":      { rounds:["0.01% POWER","REALITY CRACKS","GODS NOTICE","ZOINKS"],                       alphaWinLine:"Shaggy reveals 0.01% of his power. Goku never stood a chance.", bravoWinLine:"Goku pushes Shaggy past 0.01%. The universe thanks him." },
+  "KIRBY|GOKU":       { rounds:["INHALE ATTEMPT","POWER COPY","ADAPTED FORM","FINAL CLASH"],                  alphaWinLine:"Kirby copies Ultra Instinct. The rest is history.", bravoWinLine:"Goku moves too fast for the inhale. Kirby cannot copy what it cannot catch." },
+  "DOOM_SLAYER|KRATOS":{ rounds:["RAGE MEETS RAGE","ARSENAL UNLEASHED","GODS AND DEMONS","RIPPING AND TEARING"], alphaWinLine:"The Doom Slayer's pure rage is a force even a god of war respects.", bravoWinLine:"Kratos has killed actual gods. Demons are Tuesday." },
+};
+
+function getMatchLore(aKey, bKey) {
+  return MATCH_LORE[`${aKey}|${bKey}`] || MATCH_LORE[`${bKey}|${aKey}`] || null;
+}
+
+function computeBattle1v1(alphaKey, bravoKey) {
+  const A = FIGHTER_STATS[alphaKey] || { str:70,spd:70,dur:70,int:70,ver:70, title:"Unknown", flavor:"A mysterious challenger enters the arena." };
+  const B = FIGHTER_STATS[bravoKey] || { str:70,spd:70,dur:70,int:70,ver:70, title:"Unknown", flavor:"A mysterious challenger enters the arena." };
+
+  const aName = alphaKey.replace(/_/g," ");
+  const bName = bravoKey.replace(/_/g," ");
+
+  // Compute per-stat winners
+  const stats = STAT_KEYS.map((k, i) => {
+    const av = A[k], bv = B[k];
+    const winner = av > bv+2 ? "alpha" : bv > av+2 ? "bravo" : "draw";
+    return { label:STAT_LABELS[i], alpha:av, bravo:bv, winner,
+             alphaVal:av.toFixed(1), bravoVal:bv.toFixed(1) };
+  });
+
+  // Overall score
+  const aTotal = STAT_KEYS.reduce((s,k)=>s+A[k],0);
+  const bTotal = STAT_KEYS.reduce((s,k)=>s+B[k],0);
+  const diff = aTotal - bTotal;
+  const alphaWins = diff > 5;
+  const bravoWins = diff < -5;
+  const close = Math.abs(diff) <= 5;
+
+  const winnerKey  = alphaWins ? alphaKey : bravoWins ? bravoKey : alphaKey;
+  const winnerName = alphaWins ? aName    : bravoWins ? bName    : aName;
+  const winSide    = alphaWins ? "alpha"  : "bravo";
+  const reliability = close ? `${52 + Math.abs(diff)}%` : alphaWins ? `${60+Math.min(diff,35)}%` : `${60+Math.min(-diff,35)}%`;
+  const alphaProb  = close ? "52%" : alphaWins ? `${55+Math.min(diff/2,35)}%` : `${Math.max(15, 45+diff/2)}%`;
+  const bravoProb  = `${100-parseInt(alphaProb)}%`;
+
+  const lore = getMatchLore(alphaKey, bravoKey);
+  const roundTitles = lore?.rounds || ["OPENING CLASH","POWER ESCALATION","TURNING POINT","FINAL EXCHANGE"];
+
+  // Generate rounds
+  const statWins = stats.filter(s=>s.winner!=="draw");
+  const rounds = roundTitles.map((title, i) => {
+    const roundWinner = i===0 ? (close?"draw":winSide) : i===1 ? (alphaWins?"bravo":"alpha") : i===2 ? winSide : winSide;
+    const winTeam = roundWinner;
+    const wName = roundWinner==="alpha" ? aName : roundWinner==="bravo" ? bName : "BOTH";
+    return {
+      title,
+      winner: roundWinner==="draw" ? "DRAW" : wName,
+      winTeam: roundWinner,
+      narrative: generateRoundNarrative(i, roundWinner, aName, bName, A, B),
+      reasoning: generateRoundReasoning(i, roundWinner, aName, bName, A, B, stats),
+    };
+  });
+
+  const reason = alphaWins
+    ? (lore?.alphaWinLine || `${aName}'s superior ${STAT_LABELS[STAT_KEYS.indexOf(STAT_KEYS.reduce((best,k)=>A[k]-B[k]>A[best]-B[best]?k:best,STAT_KEYS[0]))].toLowerCase()} proves decisive.`)
+    : bravoWins
+    ? (lore?.bravoWinLine || `${bName}'s superior ${STAT_LABELS[STAT_KEYS.indexOf(STAT_KEYS.reduce((best,k)=>B[k]-A[k]>B[best]-A[best]?k:best,STAT_KEYS[0]))].toLowerCase()} proves decisive.`)
+    : `An extraordinarily even matchup. Both fighters push each other to the limit.`;
+
+  return {
+    stats,
+    projection:{ winner: `${winnerName} WINS`, reliability, reason },
+    rounds,
+    alphaProb, bravoProb,
+    alphaTitle: A.title, bravoTitle: B.title,
+  };
+}
+
+function computeBattle2v2(alphaKeys, bravoKeys) {
+  const sumStats = (keys) => keys.reduce((acc, k) => {
+    const s = FIGHTER_STATS[k] || { str:70,spd:70,dur:70,int:70,ver:70 };
+    STAT_KEYS.forEach(sk => acc[sk] = (acc[sk]||0) + s[sk]);
+    return acc;
+  }, {});
+
+  const A = sumStats(alphaKeys);
+  const B = sumStats(bravoKeys);
+
+  const stats = STAT_KEYS.map((k,i) => {
+    const av = A[k], bv = B[k];
+    const winner = av > bv+4 ? "alpha" : bv > av+4 ? "bravo" : "draw";
+    return { label:STAT_LABELS[i], alpha:av, bravo:bv, winner,
+             alphaVal:av.toFixed(1), bravoVal:bv.toFixed(1) };
+  });
+
+  const aTotal = STAT_KEYS.reduce((s,k)=>s+A[k],0);
+  const bTotal = STAT_KEYS.reduce((s,k)=>s+B[k],0);
+  const diff = aTotal - bTotal;
+  const alphaWins = diff > 0;
+  const winSide = alphaWins ? "alpha" : "bravo";
+  const reliability = `${55+Math.min(Math.abs(diff)/5,35)}%`;
+  const alphaProb = alphaWins ? `${55+Math.min(diff/10,35)}%` : `${Math.max(20,45+diff/10)}%`;
+
+  const aNames = alphaKeys.map(k=>k.replace(/_/g," ")).join(" & ");
+  const bNames = bravoKeys.map(k=>k.replace(/_/g," ")).join(" & ");
+  const winnerName = alphaWins ? aNames : bNames;
+
+  const roundTitles = ["TEAM TACTICS","POWER SURGE","TURNING POINT","FINAL STAND"];
+  const rounds = roundTitles.map((title,i) => {
+    const roundWinner = i===0 ? winSide : i===1 ? (alphaWins?"bravo":"alpha") : i===2 ? winSide : winSide;
+    const wName = roundWinner==="alpha" ? aNames : bNames;
+    return {
+      title, winner: wName, winTeam: roundWinner,
+      narrative: `${roundWinner==="alpha"?aNames:bNames} seizes the momentum in ${title.toLowerCase()}, pressing their advantage with coordinated strikes.`,
+      reasoning: `Combined stats favor ${roundWinner==="alpha"?"Team Alpha":"Team Bravo"} in this phase of the fight.`,
+    };
+  });
+
+  return {
+    stats,
+    projection:{ winner:`${winnerName} WIN`, reliability,
+      reason:`Combined power ratings give ${winnerName} the edge. Synergy between ${alphaWins?aNames:bNames} proves too much to overcome.` },
+    rounds,
+    alphaProb, bravoProb: `${100-parseInt(alphaProb)}%`,
+  };
+}
+
+function generateRoundNarrative(idx, winner, aName, bName, A, B) {
+  const wName = winner==="alpha"?aName:winner==="bravo"?bName:"both fighters";
+  const lName = winner==="alpha"?bName:winner==="bravo"?aName:null;
+  const narratives = [
+    `${aName} and ${bName} collide with seismic force. The opening exchange is fast and brutal — neither willing to yield an inch.`,
+    `${wName} surges forward, pressing the advantage. ${lName||"The opposition"} digs deep but absorbs punishment.`,
+    `The tide turns. ${wName} finds an opening and exploits it decisively, shifting the entire momentum of the battle.`,
+    `In the final exchange, ${wName} channels everything into one devastating strike. The arena shakes. When the dust clears, there is only one standing.`,
+  ];
+  return narratives[Math.min(idx, narratives.length-1)];
+}
+
+function generateRoundReasoning(idx, winner, aName, bName, A, B, stats) {
+  const wName = winner==="alpha"?aName:winner==="bravo"?bName:"Neither fighter";
+  const topStat = stats.sort((a,b)=>Math.abs(b.alpha-b.bravo)-Math.abs(a.alpha-a.bravo))[0];
+  const reasons = [
+    `Early exchanges favor ${wName} slightly due to ${topStat?.label?.toLowerCase()||"raw power"} advantages.`,
+    `${winner==="alpha"?bName:aName} adapts and temporarily reverses the momentum.`,
+    `${wName}'s superior ${topStat?.label?.toLowerCase()||"versatility"} creates the decisive opening.`,
+    `${wName} delivers the finishing blow. ${topStat?.label} differential of ${Math.abs(topStat?.alpha-topStat?.bravo).toFixed(0)} points makes the difference.`,
+  ];
+  return reasons[Math.min(idx, reasons.length-1)];
+}
+
+/* ─────────────────────────────────────────────
+   BATTLE DATA (fallback — used for default hardcoded display
 ───────────────────────────────────────────── */
 const BATTLES = {
   "1v1": {
@@ -753,40 +954,67 @@ function ArenaPage() {
 }
 
 function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
-  const b = BATTLES[tab];
+  // Use the dynamic engine for all matchups
+  const battle = tab==="1v1"
+    ? computeBattle1v1(alpha1v1, bravo1v1)
+    : computeBattle2v2(alpha2v2, bravo2v2);
+
   const alphaName = tab==="1v1" ? alpha1v1.replace(/_/g," ") : (alpha2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
   const bravoName = tab==="1v1" ? bravo1v1.replace(/_/g," ") : (bravo2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
+
   return (
     <div>
-      {/* Fighter matchup header */}
-      <div style={{ textAlign:"center", marginBottom:24 }}>
-        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
-          textTransform:"uppercase", color:C.alpha }}>{alphaName}</span>
-        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:700,
-          color:C.muted, margin:"0 16px" }}>VS</span>
-        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
-          textTransform:"uppercase", color:C.bravoBorder }}>{bravoName}</span>
+      {/* Win probability banner */}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", marginBottom:3 }}>
+        <div style={{ background:C.alpha, padding:"12px 20px" }}>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
+            textTransform:"uppercase", letterSpacing:"0.12em", color:"rgba(255,255,255,0.7)", marginBottom:2 }}>
+            {alphaName} — WIN PROBABILITY
+          </div>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
+            {battle.alphaProb}
+          </div>
+          {tab==="1v1" && battle.alphaTitle && (
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"rgba(255,255,255,0.6)", marginTop:2 }}>
+              {battle.alphaTitle}
+            </div>
+          )}
+        </div>
+        <div style={{ background:C.bravo, padding:"12px 20px", textAlign:"right" }}>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
+            textTransform:"uppercase", letterSpacing:"0.12em", color:"rgba(255,255,255,0.7)", marginBottom:2 }}>
+            {bravoName} — WIN PROBABILITY
+          </div>
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
+            {battle.bravoProb}
+          </div>
+          {tab==="1v1" && battle.bravoTitle && (
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"rgba(255,255,255,0.6)", marginTop:2 }}>
+              {battle.bravoTitle}
+            </div>
+          )}
+        </div>
       </div>
+
       {/* Stat bars */}
       <section style={{ background:C.surf, padding:28, marginBottom:16, borderLeft:"3px solid #ffe792" }}>
         <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:18, fontWeight:900,
           textTransform:"uppercase", letterSpacing:"0.08em", margin:"0 0 20px", color:"#ffe792" }}>
           AGGREGATE STATS
         </h3>
-        {b.stats.map(s=>(
+        {battle.stats.map(s=>(
           <StatBar key={s.label} {...s} />
         ))}
       </section>
+
       {/* Rounds */}
       <section style={{ marginBottom:32 }}>
         <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
           textTransform:"uppercase", letterSpacing:"0.12em", color:C.muted, margin:"0 0 10px" }}>
           ROUND BY ROUND
         </h3>
-        {b.rounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
+        {battle.rounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
       </section>
-
-
 
       {/* Projection */}
       <div style={{ textAlign:"center", padding:"32px 0" }}>
@@ -797,11 +1025,11 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
         <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
           fontSize:"clamp(48px,10vw,88px)", fontWeight:900, color:"#ffe792",
           lineHeight:1, marginBottom:16, textTransform:"uppercase" }}>
-          {b.projection.winner}
+          {battle.projection.winner}
         </div>
         <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.muted, fontSize:15,
           maxWidth:560, margin:"0 auto", lineHeight:1.6 }}>
-          {b.projection.reason} Predicted outcome is {b.projection.reliability} reliable.
+          {battle.projection.reason} Predicted outcome is {battle.projection.reliability} reliable.
         </p>
       </div>
     </div>
