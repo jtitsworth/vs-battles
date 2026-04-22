@@ -1244,12 +1244,23 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
           )}
         </div>
 
-        {/* Winner name */}
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
-          fontSize:"clamp(48px,10vw,88px)", fontWeight:900, color:"#ffe792",
-          lineHeight:1, textTransform:"uppercase" }}>
-          {battle.projection.winner}
-        </div>
+        {/* Winner name — only shown after AI narrative is done */}
+        {!loading && aiRounds && (
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:"clamp(48px,10vw,88px)", fontWeight:900, color:"#ffe792",
+            lineHeight:1, textTransform:"uppercase",
+            animation:"fadeIn 0.6s ease-out" }}>
+            {battle.projection.winner}
+          </div>
+        )}
+        {loading && (
+          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:16,
+            color:C.muted, letterSpacing:"0.2em", textTransform:"uppercase",
+            animation:"pulse 1.2s infinite" }}>
+            CALCULATING OUTCOME...
+          </div>
+        )}
+        <style>{`@keyframes fadeIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }`}</style>
       </div>
     </div>
   );
