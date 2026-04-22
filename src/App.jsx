@@ -803,7 +803,7 @@ function ArenaPage() {
 
         {/* Header */}
         <header style={{ textAlign:"center", padding:"24px 0 24px" }}>
-          <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"clamp(36px,6vw,64px)",
+          <h1 style={{ fontFamily:"'Teko',sans-serif", fontSize:"clamp(36px,6vw,64px)",
             fontWeight:900, textTransform:"uppercase", color:C.onSurface, margin:"0 0 20px", lineHeight:1 }}>
             CHOOSE YOUR FIGHTERS
           </h1>
@@ -827,7 +827,7 @@ function ArenaPage() {
           <div>
             <div onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
               style={sideIndicatorStyle("alpha")}>
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
+              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:20, fontWeight:700,
                 textTransform:"uppercase", letterSpacing:"0.06em", color:C.alpha }}>
                 <span style={{ marginRight:8, fontSize:16, opacity:0.8 }}>»»</span>TEAM ALPHA
               </span>
@@ -844,7 +844,7 @@ function ArenaPage() {
                 <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
                   color:C.bravoBorder, letterSpacing:"0.1em" }}>SELECTING →</span>
               )}
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
+              <span style={{ fontFamily:"'Teko',sans-serif", fontSize:20, fontWeight:700,
                 textTransform:"uppercase", letterSpacing:"0.06em", color:C.bravoBorder }}>
                 TEAM BRAVO<span style={{ marginLeft:8, fontSize:16, opacity:0.8 }}>«««</span>
               </span>
