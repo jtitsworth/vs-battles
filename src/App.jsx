@@ -346,7 +346,8 @@ function HeroPortrait({ rosterKey, name, side, selected = true }) {
 /* ─────────────────────────────────────────────
    FIGHTER GRID CARD
 ───────────────────────────────────────────── */
-function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo }) {
+function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSide="alpha" }) {
+
   const r = ROSTER[rosterKey] || {};
   const fandomSrc = useFandomImg(rosterKey);
   const imgSrc = r.img || fandomSrc;
@@ -395,9 +396,12 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo }) {
     ? "linear-gradient(180deg, #6EB4E8 0%, #006EB7 100%)"
     : "#4D4D4C";
 
+
+
+  const hoverBorder = activeSide==="alpha" ? C.alphaBorder : C.bravoBorder;
   const borderColor = isSelAlpha ? C.alphaBorder
     : isSelBravo ? C.bravoBorder
-    : hovered ? "#ffffff"
+    : hovered ? hoverBorder
     : "transparent";
 
   const boxShadow = isSelAlpha ? `0 4px 20px ${C.alpha}`
@@ -511,60 +515,92 @@ function SummonModal({ onClose, onAdd }) {
   );
 }
 
+
+
 /* ─────────────────────────────────────────────
-   ARENA PAGE — new Figma design
+   ARENA PAGE
 ───────────────────────────────────────────── */
 function ArenaPage() {
-  const [tab, setTab]               = useState("1v1");
-  const [selectedAlpha, setAlpha]   = useState("GOKU");
-  const [selectedBravo, setBravo]   = useState("SUPERMAN");
-  const [showModal, setShowModal]   = useState(false);
-  const [modalTarget, setModalTarget] = useState("alpha"); // which side to add to
-  const [battleStarted, setBattle]  = useState(false);
+  const [tab, setTab]           = useState("1v1");
+  const [activeSide, setActiveSide] = useState("alpha"); // which side next grid click goes to
+
+  // 1v1 selections
+  const [alpha1v1, setAlpha1v1] = useState("GOKU");
+  const [bravo1v1, setBravo1v1] = useState("SUPERMAN");
+
+  // 2v2 selections — up to 2 per side, tracked by slot index
+  const [alpha2v2, setAlpha2v2] = useState(["GOKU", "NARUTO"]);
+  const [bravo2v2, setBravo2v2] = useState(["SUPERMAN", "LUFFY"]);
+  const [activeSlot, setActiveSlot] = useState(0); // 0 or 1 for 2v2
+
+  const [showModal, setShowModal] = useState(false);
+  const [battleStarted, setBattle] = useState(false);
 
   function handleGridSelect(key) {
-    if (key === "__FIND__") { setShowModal(true); setModalTarget("alpha"); return; }
+    if (key === "__FIND__") { setShowModal(true); return; }
     if (key === "__RANDOM__") {
       const keys = Object.keys(ROSTER);
-      setAlpha(keys[Math.floor(Math.random()*keys.length)]);
-      setBravo(keys[Math.floor(Math.random()*keys.length)]);
+      const rk1 = keys[Math.floor(Math.random()*keys.length)];
+      const rk2 = keys[Math.floor(Math.random()*keys.length)];
+      if (tab === "1v1") { setAlpha1v1(rk1); setBravo1v1(rk2); }
+      else {
+        setAlpha2v2([rk1, keys[Math.floor(Math.random()*keys.length)]]);
+        setBravo2v2([rk2, keys[Math.floor(Math.random()*keys.length)]]);
+      }
       return;
     }
-    // First click = alpha, if already alpha then bravo
-    if (selectedAlpha === key) { setBravo(key); return; }
-    if (selectedBravo === key) { setAlpha(key); return; }
-    if (!selectedAlpha) { setAlpha(key); return; }
-    setAlpha(key); // simplest: first click always sets alpha
+    // Route to whichever side/slot is active
+    if (tab === "1v1") {
+      if (activeSide === "alpha") setAlpha1v1(key);
+      else setBravo1v1(key);
+    } else {
+      if (activeSide === "alpha") {
+        setAlpha2v2(prev => { const n=[...prev]; n[activeSlot]=key; return n; });
+      } else {
+        setBravo2v2(prev => { const n=[...prev]; n[activeSlot]=key; return n; });
+      }
+    }
+    setBattle(false);
   }
 
   function handleAddFighter(name) {
     const key = name.toUpperCase().replace(/\s+/g,"_");
-    // Add to ROSTER dynamically
     if (!ROSTER[key]) {
-      ROSTER[key] = { img:null, franchise:"CUSTOM", abbr: name.slice(0,2).toUpperCase(), color:"#2a0a2a" };
+      ROSTER[key] = { img:null, franchise:"CUSTOM", abbr: name.slice(0,2).toUpperCase(), color:"#2a0a2a", wiki:null, page:null };
     }
-    if (modalTarget==="alpha") setAlpha(key); else setBravo(key);
+    handleGridSelect(key);
     setShowModal(false);
   }
 
-  const b = BATTLES[tab];
-  const alphaR = ROSTER[selectedAlpha] || ROSTER["GOKU"];
-  const bravoR = ROSTER[selectedBravo] || ROSTER["SUPERMAN"];
+  function handleReset() {
+    setAlpha1v1("GOKU"); setBravo1v1("SUPERMAN");
+    setAlpha2v2(["GOKU","NARUTO"]); setBravo2v2(["SUPERMAN","LUFFY"]);
+    setActiveSide("alpha"); setActiveSlot(0); setBattle(false);
+  }
+
+  const sideIndicatorStyle = (side) => ({
+    display:"inline-flex", alignItems:"center", gap:8,
+    cursor:"pointer", padding:"4px 10px",
+    border: activeSide===side ? `1.5px solid ${side==="alpha"?C.alphaBorder:C.bravoBorder}` : "1.5px solid transparent",
+    borderRadius:2, transition:"border-color 0.15s",
+  });
+
+  // What's selected for the active tab
+  const selAlpha = tab==="1v1" ? alpha1v1 : null;
+  const selBravo = tab==="1v1" ? bravo1v1 : null;
 
   return (
     <div style={{ paddingTop:52, minHeight:"100vh", background:C.bg }}>
-      {/* Red ambient top-left glow */}
       <div style={{ position:"fixed", top:0, left:0, width:400, height:400, pointerEvents:"none", zIndex:0,
         background:"radial-gradient(ellipse at top left, rgba(180,15,30,0.18) 0%, transparent 70%)" }} />
-      {/* Blue ambient top-right */}
       <div style={{ position:"fixed", top:0, right:0, width:400, height:400, pointerEvents:"none", zIndex:0,
         background:"radial-gradient(ellipse at top right, rgba(20,40,200,0.15) 0%, transparent 70%)" }} />
 
       <div style={{ maxWidth:1140, margin:"0 auto", padding:"0 24px 80px", position:"relative", zIndex:1 }}>
 
-        {/* Reset Battle */}
+        {/* Reset */}
         <div style={{ display:"flex", justifyContent:"flex-end", padding:"16px 0 0" }}>
-          <button onClick={()=>{ setAlpha("GOKU"); setBravo("SUPERMAN"); setBattle(false); }}
+          <button onClick={handleReset}
             style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, fontWeight:700,
               letterSpacing:"0.12em", color:C.mutedLight, background:"none", border:"none",
               cursor:"pointer", textTransform:"uppercase" }}>
@@ -573,42 +609,53 @@ function ArenaPage() {
         </div>
 
         {/* Header */}
-        <header style={{ textAlign:"center", padding:"24px 0 32px" }}>
+        <header style={{ textAlign:"center", padding:"24px 0 24px" }}>
           <h1 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:"clamp(36px,6vw,64px)",
-            fontWeight:900, textTransform:"uppercase", letterSpacing:"-0.01em",
-            color:C.onSurface, margin:"0 0 20px", lineHeight:1 }}>
+            fontWeight:900, textTransform:"uppercase", color:C.onSurface, margin:"0 0 20px", lineHeight:1 }}>
             CHOOSE YOUR FIGHTERS
           </h1>
-          {/* Tab pills */}
           <div style={{ display:"inline-flex", background:C.surf, borderRadius:999,
             padding:3, gap:2, border:"1px solid rgba(255,255,255,0.08)" }}>
             {[["1v1","1 VS 1 SIMULATION"],["2v2","2 VS 2 SIMULATION"]].map(([key,label])=>(
-              <button key={key} onClick={()=>setTab(key)}
+              <button key={key} onClick={()=>{ setTab(key); setBattle(false); }}
                 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13, fontWeight:700,
                   letterSpacing:"0.08em", textTransform:"uppercase",
                   padding:"8px 24px", borderRadius:999, border:"none", cursor:"pointer",
                   background: tab===key ? C.alpha : "transparent",
-                  color: tab===key ? "#fff" : C.muted,
-                  transition:"all 0.2s" }}>
+                  color: tab===key ? "#fff" : C.muted, transition:"all 0.2s" }}>
                 {label}
               </button>
             ))}
           </div>
         </header>
 
-        {/* Team headers */}
+        {/* Team headers — click to set active side */}
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:8 }}>
           <div>
-            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
-              textTransform:"uppercase", letterSpacing:"0.06em", color:C.alpha }}>
-              <span style={{ marginRight:8, fontSize:16, opacity:0.8 }}>»»</span>TEAM ALPHA
-            </span>
+            <div onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
+              style={sideIndicatorStyle("alpha")}>
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
+                textTransform:"uppercase", letterSpacing:"0.06em", color:C.alpha }}>
+                <span style={{ marginRight:8, fontSize:16, opacity:0.8 }}>»»</span>TEAM ALPHA
+              </span>
+              {activeSide==="alpha" && (
+                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
+                  color:C.alpha, letterSpacing:"0.1em" }}>← SELECTING</span>
+              )}
+            </div>
           </div>
           <div style={{ textAlign:"right" }}>
-            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
-              textTransform:"uppercase", letterSpacing:"0.06em", color:C.bravoBorder }}>
-              TEAM BRAVO<span style={{ marginLeft:8, fontSize:16, opacity:0.8 }}>«««</span>
-            </span>
+            <div onClick={()=>{ setActiveSide("bravo"); setActiveSlot(0); }}
+              style={{ ...sideIndicatorStyle("bravo"), justifyContent:"flex-end" }}>
+              {activeSide==="bravo" && (
+                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
+                  color:C.bravoBorder, letterSpacing:"0.1em" }}>SELECTING →</span>
+              )}
+              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:900,
+                textTransform:"uppercase", letterSpacing:"0.06em", color:C.bravoBorder }}>
+                TEAM BRAVO<span style={{ marginLeft:8, fontSize:16, opacity:0.8 }}>«««</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -616,35 +663,63 @@ function ArenaPage() {
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3, marginBottom:20 }}>
           {tab==="1v1" ? (
             <>
-              <HeroPortrait rosterKey={selectedAlpha} name={selectedAlpha.replace(/_/g," ")} side="alpha" />
-              <HeroPortrait rosterKey={selectedBravo} name={selectedBravo.replace(/_/g," ")} side="bravo" />
+              {/* Clicking portrait sets that side as active */}
+              <div onClick={()=>setActiveSide("alpha")} style={{ cursor:"pointer",
+                outline: activeSide==="alpha" ? `2px solid ${C.alphaBorder}` : "2px solid transparent",
+                outlineOffset:2, transition:"outline-color 0.15s" }}>
+                <HeroPortrait rosterKey={alpha1v1} name={alpha1v1.replace(/_/g," ")} side="alpha" />
+              </div>
+              <div onClick={()=>setActiveSide("bravo")} style={{ cursor:"pointer",
+                outline: activeSide==="bravo" ? `2px solid ${C.bravoBorder}` : "2px solid transparent",
+                outlineOffset:2, transition:"outline-color 0.15s" }}>
+                <HeroPortrait rosterKey={bravo1v1} name={bravo1v1.replace(/_/g," ")} side="bravo" />
+              </div>
             </>
           ) : (
             <>
+              {/* 2v2 — each slot individually clickable */}
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3 }}>
-                {b.alpha.fighters.map(f=>(
-                  <HeroPortrait key={f.name} rosterKey={f.rosterKey} name={f.name} side="alpha" />
+                {alpha2v2.map((rk, i)=>(
+                  <div key={i} onClick={()=>{ setActiveSide("alpha"); setActiveSlot(i); }}
+                    style={{ cursor:"pointer",
+                      outline: activeSide==="alpha" && activeSlot===i ? `2px solid ${C.alphaBorder}` : "2px solid transparent",
+                      outlineOffset:2, transition:"outline-color 0.15s" }}>
+                    <HeroPortrait rosterKey={rk} name={rk.replace(/_/g," ")} side="alpha" />
+                  </div>
                 ))}
               </div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3 }}>
-                {b.bravo.fighters.map(f=>(
-                  <HeroPortrait key={f.name} rosterKey={f.rosterKey} name={f.name} side="bravo" />
+                {bravo2v2.map((rk, i)=>(
+                  <div key={i} onClick={()=>{ setActiveSide("bravo"); setActiveSlot(i); }}
+                    style={{ cursor:"pointer",
+                      outline: activeSide==="bravo" && activeSlot===i ? `2px solid ${C.bravoBorder}` : "2px solid transparent",
+                      outlineOffset:2, transition:"outline-color 0.15s" }}>
+                    <HeroPortrait rosterKey={rk} name={rk.replace(/_/g," ")} side="bravo" />
+                  </div>
                 ))}
               </div>
             </>
           )}
         </div>
 
-        {/* Fighter selection grid */}
+        {/* Hint text */}
+        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:C.muted,
+          textAlign:"center", marginBottom:12, letterSpacing:"0.08em", textTransform:"uppercase" }}>
+          Click a portrait or team label to select a side, then pick from the grid below
+        </p>
+
+        {/* Fighter grid */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(8,1fr)", gap:4, marginBottom:32 }}>
           {FIGHTER_GRID.map((key,i)=>(
             <GridCard key={key+i} rosterKey={key}
               onSelect={handleGridSelect}
-              selectedAlpha={selectedAlpha} selectedBravo={selectedBravo} />
+              selectedAlpha={tab==="1v1" ? alpha1v1 : alpha2v2[activeSlot]}
+              selectedBravo={tab==="1v1" ? bravo1v1 : bravo2v2[activeSlot]}
+              activeSide={activeSide} />
           ))}
         </div>
 
-        {/* Start Battle CTA */}
+        {/* Start Battle */}
         <div style={{ display:"flex", justifyContent:"center" }}>
           <button onClick={()=>setBattle(true)}
             style={{ background:C.alpha, border:"none", cursor:"pointer",
@@ -658,15 +733,18 @@ function ArenaPage() {
           </button>
         </div>
 
-        {/* Battle results (shown after START) */}
+        {/* Battle results */}
         {battleStarted && (
           <div style={{ marginTop:48 }}>
-            <BattleResults tab={tab} b={b} />
+            <BattleResults
+              tab={tab}
+              alpha1v1={alpha1v1} bravo1v1={bravo1v1}
+              alpha2v2={alpha2v2} bravo2v2={bravo2v2}
+            />
           </div>
         )}
       </div>
 
-      {/* Summon modal */}
       {showModal && (
         <SummonModal onClose={()=>setShowModal(false)} onAdd={handleAddFighter} />
       )}
@@ -674,15 +752,23 @@ function ArenaPage() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   BATTLE RESULTS (stat bars + rounds)
-───────────────────────────────────────────── */
-function BattleResults({ tab, b }) {
+function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
+  const b = BATTLES[tab];
+  const alphaName = tab==="1v1" ? alpha1v1.replace(/_/g," ") : (alpha2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
+  const bravoName = tab==="1v1" ? bravo1v1.replace(/_/g," ") : (bravo2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
   return (
     <div>
+      {/* Fighter matchup header */}
+      <div style={{ textAlign:"center", marginBottom:24 }}>
+        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
+          textTransform:"uppercase", color:C.alpha }}>{alphaName}</span>
+        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20, fontWeight:700,
+          color:C.muted, margin:"0 16px" }}>VS</span>
+        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
+          textTransform:"uppercase", color:C.bravoBorder }}>{bravoName}</span>
+      </div>
       {/* Stat bars */}
-      <section style={{ background:C.surf, padding:28, marginBottom:16,
-        borderLeft:`3px solid #ffe792` }}>
+      <section style={{ background:C.surf, padding:28, marginBottom:16, borderLeft:"3px solid #ffe792" }}>
         <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:18, fontWeight:900,
           textTransform:"uppercase", letterSpacing:"0.08em", margin:"0 0 20px", color:"#ffe792" }}>
           AGGREGATE STATS
@@ -691,7 +777,6 @@ function BattleResults({ tab, b }) {
           <StatBar key={s.label} {...s} />
         ))}
       </section>
-
       {/* Rounds */}
       <section style={{ marginBottom:32 }}>
         <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
@@ -700,6 +785,8 @@ function BattleResults({ tab, b }) {
         </h3>
         {b.rounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
       </section>
+
+
 
       {/* Projection */}
       <div style={{ textAlign:"center", padding:"32px 0" }}>
