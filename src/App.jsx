@@ -250,8 +250,10 @@ const FIGHTER_STATS = {
   // Feats: Inhaled black holes, survived multiple universe-shaking events, copied gods' powers
   KIRBY:        { str:72, spd:74, dur:89, int:79, ver:100,title:"Star Warrior — Copy Ability", flavor:"Don't let the pink fool you. Kirby has survived black holes, copied the powers of cosmic gods, and defeated Nightmare — a being of pure evil. His copy ability has literally no ceiling." },
 
-  // Shaggy: Meme-tier ultra power (0.01% meme)
-  SHAGGY:       { str:99, spd:99, dur:99, int:60, ver:99, title:"Ultra Instinct Shaggy", flavor:"0.01% of his power casually reshapes reality. No wiki page can quantify this. Zoinks." },
+  // Shaggy: VS Battles Wiki Tier 9-A base, Subsonic+ speed, Class K lifting
+  // Feats: busts steel doors, survived sperm whale hit, outruns Mystery Machine (145 km/h)
+  // Sword of Fate bumps him to Tier 7-C (Town level). Scooby Snacks = stat amp.
+  SHAGGY:       { str:52, spd:58, dur:55, int:42, ver:70, title:"Mystery Inc. — Sword of Fate", flavor:"Don't let the cowardice fool you. Shaggy outruns vehicles, busts through steel doors, survived being shot from a cannon, and with the Sword of Fate challenged the fiercest samurai in feudal Japan. Zoinks." },
 };
 
 /* ─────────────────────────────────────────────
