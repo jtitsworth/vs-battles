@@ -710,17 +710,9 @@ function ArenaPage() {
       setAlpha1v1(rk1); setBravo1v1(rk2);
       return;
     }
-    // Route to whichever side/slot is active
-    if (tab === "1v1") {
-      if (activeSide === "alpha") setAlpha1v1(key);
-      else setBravo1v1(key);
-    } else {
-      if (activeSide === "alpha") {
-         n=key; return n; });
-      } else {
-         n=key; return n; });
-      }
-    }
+    // Route to active side
+    if (activeSide === "alpha") setAlpha1v1(key);
+    else setBravo1v1(key);
     setBattle(false);
   }
 
