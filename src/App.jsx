@@ -317,25 +317,6 @@ const BATTLES = {
       { title:"ULTRA INSTINCT AWAKENS", winner:"GOKU",   winTeam:"alpha", narrative:"Ultra Instinct activates — movements become fluid and automatic.", reasoning:"Ultra Instinct's autonomous dodging counters Superman's speed." },
       { title:"FINAL EXCHANGE",         winner:"GOKU",   winTeam:"alpha", narrative:"A blinding white explosion. Superman is on one knee.", reasoning:"Mastered Ultra Instinct surpasses what Superman can absorb." },
     ],
-  }, },
-      { name:"NARUTO", rosterKey:"NARUTO", stat:{ label:"CHAKRA POTENTIAL", val:"S-RANK",    pct:92 } },
-    ]},
-    bravo:{ name:"BRAVO", label:"TEAM BRAVO", prob:"36%", fighters:[
-      { name:"SUPERMAN", rosterKey:"SUPERMAN", stat:{ label:"SOLAR ABSORPTION", val:"MAXIMUM",  pct:95 } },
-      { name:"LUFFY",    rosterKey:"LUFFY",    stat:{ label:"GEAR FIFTH POWER", val:"REALITY+", pct:88 } },
-    ]},
-    stats:[
-      { label:"STRENGTH",               alpha:183, bravo:181, winner:"alpha", alphaVal:"183.0", bravoVal:"181.0" },
-      { label:"INTELLIGENCE / TACTICS", alpha:150, bravo:150, winner:"draw",  alphaVal:"150.0", bravoVal:"150.0" },
-      { label:"VERSATILITY / ARSENAL",  alpha:187, bravo:142, winner:"alpha", alphaVal:"187.0", bravoVal:"142.0" },
-    ],
-    projection:{ winner:"ALPHA WIN", reliability:"64.0%", reason:"Goku and Naruto's combat synergy is nearly telepathic." },
-    rounds:[
-      { title:"TEAM TACTICS",        winner:"TEAM ALPHA", winTeam:"alpha", narrative:"Goku engages Superman while Naruto floods the field.", reasoning:"Instinctive teamwork overwhelms Team Bravo." },
-      { title:"GEAR FIFTH CHAOS",    winner:"TEAM BRAVO", winTeam:"bravo", narrative:"Luffy activates Gear Fifth — the battlefield warps.", reasoning:"Gear Fifth chaos disrupts Naruto's tactical plans." },
-      { title:"DUAL TRANSFORMATION", winner:"TEAM ALPHA", winTeam:"alpha", narrative:"Goku hits Ultra Instinct while Naruto ignites Baryon Mode.", reasoning:"Simultaneous peak transformations overwhelm Team Bravo." },
-      { title:"FINAL STAND",         winner:"TEAM ALPHA", winTeam:"alpha", narrative:"Combined Kamehameha-Rasenshuriken finishes it.", reasoning:"Instant Transmission + clone tactics creates an unstoppable finish." },
-    ],
   },
 };
 
