@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 ───────────────────────────────────────────── */
 const IMG_CACHE = {};
 
-
 async function fetchFandomImg(wiki, pageTitle) {
   const key = `${wiki}::${pageTitle}`;
   if (IMG_CACHE[key] !== undefined) return IMG_CACHE[key];
@@ -28,7 +27,7 @@ async function fetchFandomImg(wiki, pageTitle) {
 
 
 /* ─────────────────────────────────────────────
-   DESIGN TOKENS — VS Battles Figma reskin
+   DESIGN TOKENS — Arena Battles
 ───────────────────────────────────────────── */
 const C = {
   bg:          "#0a0a0f",
@@ -101,164 +100,45 @@ const FIGHTER_GRID = [
    Each 0-100. These drive the dynamic battle engine.
 ───────────────────────────────────────────── */
 const FIGHTER_STATS = {
-  // ── DRAGON BALL ──────────────────────────────────────────────────────────
-  // Goku: Mastered Ultra Instinct — multiversal, FTL+ speed, autonomous reflexes
-  // Feats: Fought Jiren (stronger than Gods of Destruction), shook void of universe
-  GOKU:         { str:98, spd:99, dur:95, int:74, ver:97, title:"Mastered Ultra Instinct", flavor:"Autonomous combat reflexes that bypass conscious thought — his body moves faster than gods can perceive." },
-
-  // Broly: Legendary Super Saiyan — grows stronger the longer he fights, forced Gogeta Blue
-  // Feats: Overpowered SSB Goku + Vegeta simultaneously, fought Gogeta Blue
-  BROLY:        { str:100,spd:86, dur:98, int:40, ver:68, title:"Legendary Super Saiyan", flavor:"Born power level so immense King Vegeta exiled him as an infant. His berserker ki has no ceiling — the longer the fight, the more unstoppable he becomes." },
-
-  // Vegeta: Ultra Ego — grows stronger from damage, Hakai destruction energy
-  // Feats: Defeated Toppo (God of Destruction), mastered Forced Spirit Fission
-  VEGETA:       { str:96, spd:94, dur:92, int:84, ver:88, title:"Ultra Ego", flavor:"Destruction energy channeled through Saiyan pride — Ultra Ego makes every blow he absorbs fuel his next attack." },
-
-  // Gohan: Beast Mode — rivals Ultra Instinct Goku, destroyed Cell Max solo
-  // Feats: Held his own against UI Goku, Vegeta, Broly in spar; defeated Cell Max
-  GOHAN:        { str:95, spd:89, dur:90, int:92, ver:86, title:"Beast Mode", flavor:"His hidden potential — unlocked through rage since childhood — erupts in Beast form into power that rivals the gods themselves." },
-
-  // Piccolo: Orange Piccolo — Shenron unlocked his potential, rival to God-tier Saiyans
-  // Feats: Defeated Gamma 1 and 2, held his own against Cell Max, fused with Nail and Kami
-  PICCOLO:      { str:83, spd:80, dur:84, int:91, ver:86, title:"Orange Piccolo", flavor:"Namekian warrior who fused with Nail and Kami — Shenron's gift unlocked his full potential, elevating him to stand among gods." },
-
-  // ── NARUTO ───────────────────────────────────────────────────────────────
-  // Naruto: Six Paths Sage Mode — planetary durability, dodged light-speed attacks
-  // Feats: Survived moon being split, defeated Kaguya (god), Baryon Mode drained Isshiki's lifespan
-  NARUTO:       { str:90, spd:93, dur:89, int:80, ver:95, title:"Seven Hokage / Six Paths Sage", flavor:"Six Paths chakra grants mastery of all nature transformations. Shadow Clone army, Tailed Beast Rasen-Shuriken, and Baryon Mode — his Will of Fire never breaks." },
-
-  // ── ONE PIECE ────────────────────────────────────────────────────────────
-  // Luffy: Gear 5 / Sun God Nika — reality-bending Toon-Force physics
-  // Feats: Defeated Kaido (world's strongest creature), lightning reflexes, body like rubber
-  LUFFY:        { str:91, spd:87, dur:90, int:66, ver:94, title:"Sun God Nika — Gear Fifth", flavor:"Gear Fifth channels the Sun God Nika — his body becomes the island itself, turning imagination into combat reality. Defeated the world's strongest creature." },
-
-  // ── DC ───────────────────────────────────────────────────────────────────
-  // Superman: Solar-powered Kryptonian — shifted tectonic plates, survived World Engine
-  // Feats: Dragged cruise ship through ice, survived Doomsday energy blasts seen from space
-  SUPERMAN:     { str:97, spd:96, dur:98, int:81, ver:84, title:"Last Son of Krypton", flavor:"Earth's yellow sun supercharges every cell in his Kryptonian body. Heat vision at 3.5 million Kelvin, near-invulnerable skin, and enough strength to shift tectonic plates." },
-
-  // Batman: World's greatest detective — 127 martial arts, 12 master's degrees, prep time king
-  // Feats: Has contingency plans for every JLA member including Superman; bench presses 1000 lbs
-  BATMAN:       { str:73, spd:79, dur:72, int:99, ver:97, title:"World's Greatest Detective", flavor:"127 martial arts mastered. Genius-level detective who has outwitted gods. With prep time, Bruce Wayne has contingency plans to neutralize every being on Earth." },
-
-  // Lex Luthor: Apex human intellect — Warsuit, power rings, kryptonite
-  // Feats: Operated Orange Lantern ring, built anti-Superman tech, briefly held godhood
-  LEX_LUTHOR:   { str:61, spd:57, dur:68, int:100,ver:91, title:"Apex Intellect / Warsuit", flavor:"Arguably the most intelligent human alive. His Warsuit matches Superman's power output while his mind outpaces every computer on Earth. Prep time is his superpower." },
-
-  // Harley Quinn: Enhanced physiology from Ivy's serum, gymnastic chaos
-  // Feats: Enhanced strength/durability from Poison Ivy's serum, kept pace with Batman
-  HARLEY_QUINN: { str:70, spd:76, dur:68, int:80, ver:84, title:"Clown Princess of Crime", flavor:"Her PhD in psychology makes her dangerous before she swings her mallet. Poison Ivy's enhancement serum gives her physical strength beyond peak human." },
-
-  // ── MARVEL ───────────────────────────────────────────────────────────────
-  // Wolverine: Adamantium skeleton, healing factor regenerates from skeleton, 150+ years combat
-  // Feats: Survived having skin/organs incinerated and regenerated in minutes; claws pierce Thor
-  WOLVERINE:    { str:81, spd:79, dur:96, int:76, ver:79, title:"Adamantium Berserker", flavor:"Born in the 1880s, every decade of war has sharpened his instincts. His adamantium-laced skeleton is indestructible and his healing factor regenerates from near-nothing." },
-
-  // Captain America: Super-soldier serum peak human, vibranium shield, WWII+ veteran
-  // Feats: Briefly wielded Mjolnir, matched Iron Man in armor, tactical IQ rivals Batman
-  CAP_AMERICA:  { str:77, spd:79, dur:79, int:89, ver:86, title:"Super Soldier / Avengers Leader", flavor:"The super-soldier serum pushed every human biological limit to its peak. His vibranium shield absorbs any impact and his 80+ years of combat experience makes him the Avengers' tactical core." },
-
-  // Psylocke (Kwannon): Telepathic, psychic katana bypasses physical durability, ninja assassin
-  // Feats: Psychic blade directly attacks the mind; ninja training from Hand; matched X-Men veterans
-  PSYLOCKE:     { str:73, spd:86, dur:71, int:83, ver:86, title:"Psi-Blade Assassin", flavor:"Her psychic katana doesn't cut flesh — it severs consciousness directly. A Hand-trained ninja with telepathic precision, she bypasses armor and healing factors alike." },
-
-  // Storm: Omega-level mutant, planetary weather control, lightning in microseconds
-  // Feats: Controlled weather of entire planet, held her own against Thor, disrupted Phoenix
-  STORM:        { str:71, spd:84, dur:73, int:81, ver:91, title:"Omega-Level Weather Witch", flavor:"Ororo Munroe can summon lightning from a clear sky or extinguish the sun's warmth over a continent. Her Omega-level mutation means atmospheric control is instinctive — never exhausting." },
-
-  // Moon Knight: Avatar of Khonshu, superhuman strength at night, multiple personalities
-  // Feats: Khonshu turned back the night sky, resurrected multiple times, fought Spector-level threats
-  MOON_KNIGHT:  { str:76, spd:77, dur:76, int:79, ver:82, title:"Avatar of Khonshu", flavor:"Marc Spector died and was resurrected by the Egyptian moon god. Khonshu grants him strength that scales with moonlight, and his fractured psyche makes him immune to telepathic manipulation." },
-
-  // Venom (Eddie Brock): Symbiote grants wall-crawling, undetectable by spider-sense, shapeshifting
-  // Feats: Matches Spider-Man's strength + symbiote bonuses, immune to spider-sense, tendrils
-  VENOM:        { str:87, spd:81, dur:87, int:73, ver:85, title:"Lethal Protector", flavor:"The Venom symbiote amplifies Eddie Brock's strength beyond Spider-Man's and grants stealth spider-sense can't detect. Tendrils, shapeshifting, and a healing bond make them a singular predator." },
-
-  // ── GOD OF WAR ───────────────────────────────────────────────────────────
-  // Kratos: Killed entire Greek pantheon + Norse Gods, Leviathan Axe + Blades of Chaos
-  // Feats: Killed Zeus, Ares, Poseidon, Baldur, Thor; pushed Tyr's temple (1 million tons)
-  KRATOS:       { str:97, spd:83, dur:95, int:79, ver:89, title:"Ghost of Sparta / God of War", flavor:"He has killed gods across two mythologies. The Blades of Chaos forge hellfire in Helheim's cold and the Leviathan Axe freezes anything it strikes. His rage is a weapon no pantheon has survived." },
-
-  // ── DEVIL MAY CRY ────────────────────────────────────────────────────────
-  // Dante: Son of Sparda, Sin Devil Trigger surpasses Sparda, defeated Mundus, FTL speed
-  // Feats: Defeated Mundus who fused demon/human worlds; Sin DT exceeded his father's power
-  DANTE:        { str:89, spd:92, dur:87, int:75, ver:96, title:"Son of Sparda / Sin Devil Trigger", flavor:"Half the blood of the legendary Dark Knight Sparda flows in him. His Sin Devil Trigger exceeds even his father's power — and Sparda sealed an entire demon world alone." },
-
-  // ── DOOM ─────────────────────────────────────────────────────────────────
-  // Doom Slayer: Defeated Davoth (creator of DOOM multiverse), limitless stamina
-  // Feats: Fought legions of hell for millennia; defeated the literal creator of the DOOM universe
-  DOOM_SLAYER:  { str:92, spd:87, dur:93, int:77, ver:89, title:"Unchained Predator", flavor:"Rip and tear until it is done. The Seraphim blessed him with power beyond mortality — he fought Hell non-stop for centuries and grew stronger with every demon he killed." },
-
-  // ── HALO ─────────────────────────────────────────────────────────────────
-  // Master Chief: SPARTAN-II augmentation + MJOLNIR armor — 5x strength/speed amplification
-  // Feats: Survived 2km fall; MJOLNIR withstands 46.5kg TNT; ran 105 km/h in armor; IQ 140+
-  MASTER_CHIEF: { str:79, spd:77, dur:83, int:87, ver:87, title:"SPARTAN-117", flavor:"John-117's MJOLNIR armor amplifies his SPARTAN-II augmented physiology by a factor of five. Two hundred campaigns across the galaxy and a reaction time ten times faster than baseline soldiers." },
-
-  // ── STREET FIGHTER ───────────────────────────────────────────────────────
-  // Ryu: Satsui no Hado + Power of Nothingness — dual power mastery, island-busting feats
-  // Feats: Comparable to Akuma who sunk an island; Hadoken shattered a skyscraper; survived M. Bison
-  RYU:          { str:79, spd:83, dur:79, int:81, ver:83, title:"Wandering World Warrior", flavor:"He masters two opposing forces — the killing intent of Satsui no Hado and the transcendent Power of Nothingness. At his peak, these dual energies make him the most balanced fighter alive." },
-
-  // Akuma: Perfected Satsui no Hado — sank an island with a single chop, Shin Akuma is nigh-unstoppable
-  // Feats: Killed Bison with Shun Goku Satsu; sank Gokuento island; destroyed M. Bison's Psycho Power
-  AKUMA:        { str:90, spd:89, dur:85, int:79, ver:87, title:"Master of the Fist", flavor:"He abandoned his humanity to perfect the Satsui no Hado. His Shun Goku Satsu destroys the soul — not the body. He sank an entire island with a single strike and sought a death worthy of his power." },
-
-  // Cammy: Delta Red operative, fastest in Street Fighter, Killer Bee instincts
-  // Feats: Peak human with enhancement; faster than eye can follow; Spiral Arrow covers ground instantly
-  CAMMY:        { str:71, spd:92, dur:69, int:79, ver:79, title:"Delta Red Operative", flavor:"Engineered by Shadaloo as a perfect weapon, Cammy White's Killer Bee fighting style relies on blinding speed and precision strikes that end fights before opponents can react." },
-
-  // Chun-Li: Interpol's strongest woman, Kikosho, Hyakuretsukyaku (hundred lightning kicks)
-  // Feats: Vaporized a large section of forest with Kikosho; faster than Ryu's reactions
-  CHUN_LI:      { str:73, spd:91, dur:71, int:81, ver:81, title:"Strongest Woman in the World", flavor:"Her Hyakuretsukyaku delivers a hundred kicks faster than the eye can track. Interpol's finest has spent decades mastering chi alongside conventional combat — her Kikosho levels forests." },
-
-  // Jin Kazama: Devil Gene — transforms into a winged devil with energy blasts, Tekken God
-  // Feats: Defeated Azazel (ancient supernatural demon), Devil form gives flight and laser blasts
-  JIN_KAZAMA:   { str:84, spd:85, dur:82, int:77, ver:81, title:"Devil Gene Heir", flavor:"The cursed Devil Gene transforms Jin into a supernatural being with wings, flight, and devastating energy blasts. His Mishima-style Karate is the deadliest art in the Tekken universe." },
-
-  // ── GUILTY GEAR ──────────────────────────────────────────────────────────
-  // Sol Badguy: Prototype Gear — suppresses most of his power via Fireseal, immense raw magic
-  // Feats: Killed Justice (most powerful Gear), his full power level is literally off the charts
-  SOL_BADGUY:   { str:87, spd:86, dur:85, int:79, ver:89, title:"Prototype Gear / Fireseal", flavor:"Frederick Bulsara voluntarily limits his own power with the Fireseal ring. Even suppressed, he slaughtered Justice. Unsealed, his Gear biology gives him power that warps the battlefield." },
-
-  // ── MORTAL KOMBAT ────────────────────────────────────────────────────────
-  // Scorpion: Undead Shirai Ryu spectre, hellfire chains, can drag opponents to Netherrealm
-  // Feats: Killed Sub-Zero, survived death itself; Hellfire bypasses conventional durability
-  SCORPION:     { str:81, spd:83, dur:81, int:73, ver:81, title:"Hellfire Spectre", flavor:"Hanzo Hasashi died and returned as a Netherrealm spectre. His Hellfire burns the soul, his chain dragged Shang Tsung to his doom, and his GET OVER HERE has never been denied." },
-
-  // ── SOUL CALIBUR ─────────────────────────────────────────────────────────
-  // Siegfried: Soul Calibur chosen wielder — holy sword purifies evil, massive two-handed power
-  // Feats: Wielded both Soul Calibur and Soul Edge at once; defeated Nightmare; legendary German knight
-  SIEGFRIED:    { str:85, spd:75, dur:87, int:73, ver:77, title:"Soul Calibur's Chosen", flavor:"The holy sword Soul Calibur chose Siegfried as its wielder to purge Soul Edge's corruption. His massive Zweihänder delivers crushing blows that shatter supernatural defenses." },
-
-  // Ivy Valentine: Snake Sword alchemy, aristocratic combat intelligence, centuries of research
-  // Feats: Blade transforms between sword and whip; alchemy enhances her strength; defeated Cervantes
-  IVY:          { str:77, spd:79, dur:75, int:85, ver:89, title:"Ivy Valentine — Snake Sword", flavor:"Her alchemically-forged Valentine snake sword shifts between whip and blade mid-combat. Centuries of occult research give her tactical options no conventional fighter can anticipate." },
-
-  // Voldo: Contortionist hell guardian, blindfolded fighter, unpredictable movement
-  // Feats: Guarded Vercci's treasure for decades alone, moving unlike any human; pure instinct fighter
-  VOLDO:        { str:75, spd:87, dur:75, int:48, ver:83, title:"Hell Guardian", flavor:"He has guarded his master's treasure for decades in total darkness, his senses atrophied into pure predatory instinct. His contorted movement patterns are unlike any human fighting style — impossible to read." },
-
-  // ── OKAMI ────────────────────────────────────────────────────────────────
-  // Amaterasu: Sun goddess, Celestial Brush techniques, divine weapons, restored the world
-  // Feats: Defeated Yami (darkness itself), restored life across all of Nippon, solar deity powers
-  AMATERASU:    { str:73, spd:89, dur:77, int:83, ver:91, title:"Origin of All Things", flavor:"The sun goddess Amaterasu wields the Celestial Brush — painting reality itself to summon infernos, blizzards, and lightning. She defeated Yami, the master of darkness, and restored the world." },
-
-  // ── DC (HARLEY QUINN) ──────────── already done above ───────────────────
-
-  // ── MARVEL (SHAGGY BONUS) ────────────────────────────────────────────────
-  // Kirby: Copy ability, survived black holes, defeated galactic-level threats, Planet Popstar
-  // Feats: Inhaled black holes, survived multiple universe-shaking events, copied gods' powers
-  KIRBY:        { str:72, spd:74, dur:89, int:79, ver:100,title:"Star Warrior — Copy Ability", flavor:"Don't let the pink fool you. Kirby has survived black holes, copied the powers of cosmic gods, and defeated Nightmare — a being of pure evil. His copy ability has literally no ceiling." },
-
-  // Shaggy: VS Battles Wiki Tier 9-A base, Subsonic+ speed, Class K lifting
-  // Feats: busts steel doors, survived sperm whale hit, outruns Mystery Machine (145 km/h)
-  // Sword of Fate bumps him to Tier 7-C (Town level). Scooby Snacks = stat amp.
-  SHAGGY:       { str:52, spd:58, dur:55, int:42, ver:70, title:"Mystery Inc. — Sword of Fate", flavor:"Don't let the cowardice fool you. Shaggy outruns vehicles, busts through steel doors, survived being shot from a cannon, and with the Sword of Fate challenged the fiercest samurai in feudal Japan. Zoinks." },
+  GOKU:         { str:99, spd:99, dur:95, int:72, ver:97, title:"Ultra Instinct", flavor:"The Saiyan God whose power transcends mortal limits." },
+  BROLY:        { str:100,spd:88, dur:99, int:45, ver:72, title:"Legendary Super Saiyan", flavor:"Unbridled berserker energy with near-infinite stamina." },
+  VEGETA:       { str:96, spd:95, dur:93, int:82, ver:90, title:"Super Saiyan Blue", flavor:"Royal pride and tactical brilliance in equal measure." },
+  GOHAN:        { str:94, spd:90, dur:91, int:90, ver:88, title:"Ultimate Gohan", flavor:"Latent power that rivals the gods when fully unleashed." },
+  PICCOLO:      { str:82, spd:80, dur:84, int:90, ver:85, title:"Namekian Warrior", flavor:"Strategic genius with regenerative durability and ki mastery." },
+  NARUTO:       { str:90, spd:92, dur:88, int:78, ver:94, title:"Seventh Hokage", flavor:"Sage of Six Paths chakra and an army of shadow clones." },
+  LUFFY:        { str:91, spd:88, dur:89, int:65, ver:92, title:"Sun God Nika", flavor:"Gear Fifth reality warping makes him a wildcard in any fight." },
+  SUPERMAN:     { str:97, spd:96, dur:98, int:80, ver:85, title:"Man of Steel", flavor:"Solar-powered godhood with near-invincible durability." },
+  BATMAN:       { str:72, spd:78, dur:70, int:99, ver:97, title:"World's Greatest Detective", flavor:"Peak human with gear and tactics that defeat near-gods." },
+  LEX_LUTHOR:   { str:60, spd:55, dur:65, int:100,ver:90, title:"Apex Intellect", flavor:"The most dangerous human alive — planning wins wars." },
+  HARLEY_QUINN: { str:68, spd:74, dur:65, int:80, ver:82, title:"Clown Princess", flavor:"Unpredictable chaos and gymnastic lethality in a mallet swing." },
+  WOLVERINE:    { str:80, spd:78, dur:95, int:74, ver:78, title:"Adamantium Berserker", flavor:"Regeneration and adamantium claws make him nearly unkillable." },
+  CAP_AMERICA:  { str:76, spd:78, dur:78, int:88, ver:85, title:"Super Soldier", flavor:"Peak human enhanced by serum — leadership and shield mastery." },
+  PSYLOCKE:     { str:72, spd:85, dur:70, int:82, ver:85, title:"Psi-Blade Assassin", flavor:"Telepathic strikes that bypass physical defenses entirely." },
+  STORM:        { str:70, spd:82, dur:72, int:80, ver:90, title:"Omega-Level Mutant", flavor:"Weather manipulation on a planetary scale — lightning made flesh." },
+  MOON_KNIGHT:  { str:74, spd:76, dur:74, int:78, ver:80, title:"Avatar of Khonshu", flavor:"Moon-powered resilience and multiple personalities as tactical assets." },
+  VENOM:        { str:85, spd:80, dur:86, int:72, ver:84, title:"Lethal Protector", flavor:"Symbiote bonding grants strength, stealth and spider-sense immunity." },
+  KRATOS:       { str:96, spd:82, dur:94, int:78, ver:88, title:"God of War", flavor:"Godslayer. Has killed Zeus, Ares, and entire pantheons." },
+  DANTE:        { str:88, spd:90, dur:86, int:74, ver:95, title:"Son of Sparda", flavor:"Half-demon stylishness meets demon-slaying firepower." },
+  DOOM_SLAYER:  { str:90, spd:86, dur:92, int:76, ver:88, title:"Doom Eternal", flavor:"Rage incarnate — literally too angry to die." },
+  MASTER_CHIEF: { str:78, spd:76, dur:82, int:86, ver:86, title:"Spartan-117", flavor:"MJOLNIR armor, tactical genius, and two lucky feet." },
+  RYU:          { str:78, spd:82, dur:78, int:80, ver:82, title:"Street Fighter", flavor:"Hadoken discipline and Satsui no Hado in perfect balance." },
+  JIN_KAZAMA:   { str:82, spd:84, dur:80, int:76, ver:80, title:"Devil Gene", flavor:"Tekken mastery fused with demonic transformation." },
+  SOL_BADGUY:   { str:86, spd:85, dur:84, int:78, ver:88, title:"Guilty Gear Strive", flavor:"Prototype Gear with raw magical power and Fireseal mastery." },
+  AKUMA:        { str:88, spd:88, dur:84, int:78, ver:86, title:"Master of the Fist", flavor:"Satsui no Hado at its purest — seeks only to fight and die." },
+  CAMMY:        { str:70, spd:90, dur:68, int:78, ver:78, title:"Delta Red Operative", flavor:"Fastest strikes in street fighting — Spiral Arrow never misses." },
+  CHUN_LI:      { str:72, spd:90, dur:70, int:80, ver:80, title:"Strongest Woman", flavor:"Lightning kicks and Interpol tactical training combined." },
+  SIEGFRIED:    { str:84, spd:74, dur:86, int:72, ver:76, title:"Soul Calibur Knight", flavor:"Soul Calibur chosen wielder — holy blade that purifies evil." },
+  IVY:          { str:76, spd:78, dur:74, int:84, ver:88, title:"Ivy Valentine", flavor:"Snake Sword alchemy and centuries of alchemical knowledge." },
+  VOLDO:        { str:74, spd:86, dur:74, int:50, ver:82, title:"Hell Guard", flavor:"Blindfolded contortionist whose unpredictability is his armor." },
+  AMATERASU:    { str:72, spd:88, dur:76, int:82, ver:90, title:"Origin of All Things", flavor:"Solar deity with celestial brush techniques and divine weapons." },
+  SCORPION:     { str:80, spd:82, dur:80, int:72, ver:80, title:"Hellfire Ninja", flavor:"Undead vengeance with hellfire chains and GET OVER HERE." },
+  KIRBY:        { str:70, spd:72, dur:88, int:78, ver:99, title:"Copy Ability", flavor:"Absorbs any power — theoretically limitless adaptability." },
+  SHAGGY:       { str:99, spd:99, dur:99, int:60, ver:99, title:"Ultra Instinct Shaggy", flavor:"0.01% of his power casually reshapes reality. Zoinks." },
 };
 
 /* ─────────────────────────────────────────────
    DYNAMIC BATTLE ENGINE
-   Computes any 1v1 or 2v2 matchup from stats
+   Computes 1v1 matchup from stats
 ───────────────────────────────────────────── */
 const STAT_LABELS = ["STRENGTH","SPEED / REFLEXES","DURABILITY","INT / TACTICS","VERSATILITY"];
 const STAT_KEYS   = ["str","spd","dur","int","ver"];
@@ -303,16 +183,9 @@ function computeBattle1v1(alphaKey, bravoKey) {
   const bravoWins = diff < -5;
   const close = Math.abs(diff) <= 5;
 
-  // ── UPSET MECHANIC: 15% chance underdog wins if gap < 25 pts ──────────
-  const upsetPossible = !close && Math.abs(diff) < 25;
-  const upsetTriggered = upsetPossible && Math.random() < 0.15;
-
-  const effectiveAlphaWins = upsetTriggered ? bravoWins : alphaWins;
-  const effectiveBravoWins = upsetTriggered ? alphaWins : bravoWins;
-
-  const winnerName = effectiveAlphaWins ? aName : effectiveBravoWins ? bName : aName;
-  const winSide    = effectiveAlphaWins ? "alpha" : "bravo";
-  const upsetLabel = upsetTriggered ? " ⚡ UPSET" : "";
+  const winnerKey  = alphaWins ? alphaKey : bravoWins ? bravoKey : alphaKey;
+  const winnerName = alphaWins ? aName    : bravoWins ? bName    : aName;
+  const winSide    = alphaWins ? "alpha"  : "bravo";
   const reliability = close ? `${52 + Math.abs(diff)}%` : alphaWins ? `${60+Math.min(diff,35)}%` : `${60+Math.min(-diff,35)}%`;
   const alphaProb  = close ? "52%" : alphaWins ? `${55+Math.min(diff/2,35)}%` : `${Math.max(15, 45+diff/2)}%`;
   const bravoProb  = `${100-parseInt(alphaProb)}%`;
@@ -335,15 +208,15 @@ function computeBattle1v1(alphaKey, bravoKey) {
     };
   });
 
-  const reason = effectiveAlphaWins
-    ? (upsetTriggered ? `Against all odds, ${aName} finds an opening — the upset of the century.` : lore?.alphaWinLine || `${aName}'s superior ${STAT_LABELS[STAT_KEYS.indexOf(STAT_KEYS.reduce((best,k)=>A[k]-B[k]>A[best]-B[best]?k:best,STAT_KEYS[0]))].toLowerCase()} proves decisive.`)
-    : effectiveBravoWins
-    ? (upsetTriggered ? `Against all odds, ${bName} finds an opening — the upset of the century.` : lore?.bravoWinLine || `${bName}'s superior ${STAT_LABELS[STAT_KEYS.indexOf(STAT_KEYS.reduce((best,k)=>B[k]-A[k]>B[best]-A[best]?k:best,STAT_KEYS[0]))].toLowerCase()} proves decisive.`)
+  const reason = alphaWins
+    ? (lore?.alphaWinLine || `${aName}'s superior ${STAT_LABELS[STAT_KEYS.indexOf(STAT_KEYS.reduce((best,k)=>A[k]-B[k]>A[best]-B[best]?k:best,STAT_KEYS[0]))].toLowerCase()} proves decisive.`)
+    : bravoWins
+    ? (lore?.bravoWinLine || `${bName}'s superior ${STAT_LABELS[STAT_KEYS.indexOf(STAT_KEYS.reduce((best,k)=>B[k]-A[k]>B[best]-A[best]?k:best,STAT_KEYS[0]))].toLowerCase()} proves decisive.`)
     : `An extraordinarily even matchup. Both fighters push each other to the limit.`;
 
   return {
     stats,
-    projection:{ winner: `${winnerName} WINS${upsetLabel}`, reliability, reason, upset: upsetTriggered },
+    projection:{ winner: `${winnerName} WINS`, reliability, reason },
     rounds,
     alphaProb, bravoProb,
     alphaTitle: A.title, bravoTitle: B.title,
@@ -444,11 +317,7 @@ const BATTLES = {
       { title:"ULTRA INSTINCT AWAKENS", winner:"GOKU",   winTeam:"alpha", narrative:"Ultra Instinct activates — movements become fluid and automatic.", reasoning:"Ultra Instinct's autonomous dodging counters Superman's speed." },
       { title:"FINAL EXCHANGE",         winner:"GOKU",   winTeam:"alpha", narrative:"A blinding white explosion. Superman is on one knee.", reasoning:"Mastered Ultra Instinct surpasses what Superman can absorb." },
     ],
-  },
-  "2v2": {
-    id:"2v2", type:"2v2",
-    alpha:{ name:"ALPHA", label:"TEAM ALPHA", prob:"64%", fighters:[
-      { name:"GOKU",   rosterKey:"GOKU",   stat:{ label:"POWER LEVEL",      val:"OVER 9000", pct:98 } },
+  }, },
       { name:"NARUTO", rosterKey:"NARUTO", stat:{ label:"CHAKRA POTENTIAL", val:"S-RANK",    pct:92 } },
     ]},
     bravo:{ name:"BRAVO", label:"TEAM BRAVO", prob:"36%", fighters:[
@@ -512,17 +381,17 @@ const TABLE_PAGE = 10;
 ───────────────────────────────────────────── */
 const RECENT_P1 = [
   { id:"r1", type:"1v1", time:"20:45 UTC", winnerColor:"alpha", winner:{ name:"GOKU", sub:"Team Alpha", rosterKey:"GOKU", pct:98 }, loser:{ name:"SUPERMAN", rosterKey:"SUPERMAN" } },
-  { id:"r2", type:"2v2", time:"19:12 UTC", winnerColor:"alpha", winner:{ name:"ALPHA SYNDICATE", sub:"Team Alpha" }, fighters:[{ name:"GOKU", rosterKey:"GOKU" },{ name:"NARUTO", rosterKey:"NARUTO" }], losers:[{ rosterKey:"SUPERMAN" },{ rosterKey:"LUFFY" }], loserName:"TEAM_BRAVO" },
+
   { id:"r3", type:"1v1", time:"12:15 UTC", winnerColor:"bravo", winner:{ name:"LUFFY", sub:"Team Bravo", rosterKey:"LUFFY", pct:72 }, loser:{ name:"NARUTO", rosterKey:"NARUTO" } },
   { id:"r4", type:"1v1", time:"08:44 UTC", winnerColor:"alpha", winner:{ name:"NARUTO", sub:"Team Alpha", rosterKey:"NARUTO", pct:85 }, loser:{ name:"LUFFY", rosterKey:"LUFFY" } },
 ];
 const RECENT_P2 = [
   { id:"p2a", type:"1v1", time:"23:10 UTC", winnerColor:"alpha", winner:{ name:"KRATOS", sub:"Combatant Alpha", rosterKey:"KRATOS", pct:91 }, loser:{ name:"DANTE", rosterKey:"DANTE" } },
-  { id:"p2b", type:"2v2", time:"22:05 UTC", winnerColor:"bravo", winner:{ name:"DOOM PACT", sub:"Team Bravo" }, fighters:[{ name:"DOOM SLAYER", rosterKey:"DOOM_SLAYER" },{ name:"MASTER CHIEF", rosterKey:"MASTER_CHIEF" }], losers:[{ rosterKey:"RYU" },{ rosterKey:"JIN_KAZAMA" }], loserName:"STREET_TEKKEN" },
+
   { id:"p2c", type:"1v1", time:"18:30 UTC", winnerColor:"alpha", winner:{ name:"SOL BADGUY", sub:"Combatant Alpha", rosterKey:"SOL_BADGUY", pct:78 }, loser:{ name:"SCORPION", rosterKey:"SCORPION" } },
   { id:"p2d", type:"1v1", time:"16:55 UTC", winnerColor:"bravo", winner:{ name:"SHAGGY", sub:"Combatant Beta", rosterKey:"SHAGGY", pct:99 }, loser:{ name:"KIRBY", rosterKey:"KIRBY" } },
   { id:"p2e", type:"1v1", time:"14:22 UTC", winnerColor:"alpha", winner:{ name:"MASTER CHIEF", sub:"Combatant Alpha", rosterKey:"MASTER_CHIEF", pct:67 }, loser:{ name:"DOOM SLAYER", rosterKey:"DOOM_SLAYER" } },
-  { id:"p2f", type:"2v2", time:"11:48 UTC", winnerColor:"alpha", winner:{ name:"WARRIOR PACT", sub:"Team Alpha" }, fighters:[{ name:"KRATOS", rosterKey:"KRATOS" },{ name:"SOL BADGUY", rosterKey:"SOL_BADGUY" }], losers:[{ rosterKey:"SCORPION" },{ rosterKey:"SHAGGY" }], loserName:"CHAOS_UNIT" },
+
 ];
 
 /* ─────────────────────────────────────────────
@@ -583,21 +452,19 @@ function NavBar({ page, setPage }) {
     { key:"recent",   label:"RECENT BATTLES" },
     { key:"rankings", label:"RANKINGS" },
   ];
-
-
-    return (
+  return (
     <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100,
       background:"rgba(6,6,8,0.95)", backdropFilter:"blur(12px)",
       borderBottom:"1px solid rgba(255,255,255,0.06)",
       height:52, display:"flex", alignItems:"center", padding:"0 24px", gap:24 }}>
-      {/* Logo — fixed width so nav stays truly centered */}
-      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:4, cursor:"pointer", flexShrink:0, width:160 }}>
+      {/* Logo — ARENA BATTLES in Zen Dots with skew */}
+      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:4, cursor:"pointer", flexShrink:0 }}>
         <span style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:22, fontWeight:400,
           color:"#fff", transform:"matrix(1,0,-0.23,0.97,0,0)", display:"inline-block",
-          lineHeight:"38px", whiteSpace:"nowrap" }}>VS BATTLES</span>
+          lineHeight:"38px", whiteSpace:"nowrap" }}>ARENA BATTLES</span>
       </div>
 
-      {/* Nav links — truly centered between equal-width sides */}
+      {/* Nav links — centered */}
       <div style={{ flex:1, display:"flex", justifyContent:"center", gap:44 }}>
         {links.map(l=>{
           const active = page===l.key;
@@ -614,7 +481,7 @@ function NavBar({ page, setPage }) {
         })}
       </div>
 
-      <div style={{ width:160, flexShrink:0 }} />
+      <div style={{ width:80 }} />
     </nav>
   );
 }
@@ -655,9 +522,9 @@ function HeroPortrait({ rosterKey, name, side, selected = true }) {
 
       {/* Name label */}
       <div style={{ position:"absolute", bottom:16, [nameAlign]:16, zIndex:2 }}>
-        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:48, fontWeight:400,
-          textTransform:"uppercase", letterSpacing:"0.02em", color:"#fff",
-          textShadow:"0 2px 12px rgba(0,0,0,0.9)", lineHeight:1 }}>
+        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:28, fontWeight:900,
+          textTransform:"uppercase", letterSpacing:"0.04em", color:C.onSurface,
+          textShadow:"0 2px 12px rgba(0,0,0,0.9)" }}>
           {name}
         </span>
       </div>
@@ -774,11 +641,11 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
           textTransform:"uppercase", letterSpacing:"0.02em", color:"#fff", lineHeight:1.1 }}>
           {rosterKey.replace(/_/g," ")}
         </div>
-        {/* Franchise label — always visible */}
-        {r.franchise && (
+        {/* Hover subtitle — franchise shown below name on hover */}
+        {hovered && !isSelAlpha && !isSelBravo && (
           <div style={{ fontFamily:"'Inter',sans-serif", fontSize:9, color:"#DAD9D9",
             textTransform:"uppercase", marginTop:1, opacity:0.8 }}>
-            {r.franchise}
+            {r.franchise||""}
           </div>
         )}
       </div>
@@ -843,17 +710,12 @@ function SummonModal({ onClose, onAdd }) {
    ARENA PAGE
 ───────────────────────────────────────────── */
 function ArenaPage() {
-  const [tab, setTab]           = useState("1v1");
   const [activeSide, setActiveSide] = useState("alpha"); // which side next grid click goes to
 
   // 1v1 selections
   const [alpha1v1, setAlpha1v1] = useState("GOKU");
   const [bravo1v1, setBravo1v1] = useState("SUPERMAN");
 
-  // 2v2 selections — up to 2 per side, tracked by slot index
-  const [alpha2v2, setAlpha2v2] = useState(["GOKU", "NARUTO"]);
-  const [bravo2v2, setBravo2v2] = useState(["SUPERMAN", "LUFFY"]);
-  const [activeSlot, setActiveSlot] = useState(0); // 0 or 1 for 2v2
 
   const [showModal, setShowModal] = useState(false);
   const [battleStarted, setBattle] = useState(false);
@@ -864,11 +726,7 @@ function ArenaPage() {
       const keys = Object.keys(ROSTER);
       const rk1 = keys[Math.floor(Math.random()*keys.length)];
       const rk2 = keys[Math.floor(Math.random()*keys.length)];
-      if (tab === "1v1") { setAlpha1v1(rk1); setBravo1v1(rk2); }
-      else {
-        setAlpha2v2([rk1, keys[Math.floor(Math.random()*keys.length)]]);
-        setBravo2v2([rk2, keys[Math.floor(Math.random()*keys.length)]]);
-      }
+      setAlpha1v1(rk1); setBravo1v1(rk2);
       return;
     }
     // Route to whichever side/slot is active
@@ -877,9 +735,9 @@ function ArenaPage() {
       else setBravo1v1(key);
     } else {
       if (activeSide === "alpha") {
-        setAlpha2v2(prev => { const n=[...prev]; n[activeSlot]=key; return n; });
+         n=key; return n; });
       } else {
-        setBravo2v2(prev => { const n=[...prev]; n[activeSlot]=key; return n; });
+         n=key; return n; });
       }
     }
     setBattle(false);
@@ -896,8 +754,7 @@ function ArenaPage() {
 
   function handleReset() {
     setAlpha1v1("GOKU"); setBravo1v1("SUPERMAN");
-    setAlpha2v2(["GOKU","NARUTO"]); setBravo2v2(["SUPERMAN","LUFFY"]);
-    setActiveSide("alpha"); setActiveSlot(0); setBattle(false);
+    setActiveSide("alpha"); setBattle(false);
   }
 
   const sideIndicatorStyle = (side) => ({
@@ -908,8 +765,8 @@ function ArenaPage() {
   });
 
   // What's selected for the active tab
-  const selAlpha = tab==="1v1" ? alpha1v1 : null;
-  const selBravo = tab==="1v1" ? bravo1v1 : null;
+  const selAlpha = alpha1v1;
+  const selBravo = bravo1v1;
 
   return (
     <div style={{ paddingTop:52, minHeight:"100vh", background:C.bg }}>
@@ -924,7 +781,7 @@ function ArenaPage() {
         <div style={{ display:"flex", justifyContent:"flex-end", padding:"16px 0 0" }}>
           <button onClick={handleReset}
             style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, fontWeight:700,
-              letterSpacing:"0.12em", color:"#FFFFFF", background:"none", border:"none",
+              letterSpacing:"0.12em", color:C.mutedLight, background:"none", border:"none",
               cursor:"pointer", textTransform:"uppercase" }}>
             RESET BATTLE
           </button>
@@ -936,25 +793,13 @@ function ArenaPage() {
             fontWeight:400, textTransform:"uppercase", color:C.onSurface, margin:"0 0 20px", lineHeight:1 }}>
             CHOOSE YOUR FIGHTERS
           </h1>
-          <div style={{ display:"inline-flex", background:C.surf, borderRadius:999,
-            padding:3, gap:2, border:"1px solid rgba(255,255,255,0.08)" }}>
-            {[["1v1","1 VS 1 SIMULATION"],["2v2","2 VS 2 SIMULATION"]].map(([key,label])=>(
-              <button key={key} onClick={()=>{ setTab(key); setBattle(false); }}
-                style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13, fontWeight:700,
-                  letterSpacing:"0.08em", textTransform:"uppercase",
-                  padding:"8px 24px", borderRadius:999, border:"none", cursor:"pointer",
-                  background: tab===key ? C.alpha : "transparent",
-                  color: tab===key ? "#fff" : C.muted, transition:"all 0.2s" }}>
-                {label}
-              </button>
-            ))}
-          </div>
+
         </header>
 
         {/* Team headers — click to set active side */}
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:8 }}>
-          <div style={{ display:"flex", justifyContent:"flex-start" }}>
-            <div onClick={()=>{ setActiveSide("alpha"); setActiveSlot(0); }}
+          <div>
+            <div onClick={()=>{ setActiveSide("alpha"); }}
               style={sideIndicatorStyle("alpha")}>
               <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
                 textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff", textAlign:"left" }}>
@@ -967,7 +812,7 @@ function ArenaPage() {
             </div>
           </div>
           <div style={{ textAlign:"right" }}>
-            <div onClick={()=>{ setActiveSide("bravo"); setActiveSlot(0); }}
+            <div onClick={()=>{ setActiveSide("bravo"); }}
               style={{ ...sideIndicatorStyle("bravo"), justifyContent:"flex-end" }}>
               {activeSide==="bravo" && (
                 <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
@@ -983,7 +828,7 @@ function ArenaPage() {
 
         {/* Hero portraits */}
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3, marginBottom:20 }}>
-          {tab==="1v1" ? (
+          {(
             <>
               {/* Clicking portrait sets that side as active */}
               <div onClick={()=>setActiveSide("alpha")} style={{ cursor:"pointer",
@@ -997,35 +842,12 @@ function ArenaPage() {
                 <HeroPortrait rosterKey={bravo1v1} name={bravo1v1.replace(/_/g," ")} side="bravo" />
               </div>
             </>
-          ) : (
-            <>
-              {/* 2v2 — each slot individually clickable */}
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3 }}>
-                {alpha2v2.map((rk, i)=>(
-                  <div key={i} onClick={()=>{ setActiveSide("alpha"); setActiveSlot(i); }}
-                    style={{ cursor:"pointer",
-                      outline: activeSide==="alpha" && activeSlot===i ? `2px solid ${C.alphaBorder}` : "2px solid transparent",
-                      outlineOffset:2, transition:"outline-color 0.15s" }}>
-                    <HeroPortrait rosterKey={rk} name={rk.replace(/_/g," ")} side="alpha" />
-                  </div>
-                ))}
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:3 }}>
-                {bravo2v2.map((rk, i)=>(
-                  <div key={i} onClick={()=>{ setActiveSide("bravo"); setActiveSlot(i); }}
-                    style={{ cursor:"pointer",
-                      outline: activeSide==="bravo" && activeSlot===i ? `2px solid ${C.bravoBorder}` : "2px solid transparent",
-                      outlineOffset:2, transition:"outline-color 0.15s" }}>
-                    <HeroPortrait rosterKey={rk} name={rk.replace(/_/g," ")} side="bravo" />
-                  </div>
-                ))}
-              </div>
-            </>
+
           )}
         </div>
 
         {/* Hint text */}
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:"#DAD9D9",
+        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:C.muted,
           textAlign:"center", marginBottom:12, letterSpacing:"0.08em", textTransform:"uppercase" }}>
           Click a portrait or team label to select a side, then pick from the grid below
         </p>
@@ -1035,8 +857,8 @@ function ArenaPage() {
           {FIGHTER_GRID.map((key,i)=>(
             <GridCard key={key+i} rosterKey={key}
               onSelect={handleGridSelect}
-              selectedAlpha={tab==="1v1" ? alpha1v1 : alpha2v2[activeSlot]}
-              selectedBravo={tab==="1v1" ? bravo1v1 : bravo2v2[activeSlot]}
+              selectedAlpha={alpha1v1}
+              selectedBravo={bravo1v1}
               activeSide={activeSide} />
           ))}
         </div>
@@ -1061,7 +883,7 @@ function ArenaPage() {
             <BattleResults
               tab={tab}
               alpha1v1={alpha1v1} bravo1v1={bravo1v1}
-              alpha2v2={alpha2v2} bravo2v2={bravo2v2}
+              
             />
           </div>
         )}
@@ -1138,7 +960,7 @@ async function fetchBattleNarrative(alphaName, bravoName, alphaStats, bravoStats
   const alphaTitle  = alphaStats.title  || "";
   const bravoTitle  = bravoStats.title  || "";
 
-  const prompt = `You are the narrator for VS Battles, a fighting simulation app. Write a dramatic 4-round battle breakdown for ${alphaName} (${alphaTitle} — ${alphaFlavor}) vs ${bravoName} (${bravoTitle} — ${bravoFlavor}) in a ${tab} match. The predicted winner is ${winner}.
+  const prompt = `You are the narrator for Arena Battles, a fighting simulation app. Write a dramatic 4-round battle breakdown for ${alphaName} (${alphaTitle} — ${alphaFlavor}) vs ${bravoName} (${bravoTitle} — ${bravoFlavor}) in a ${tab} match. The predicted winner is ${winner}.
 
 Return ONLY a JSON object with this exact shape, no markdown, no extra text:
 {
@@ -1156,7 +978,7 @@ Rules:
 - winTeam must be "alpha" if ${alphaName} wins that round, "bravo" if ${bravoName} wins, "draw" if tied
 - winner field should be the fighter's name (or "DRAW")
 - The predicted overall winner (${winner}) should win rounds 3 and 4
-- Make the narrative feel like a real VS Battles wiki debate come to life`;
+- Make the narrative feel like a real Arena Battles wiki debate come to life`;
 
   const apiKey = import.meta.env.VITE_OPENAI_KEY;
   console.log("[VS-Battles] API key present:", !!apiKey, "| length:", apiKey?.length);
@@ -1194,16 +1016,12 @@ Rules:
   }
 }
 
-function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
-  const battle = tab==="1v1"
-    ? computeBattle1v1(alpha1v1, bravo1v1)
-    : computeBattle2v2(alpha2v2, bravo2v2);
-
-  const alphaName = tab==="1v1" ? alpha1v1.replace(/_/g," ") : (alpha2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
-  const bravoName = tab==="1v1" ? bravo1v1.replace(/_/g," ") : (bravo2v2||[]).map(k=>k.replace(/_/g," ")).join(" & ");
-
-  const alphaStats = FIGHTER_STATS[alpha1v1] || FIGHTER_STATS[alpha2v2?.[0]] || {};
-  const bravoStats = FIGHTER_STATS[bravo1v1] || FIGHTER_STATS[bravo2v2?.[0]] || {};
+function BattleResults({ alpha1v1, bravo1v1 }) {
+  const battle = computeBattle1v1(alpha1v1, bravo1v1);
+  const alphaName = alpha1v1.replace(/_/g," ");
+  const bravoName = bravo1v1.replace(/_/g," ");
+  const alphaStats = FIGHTER_STATS[alpha1v1] || {};
+  const bravoStats = FIGHTER_STATS[bravo1v1] || {};
 
   const [aiRounds, setAiRounds]         = useState(null);
   const [aiProjection, setAiProjection] = useState(null);
@@ -1243,7 +1061,7 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [alpha1v1, bravo1v1, alpha2v2?.join(","), bravo2v2?.join(","), tab]);
+  }, [alpha1v1, bravo1v1]);
 
   // Merge AI rounds with computed stat data
   const displayRounds = aiRounds
@@ -1265,7 +1083,7 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
             {battle.alphaProb}
           </div>
-          {tab==="1v1" && battle.alphaTitle && (
+          {battle.alphaTitle && (
             <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"rgba(255,255,255,0.6)", marginTop:2 }}>
               {battle.alphaTitle}
             </div>
@@ -1279,7 +1097,7 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
             {battle.bravoProb}
           </div>
-          {tab==="1v1" && battle.bravoTitle && (
+          {battle.bravoTitle && (
             <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"rgba(255,255,255,0.6)", marginTop:2 }}>
               {battle.bravoTitle}
             </div>
@@ -1332,8 +1150,8 @@ function BattleResults({ tab, alpha1v1, bravo1v1, alpha2v2, bravo2v2 }) {
         </div>
 
         {/* Final narrative line */}
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:"#fff", fontSize:18,
-          maxWidth:640, margin:"0 auto 32px", lineHeight:1.7 }}>
+        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.mutedLight, fontSize:15,
+          maxWidth:640, margin:"0 auto 32px", lineHeight:1.6 }}>
           {aiProjection || battle.projection.reason} Predicted outcome is {battle.projection.reliability} reliable.
         </p>
 
@@ -1423,7 +1241,7 @@ function StatBar({ label, alphaVal, bravoVal, alpha, bravo, winner }) {
 }
 
 function RoundRow({ round, idx }) {
-  const [open, setOpen] = useState(idx === 0);
+  const [open, setOpen] = useState(false);
   const bc = round.winTeam==="alpha" ? C.alphaBorder : round.winTeam==="bravo" ? C.bravoBorder : C.muted;
   return (
     <div style={{ borderLeft:`3px solid ${bc}`, background:C.surf, marginBottom:3 }}>
@@ -1434,8 +1252,8 @@ function RoundRow({ round, idx }) {
           <div style={{ width:22, height:22, background:bc, display:"flex", alignItems:"center",
             justifyContent:"center", fontFamily:"'Barlow Condensed',sans-serif",
             fontSize:12, fontWeight:900, color:"#000", flexShrink:0 }}>{idx+1}</div>
-          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:16, fontWeight:700,
-            color:"#fff", textTransform:"uppercase", letterSpacing:"0.06em" }}>{round.title}</span>
+          <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
+            color:C.onSurface, textTransform:"uppercase", letterSpacing:"0.06em" }}>{round.title}</span>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
@@ -1447,10 +1265,10 @@ function RoundRow({ round, idx }) {
       </button>
       {open && (
         <div style={{ padding:"10px 16px 14px", background:C.bgDeep }}>
-          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:16, fontWeight:400, color:"#fff",
-            margin:"0 0 10px", lineHeight:1.65 }}>{round.narrative}</p>
-          <p style={{ fontFamily:"'Inter',sans-serif", fontSize:16, fontWeight:400, color:"#fff",
-            margin:0, fontStyle:"italic", opacity:0.8 }}>{round.reasoning}</p>
+          <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, color:C.mutedLight,
+            margin:"0 0 8px", lineHeight:1.6 }}>{round.narrative}</p>
+          <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:12, color:C.muted,
+            margin:0, fontStyle:"italic" }}>{round.reasoning}</p>
         </div>
       )}
     </div>
@@ -1566,7 +1384,7 @@ function Card2v2({ b }) {
             </div>
           </div>
           <div style={{ textAlign:"right" }}>
-            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, color:"#fff", textTransform:"uppercase" }}>2V2 SKIRMISH</div>
+            <div style={{ fontFamily:"'Inter',sans-serif", fontSize:10, color:"#fff", textTransform:"uppercase" }}>1V1 DUEL</div>
             <div style={{ fontFamily:"'Teko',sans-serif", fontSize:16, fontWeight:700, color:"#FAF8FE" }}>{b.time}</div>
           </div>
         </div>
@@ -1634,7 +1452,7 @@ function FeaturedCard({ teamName, fighters, losers, loserName, location, timesta
           <span style={{ fontFamily:"'Inter',sans-serif", fontSize:10, textTransform:"uppercase",
             color:"#fff", letterSpacing:"0.18px" }}>MATCH TYPE</span>
           <span style={{ fontFamily:"'Teko',sans-serif", fontSize:32, fontWeight:700,
-            color:"#fff", letterSpacing:"0.18px" }}>2v2</span>
+            color:"#fff", letterSpacing:"0.18px" }}>1v1</span>
         </div>
       </div>
 
@@ -1725,13 +1543,6 @@ function RecentBattlesPage() {
 
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, maxWidth:1100 }}>
           <Card1v1 b={RECENT_P1[0]} />
-          <Card2v2 b={RECENT_P1[1]} />
-          <FeaturedCard
-            teamName="ALPHA_SYNDICATE"
-            fighters={[{ name:"GOKU", rosterKey:"GOKU" },{ name:"NARUTO", rosterKey:"NARUTO" }]}
-            losers={[{ rosterKey:"SUPERMAN" },{ rosterKey:"LUFFY" }]}
-            loserName="TEAM_BRAVO" location="WORLD_OF_VOID" timestamp="2026-04-15 // 09:40:12"
-          />
           <Card1v1 b={RECENT_P1[2]} />
           <Card1v1 b={RECENT_P1[3]} />
         </div>
@@ -1748,17 +1559,9 @@ function RecentBattlesPage() {
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, maxWidth:1100 }}>
               <Card1v1 b={RECENT_P2[0]} />
-              <Card2v2 b={RECENT_P2[1]} />
-              <FeaturedCard
-                teamName="DOOM_PACT"
-                fighters={[{ name:"DOOM SLAYER", rosterKey:"DOOM_SLAYER" },{ name:"KRATOS", rosterKey:"KRATOS" }]}
-                losers={[{ rosterKey:"RYU" },{ rosterKey:"JIN_KAZAMA" }]}
-                loserName="STREET_TEKKEN" location="HELL_CITADEL_3" timestamp="2026-04-14 // 22:05:44"
-              />
               <Card1v1 b={RECENT_P2[2]} />
               <Card1v1 b={RECENT_P2[3]} />
               <Card1v1 b={RECENT_P2[4]} />
-              <Card2v2 b={RECENT_P2[5]} />
             </div>
           </div>
         )}
