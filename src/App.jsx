@@ -1761,7 +1761,7 @@ function RankingsPage() {
                         letterSpacing:"0.18px", color:"#fff" }}>{r.oneV}</span>
                     </td>
 
-                    {/* Win % */
+                    {/* Win % */}
                     <td style={{ padding:"26px 20px", textAlign:"right" }}>
                       <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:18, fontWeight:700,
                         letterSpacing:"0.18px", color:"#fff" }}>{r.rating}%</span>
