@@ -435,34 +435,55 @@ function NavBar({ page, setPage }) {
   ];
   return (
     <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100,
-      background:"rgba(6,6,8,0.95)", backdropFilter:"blur(12px)",
-      borderBottom:"1px solid rgba(255,255,255,0.06)",
-      height:52, display:"flex", alignItems:"center", padding:"0 24px", gap:24 }}>
-      {/* Logo — ARENA BATTLES in Zen Dots with skew */}
-      <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center", gap:4, cursor:"pointer", flexShrink:0 }}>
-        <span style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:22, fontWeight:400,
-          color:"#fff", transform:"matrix(1,0,-0.23,0.97,0,0)", display:"inline-block",
-          lineHeight:"38px", whiteSpace:"nowrap" }}>ARENA BATTLES</span>
+      background:"#111029", borderBottom:"1px solid rgba(255,255,255,0.08)",
+      height:52, display:"flex", alignItems:"stretch", padding:"0 0 0 0" }}>
+
+      {/* Left: Fandom heart + logo */}
+      <div style={{ display:"flex", alignItems:"center", gap:0, flexShrink:0 }}>
+        {/* Fandom heart icon */}
+        <div style={{ width:52, height:52, display:"flex", alignItems:"center", justifyContent:"center",
+          borderRight:"1px solid rgba(255,255,255,0.08)", flexShrink:0 }}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 16S1 11.5 1 5.5C1 3 3 1 5.5 1 7 1 8.5 1.8 9 3 9.5 1.8 11 1 12.5 1 15 1 17 3 17 5.5 17 11.5 9 16 9 16Z" fill="#00D6D6"/>
+          </svg>
+        </div>
+        {/* Site logo/name */}
+        <div onClick={()=>setPage("arena")} style={{ display:"flex", alignItems:"center",
+          gap:8, cursor:"pointer", padding:"0 16px", height:"100%",
+          borderRight:"1px solid rgba(255,255,255,0.08)" }}>
+          <span style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:16, fontWeight:400,
+            color:"#fff", whiteSpace:"nowrap", letterSpacing:"0.04em" }}>ARENA BATTLES</span>
+        </div>
       </div>
 
-      {/* Nav links — centered */}
-      <div style={{ flex:1, display:"flex", justifyContent:"center", gap:44 }}>
+      {/* Center: Nav links — VS Battles style tabs */}
+      <div style={{ flex:1, display:"flex", alignItems:"stretch" }}>
         {links.map(l=>{
           const active = page===l.key;
           return (
             <button key={l.key} onClick={()=>setPage(l.key)}
-              style={{ fontFamily:"'Zen Dots',sans-serif", fontSize:16, fontWeight:400,
-                lineHeight:"19px", background:"none", border:"none", cursor:"pointer",
-                color: active ? "#fff" : "#DAD9D9",
-                borderBottom: active ? "2px solid #FF003C" : "2px solid transparent",
-                paddingBottom:4, paddingTop:22, transition:"color 0.2s" }}>
+              style={{ fontFamily:"'Rubik',sans-serif", fontSize:13, fontWeight:500,
+                letterSpacing:"0.04em", textTransform:"uppercase",
+                background:"none", border:"none", cursor:"pointer",
+                color: active ? "#fff" : "rgba(255,255,255,0.6)",
+                borderBottom: active ? "3px solid #FF003C" : "3px solid transparent",
+                borderTop: "3px solid transparent",
+                padding:"0 20px", transition:"color 0.15s, border-color 0.15s",
+                whiteSpace:"nowrap" }}>
               {l.label}
             </button>
           );
         })}
       </div>
 
-      <div style={{ width:80 }} />
+      {/* Right: placeholder for future search/sign in */}
+      <div style={{ width:52, borderLeft:"1px solid rgba(255,255,255,0.08)", display:"flex",
+        alignItems:"center", justifyContent:"center" }}>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="6.5" cy="6.5" r="5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
+          <path d="M10.5 10.5L14 14" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </div>
     </nav>
   );
 }
@@ -534,11 +555,14 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
           display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
           gap:6, position:"relative", aspectRatio:"1/1.1", overflow:"hidden",
           transition:"border-color 0.15s, box-shadow 0.15s" }}
-        onMouseEnter={e=>{ e.currentTarget.style.borderColor="#fff"; e.currentTarget.style.boxShadow="0 4px 20px #fff8"; }}
+        onMouseEnter={e=>{ e.currentTarget.style.borderColor="#FF003C"; e.currentTarget.style.boxShadow="0 4px 20px #FF003C88"; }}
         onMouseLeave={e=>{ e.currentTarget.style.borderColor="transparent"; e.currentTarget.style.boxShadow="none"; }}>
-        <span style={{ fontSize:26 }}>?</span>
-        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, fontWeight:700,
-          color:C.mutedLight, letterSpacing:"0.08em" }}>RANDOM</span>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round">
+          <polyline points="16 3 21 3 21 8"/><polyline points="8 21 3 21 3 16"/>
+          <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:12, fontWeight:400,
+          color:C.mutedLight, letterSpacing:"0.08em", textTransform:"uppercase" }}>RANDOM</span>
       </button>
     );
   }
@@ -549,11 +573,13 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
           display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
           gap:6, position:"relative", aspectRatio:"1/1.1", overflow:"hidden",
           transition:"border-color 0.15s, box-shadow 0.15s" }}
-        onMouseEnter={e=>{ e.currentTarget.style.borderColor="#fff"; e.currentTarget.style.boxShadow="0 4px 20px #fff8"; }}
+        onMouseEnter={e=>{ e.currentTarget.style.borderColor="#4D9ED9"; e.currentTarget.style.boxShadow="0 4px 20px #4D9ED988"; }}
         onMouseLeave={e=>{ e.currentTarget.style.borderColor="transparent"; e.currentTarget.style.boxShadow="none"; }}>
-        <span style={{ fontSize:22 }}>🔍</span>
-        <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10, fontWeight:700,
-          color:C.mutedLight, letterSpacing:"0.08em" }}>FIND FIGHTER</span>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span style={{ fontFamily:"'Teko',sans-serif", fontSize:12, fontWeight:400,
+          color:C.mutedLight, letterSpacing:"0.08em", textTransform:"uppercase" }}>FIND</span>
       </button>
     );
   }
@@ -574,9 +600,10 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
     : hovered ? hoverBorder
     : "transparent";
 
-  const boxShadow = isSelAlpha ? `0 4px 20px ${C.alpha}`
-    : isSelBravo ? `0 4px 20px ${C.bravo}`
-    : hovered ? "0 4px 20px #ffffff"
+  const hoverGlow = activeSide==="alpha" ? `0 0 16px ${C.alpha}88` : `0 0 16px ${C.bravo}88`;
+  const boxShadow = isSelAlpha ? `0 0 20px ${C.alpha}, 0 0 40px ${C.alpha}55`
+    : isSelBravo ? `0 0 20px ${C.bravo}, 0 0 40px ${C.bravo}55`
+    : hovered ? hoverGlow
     : "none";
 
   return (
@@ -608,17 +635,12 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
               color:"rgba(255,255,255,0.4)" }}>{r.abbr}</span>
           </div>
         )}
-        {/* Franchise tag — overlaid on image bottom-left */}
-        <div style={{ position:"absolute", bottom:0, left:0, zIndex:3,
-          background:"#4D4D4C", padding:"2px 6px" }}>
-          <span style={{ fontFamily:"'Inter',sans-serif", fontSize:8, fontWeight:600,
-            color:"#fff", letterSpacing:"0.06em" }}>{r.franchise||""}</span>
-        </div>
+
       </div>
 
       {/* Name area below image */}
       <div style={{ padding:"4px 6px 5px", background:"#000" }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13, fontWeight:700,
+        <div style={{ fontFamily:"'Teko',sans-serif", fontSize:20, fontWeight:400,
           textTransform:"uppercase", letterSpacing:"0.02em", color:"#fff", lineHeight:1.1 }}>
           {rosterKey.replace(/_/g," ")}
         </div>
@@ -776,7 +798,7 @@ function ArenaPage() {
               style={sideIndicatorStyle("alpha")}>
               <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
                 textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff", textAlign:"left" }}>
-                <span style={{ marginRight:8, fontSize:16, opacity:0.8 }}>»»</span>TEAM ALPHA
+                <span style={{ marginRight:8, fontSize:16, color: activeSide==="alpha" ? "#FF003C" : "rgba(255,255,255,0.4)" }}>»»</span>TEAM ALPHA
               </span>
               {activeSide==="alpha" && (
                 <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
@@ -784,16 +806,16 @@ function ArenaPage() {
               )}
             </div>
           </div>
-          <div style={{ textAlign:"right" }}>
+          <div style={{ textAlign:"center" }}>
             <div onClick={()=>{ setActiveSide("bravo"); }}
-              style={{ ...sideIndicatorStyle("bravo"), justifyContent:"flex-end" }}>
+              style={{ ...sideIndicatorStyle("bravo"), justifyContent:"center" }}>
               {activeSide==="bravo" && (
                 <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
                   color:C.bravoBorder, letterSpacing:"0.1em" }}>SELECTING →</span>
               )}
               <span style={{ fontFamily:"'Teko',sans-serif", fontSize:40, fontWeight:400, fontStyle:"normal",
                 textTransform:"uppercase", letterSpacing:"0.06em", color:"#fff" }}>
-                TEAM BRAVO<span style={{ marginLeft:8, fontSize:16, opacity:0.8 }}>«««</span>
+                TEAM BRAVO<span style={{ marginLeft:8, fontSize:16, color: activeSide==="bravo" ? "#4D9ED9" : "rgba(255,255,255,0.4)" }}>«««</span>
               </span>
             </div>
           </div>
@@ -1565,8 +1587,8 @@ function RankingsPage() {
   const podiumOrder = [PODIUM[1], PODIUM[0], PODIUM[2]]; // 2nd, 1st, 3rd
   const podiumColors = {
     0: { accent:"#BE0729", tag:"RUNNER UP",  tagBg:"#BE0729",  numColor:"#fff",    barFill:"#BE0729",  winColor:"#FF8589" },
-    1: { accent:"#C8A84B", tag:"CHAMPION",   tagBg:"#F0C040",  numColor:"#fff",    barFill:"#C8A84B",  winColor:"#C8A84B" },
-    2: { accent:"#38B2D8", tag:"CONTENDER",  tagBg:"#38B2D8",  numColor:"#fff",    barFill:"#38B2D8",  winColor:"#38B2D8" },
+    1: { accent:"#C8A84B", tag:"CHAMPION",   tagBg:"#F0C040",  numColor:"#fff",    barFill:"#F0C040",  winColor:"#F0C040" },
+    2: { accent:"#8B8B8A", tag:"CONTENDER",  tagBg:"#8B8B8A",  numColor:"#fff",    barFill:"#8B8B8A",  winColor:"#8B8B8A" },
   };
 
   return (
@@ -1589,15 +1611,21 @@ function RankingsPage() {
             <span style={{ fontFamily:"'Inter',sans-serif", fontSize:16, color:"#fff", letterSpacing:"0.18px" }}>
               SEASON_04: REVENANT_STRIKE
             </span>
-            <div style={{ width:9, height:9, background:"#FF0030", borderRadius:"50%" }} />
-            <span style={{ fontFamily:"'Inter',sans-serif", fontSize:16, color:"#fff", letterSpacing:"0.18px" }}>
-              LIVE DATA FEED
-            </span>
+            <button style={{ display:"flex", alignItems:"center", gap:8,
+              background:"transparent", border:"1px solid #FF0030", borderRadius:2,
+              padding:"4px 12px", cursor:"default",
+              animation:"livePulse 2.5s ease-in-out infinite" }}>
+              <div style={{ width:7, height:7, background:"#FF0030", borderRadius:"50%" }} />
+              <span style={{ fontFamily:"'Inter',sans-serif", fontSize:12, fontWeight:700,
+                color:"#FF0030", letterSpacing:"0.12em", textTransform:"uppercase" }}>
+                LIVE DATA FEED
+              </span>
+            </button>
           </div>
         </header>
 
         {/* Podium */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:0, marginBottom:48, alignItems:"end" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:30, marginBottom:48, alignItems:"end" }}>
           {podiumOrder.map((p, idx) => {
             const pc = podiumColors[idx];
             const isFirst = idx === 1;
@@ -1665,14 +1693,15 @@ function RankingsPage() {
         </div>
 
         {/* Table */}
-        <div style={{ overflowX:"auto" }}>
+        <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch", msOverflowStyle:"none", scrollbarWidth:"none" }}
+          onTouchStart={e=>e.stopPropagation()}>
           <table style={{ width:"100%", borderCollapse:"collapse", textAlign:"left" }}>
             <thead>
               <tr style={{ background:"#1E1F25" }}>
-                {["RANK","FIGHTER","TOTAL STATS","1V1 RECORD","TEAM RECORD","RATING"].map((h,i)=>(
+                {["RANK","FIGHTER","TOTAL STATS","RECORD","WIN %"].map((h,i)=>(
                   <th key={h} style={{ padding:"13px 20px", fontFamily:"'Inter',sans-serif",
                     fontSize:12, fontWeight:900, textTransform:"uppercase", letterSpacing:"2px",
-                    color:"#fff", textAlign:i===5?"right":"left" }}>{h}</th>
+                    color:"#fff", textAlign:i===4?"right":"left" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -1696,11 +1725,11 @@ function RankingsPage() {
                     <td style={{ padding:"0 20px" }}>
                       <div style={{ display:"flex", alignItems:"center", gap:14 }}>
                         <div style={{ width:44, height:44, overflow:"hidden", flexShrink:0,
-                          background:"#fff", mixBlendMode:"saturation" }}>
+                          borderRadius:2, border:"1px solid rgba(255,255,255,0.1)" }}>
                           {rr.img
-                            ? <img src={rr.img} alt={r.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top", filter:"grayscale(1)" }} />
+                            ? <img src={rr.img} alt={r.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"top" }} />
                             : <div style={{ width:"100%", height:"100%", background:rr.color||"#333", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:900, color:"#fff", filter:"grayscale(1)" }}>{rr.abbr}</span>
+                                <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:900, color:"#fff" }}>{rr.abbr}</span>
                               </div>
                           }
                         </div>
@@ -1732,13 +1761,7 @@ function RankingsPage() {
                         letterSpacing:"0.18px", color:"#fff" }}>{r.oneV}</span>
                     </td>
 
-                    {/* Team record */}
-                    <td style={{ padding:"26px 20px" }}>
-                      <span style={{ fontFamily:"'Manrope',sans-serif", fontSize:13, fontWeight:700,
-                        letterSpacing:"0.18px", color:r.barColor }}>{r.team}</span>
-                    </td>
-
-                    {/* Rating */}
+                    {/* Win % */
                     <td style={{ padding:"26px 20px", textAlign:"right" }}>
                       <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:18, fontWeight:700,
                         letterSpacing:"0.18px", color:"#fff" }}>{r.rating}%</span>
@@ -1784,6 +1807,8 @@ export default function App() {
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #111; }
         ::-webkit-scrollbar-thumb { background: #333; }
+        @keyframes livePulse { 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+        .rankings-scroll::-webkit-scrollbar { display:none; }
       `}</style>
       <NavBar page={page} setPage={setPage} />
       {page==="arena"    && <ArenaPage />}
