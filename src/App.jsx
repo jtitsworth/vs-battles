@@ -1037,9 +1037,8 @@ function outcomeLabel(ot) {
 
 
 function BattleResults({ alpha1v1, bravo1v1 }) {
-  const battle = computeBattle1v1(alpha1v1, bravo1v1);
-  const alphaName = alpha1v1.replace(/_/g," ");
-  const bravoName = bravo1v1.replace(/_/g," ");
+  const alphaName = alpha1v1.replace(/_/g, " ");
+  const bravoName = bravo1v1.replace(/_/g, " ");
 
   const [outcome, setOutcome] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1053,132 +1052,129 @@ function BattleResults({ alpha1v1, bravo1v1 }) {
     });
   }, [alpha1v1, bravo1v1]);
 
-  const winner       = outcome?.w || battle.projection.winner.replace(" WINS","").trim();
-  const loser        = outcome?.l || (winner === alphaName ? bravoName : alphaName);
-  const ot           = outcome?.ot || "competitive";
-  const roundsWonA   = outcome?.ra ?? 2;
-  const roundsWonB   = outcome?.rb ?? 2;
-  const narrative    = outcome?.n || battle.projection.reason;
-  const wFranchise   = outcome?.wf || "";
-  const isAlphaWins  = winner.toLowerCase() === alphaName.toLowerCase();
-
-  const ROUND_NAMES  = ["OPENING EXCHANGE","SPEED CLASH","TACTICAL ESCALATION","FINAL CLASH"];
-  const displayRounds = ROUND_NAMES.map((title, i) => {
-    const base = battle.rounds[i] || {};
-    const aWins = outcome?.ra ?? 2;
-    const roundWinTeam = i < aWins ? "alpha" : "bravo";
-    return { ...base, title, winTeam: roundWinTeam, winner: roundWinTeam === "alpha" ? alphaName : bravoName };
-  });
+  const winner      = outcome?.w || alphaName;
+  const ot          = outcome?.ot || "competitive";
+  const narrative   = outcome?.n  || "";
+  const wFranchise  = outcome?.wf || "";
+  const isAlphaWins = winner.toLowerCase() === alphaName.toLowerCase();
+  const winColor    = isAlphaWins ? C.alphaBorder : C.bravoBorder;
 
   return (
-    <div>
-      {/* Win probability banner */}
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", marginBottom:3 }}>
-        <div style={{ background: isAlphaWins ? C.alpha : C.alphaDim, padding:"12px 20px",
-          borderBottom: isAlphaWins ? "3px solid #ffe792" : "3px solid transparent" }}>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
-            textTransform:"uppercase", letterSpacing:"0.12em", color:"rgba(255,255,255,0.7)", marginBottom:2 }}>
-            {alphaName} — WIN PROBABILITY
+    <div style={{ marginTop: 32 }}>
+
+      {/* Winner banner */}
+      <div style={{
+        display: "grid", gridTemplateColumns: "1fr 1fr", marginBottom: 24
+      }}>
+        <div style={{
+          background: isAlphaWins ? C.alpha : C.alphaDim,
+          padding: "14px 20px",
+          borderBottom: isAlphaWins ? "3px solid #ffe792" : "3px solid transparent"
+        }}>
+          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, fontWeight: 700,
+            textTransform: "uppercase", letterSpacing: "0.12em",
+            color: "rgba(255,255,255,0.65)", marginBottom: 4 }}>
+            TEAM ALPHA
           </div>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
-            {battle.alphaProb}
+          <div style={{ fontFamily: "'Teko',sans-serif", fontSize: 22, fontWeight: 600,
+            color: "#fff", letterSpacing: "0.02em", textTransform: "uppercase" }}>
+            {alphaName}
           </div>
-          {isAlphaWins && <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"#ffe792", marginTop:2 }}>✦ PREDICTED WINNER</div>}
+          {isAlphaWins && (
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11,
+              color: "#ffe792", marginTop: 4, letterSpacing: "0.1em" }}>✦ PREDICTED WINNER</div>
+          )}
         </div>
-        <div style={{ background: !isAlphaWins ? C.bravo : C.bravoDim, padding:"12px 20px", textAlign:"right",
-          borderBottom: !isAlphaWins ? "3px solid #ffe792" : "3px solid transparent" }}>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
-            textTransform:"uppercase", letterSpacing:"0.12em", color:"rgba(255,255,255,0.7)", marginBottom:2 }}>
-            {bravoName} — WIN PROBABILITY
+        <div style={{
+          background: !isAlphaWins ? C.bravo : C.bravoDim,
+          padding: "14px 20px", textAlign: "right",
+          borderBottom: !isAlphaWins ? "3px solid #ffe792" : "3px solid transparent"
+        }}>
+          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, fontWeight: 700,
+            textTransform: "uppercase", letterSpacing: "0.12em",
+            color: "rgba(255,255,255,0.65)", marginBottom: 4 }}>
+            TEAM BRAVO
           </div>
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
-            {battle.bravoProb}
+          <div style={{ fontFamily: "'Teko',sans-serif", fontSize: 22, fontWeight: 600,
+            color: "#fff", letterSpacing: "0.02em", textTransform: "uppercase" }}>
+            {bravoName}
           </div>
-          {!isAlphaWins && <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"#ffe792", marginTop:2, textAlign:"right" }}>✦ PREDICTED WINNER</div>}
+          {!isAlphaWins && (
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11,
+              color: "#ffe792", marginTop: 4, letterSpacing: "0.1em", textAlign: "right" }}>
+              ✦ PREDICTED WINNER
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Stat bars */}
-      <section style={{ background:C.surf, padding:28, marginBottom:16, borderLeft:"3px solid #ffe792" }}>
-        <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:18, fontWeight:900,
-          textTransform:"uppercase", letterSpacing:"0.08em", margin:"0 0 20px", color:"#ffe792" }}>
-          AGGREGATE STATS
-        </h3>
-        {battle.stats.map(s=>(<StatBar key={s.label} {...s} />))}
-      </section>
-
-      {/* Rounds */}
-      <section style={{ marginBottom:32 }}>
-        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:10 }}>
-          <h3 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, fontWeight:700,
-            textTransform:"uppercase", letterSpacing:"0.12em", color:C.muted, margin:0 }}>
-            ROUND BY ROUND
-          </h3>
-          {!loading && outcome && (
-            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
-              color:"#ffe792", letterSpacing:"0.1em", background:"#ffe79222", padding:"2px 8px" }}>
-              ✦ {outcomeLabel(ot)}
-            </span>
-          )}
-          {loading && (
-            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:C.muted, letterSpacing:"0.08em" }}>
-              LOADING...
-            </span>
-          )}
+      {/* Outcome badge */}
+      {!loading && outcome && (
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
+          <span style={{
+            fontFamily: "'Barlow Condensed',sans-serif", fontSize: 12, fontWeight: 700,
+            textTransform: "uppercase", letterSpacing: "0.14em",
+            color: "#ffe792", background: "#ffe79218",
+            border: "1px solid #ffe79244", padding: "4px 16px", borderRadius: 2
+          }}>
+            ✦ {outcomeLabel(ot)}
+          </span>
         </div>
-        <style>{"@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}"}</style>
-        {displayRounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
-      </section>
+      )}
 
-      {/* Projection */}
-      <div style={{ textAlign:"center", padding:"32px 0" }}>
-        <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
-          letterSpacing:"0.2em", color:C.muted, textTransform:"uppercase", marginBottom:12 }}>
-          BATTLE ANALYSIS
-        </div>
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.mutedLight, fontSize:15,
-          maxWidth:680, margin:"0 auto 28px", lineHeight:1.7, fontStyle:"italic" }}>
-          {loading ? "Analyzing matchup..." : narrative}
-        </p>
-        {!loading && (
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:24, marginBottom:28 }}>
-            <div style={{ textAlign:"center" }}>
-              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:52, fontWeight:700,
-                color: isAlphaWins ? "#ffe792" : C.mutedLight, lineHeight:1 }}>{roundsWonA}</div>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:C.muted, textTransform:"uppercase" }}>{alphaName}</div>
-            </div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:22, color:C.muted, fontWeight:700 }}>—</div>
-            <div style={{ textAlign:"center" }}>
-              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:52, fontWeight:700,
-                color: !isAlphaWins ? "#ffe792" : C.mutedLight, lineHeight:1 }}>{roundsWonB}</div>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:C.muted, textTransform:"uppercase" }}>{bravoName}</div>
-            </div>
+      {/* Narrative */}
+      <div style={{
+        background: C.surf, borderLeft: `3px solid ${winColor}`,
+        padding: "28px 32px", marginBottom: 32
+      }}>
+        {loading ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.alphaBorder,
+              animation: "pulse 1s infinite" }} />
+            <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 14,
+              color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              LOADING OUTCOME...
+            </span>
           </div>
+        ) : (
+          <p style={{
+            fontFamily: "'Barlow Condensed',sans-serif", fontSize: 17, lineHeight: 1.8,
+            color: C.onSurface, margin: 0, letterSpacing: "0.01em"
+          }}>
+            {narrative || "No narrative available for this matchup."}
+          </p>
         )}
-        {!loading && (
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
-            fontSize:"clamp(40px,8vw,80px)", fontWeight:900, color:"#ffe792",
-            lineHeight:1, textTransform:"uppercase", animation:"fadeIn 0.5s ease-out" }}>
+      </div>
+
+      {/* Winner reveal */}
+      {!loading && (
+        <div style={{ textAlign: "center", padding: "12px 0 40px" }}>
+          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, fontWeight: 700,
+            letterSpacing: "0.2em", color: C.muted, textTransform: "uppercase", marginBottom: 16 }}>
+            BATTLE OUTCOME
+          </div>
+          <div style={{
+            fontFamily: "'Teko',sans-serif",
+            fontSize: "clamp(44px,9vw,80px)", fontWeight: 700,
+            color: "#ffe792", lineHeight: 1, textTransform: "uppercase",
+            animation: "fadeIn 0.5s ease-out", letterSpacing: "0.02em"
+          }}>
             {winner} WINS
           </div>
-        )}
-        {!loading && wFranchise && (
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13,
-            color:C.muted, letterSpacing:"0.1em", marginTop:8, textTransform:"uppercase" }}>
-            {wFranchise}
-          </div>
-        )}
-        {loading && (
-          <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:16,
-            color:C.muted, letterSpacing:"0.2em", textTransform:"uppercase", animation:"pulse 1.2s infinite" }}>
-            CALCULATING OUTCOME...
-          </div>
-        )}
-        <style>{"@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}"}</style>
-      </div>
+          {wFranchise && (
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 13,
+              color: C.muted, letterSpacing: "0.1em", marginTop: 10, textTransform: "uppercase" }}>
+              {wFranchise}
+            </div>
+          )}
+        </div>
+      )}
+
+      <style>{"@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}} @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}"}</style>
     </div>
   );
 }
+
 
 
 function StatBar({ label, alphaVal, bravoVal, alpha, bravo, winner }) {
