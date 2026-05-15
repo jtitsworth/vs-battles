@@ -85,7 +85,6 @@ const ROSTER = {
   IVY:          { img: "/Ivy.png",                franchise: "SOULCALIBUR", abbr: "IV", color: "#1a0a1a", wiki: "soulcalibur",   page: "Ivy_Valentine" },
   LEX_LUTHOR:   { img: "/Lex Luthor.png",         franchise: "DC",          abbr: "LL", color: "#1a1a00", wiki: "dc",            page: "Lex_Luthor" },
   VENOM:        { img: "/Venom.png",              franchise: "MARVEL",      abbr: "VN", color: "#0a1a0a", wiki: "marvel",        page: "Venom" },
-,
   // ── VS Battles fighters (auto-generated) ──
   PRINCESS_PEACH: { img:null, franchise:"VS Battles", abbr:"PR", color:"#1a1a2a", wiki:"vsbattles", page:"Princess_Peach", displayName:"Princess Peach" },
   OBANAI_IGURO: { img:null, franchise:"VS Battles", abbr:"OB", color:"#1a1a2a", wiki:"vsbattles", page:"Obanai_Iguro", displayName:"Obanai Iguro" },
