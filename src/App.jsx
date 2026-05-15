@@ -742,7 +742,7 @@ function ArenaPage() {
   function handleFindSelect(name) {
     const key = name.toUpperCase().replace(/[\s().,']/g,"_").replace(/_+/g,"_").replace(/_+$/g,"");
     if (!ROSTER[key]) {
-      ROSTER[key] = { img:null, franchise:"CUSTOM", abbr:name.slice(0,2).toUpperCase(), color:"#2a0a2a", wiki:null, page:null };
+      ROSTER[key] = { img:null, franchise:"CUSTOM", abbr:name.slice(0,2).toUpperCase(), color:"#2a0a2a", wiki:null, page:null, displayName:name };
     }
     if (modalSide === "alpha") setAlpha1v1(key);
     else setBravo1v1(key);
@@ -1017,19 +1017,36 @@ Rules:
 let OUTCOMES_DB = null;
 let OUTCOMES_LOADING = false;
 let OUTCOMES_CBS = [];
+let OUTCOMES_INDEX = {}; // lowercase key -> original key
 function loadOutcomesDB() {
   if (OUTCOMES_DB) return Promise.resolve(OUTCOMES_DB);
   if (OUTCOMES_LOADING) return new Promise(r => OUTCOMES_CBS.push(r));
   OUTCOMES_LOADING = true;
   return fetch("/arena_narratives_lookup.json")
     .then(r => r.json())
-    .then(data => { OUTCOMES_DB = data; OUTCOMES_LOADING = false; OUTCOMES_CBS.forEach(cb=>cb(data)); OUTCOMES_CBS=[]; return data; })
+    .then(data => {
+      OUTCOMES_DB = data;
+      // Build lowercase index for case-insensitive lookup
+      OUTCOMES_INDEX = {};
+      Object.keys(data).forEach(k => { OUTCOMES_INDEX[k.toLowerCase()] = k; });
+      OUTCOMES_LOADING = false;
+      OUTCOMES_CBS.forEach(cb=>cb(data));
+      OUTCOMES_CBS=[];
+      return data;
+    })
     .catch(() => { OUTCOMES_DB = {}; OUTCOMES_LOADING = false; return {}; });
 }
 loadOutcomesDB();
 function lookupOutcome(a, b) {
   if (!OUTCOMES_DB) return null;
-  return OUTCOMES_DB[`${a}__vs__${b}`] || OUTCOMES_DB[`${b}__vs__${a}`] || null;
+  // Try exact match first
+  const exact = OUTCOMES_DB[`${a}__vs__${b}`] || OUTCOMES_DB[`${b}__vs__${a}`];
+  if (exact) return exact;
+  // Case-insensitive fallback
+  const k1 = `${a}__vs__${b}`.toLowerCase();
+  const k2 = `${b}__vs__${a}`.toLowerCase();
+  const origKey = OUTCOMES_INDEX[k1] || OUTCOMES_INDEX[k2];
+  return origKey ? OUTCOMES_DB[origKey] : null;
 }
 function outcomeLabel(ot) {
   return ot==="stomp"?"DECISIVE STOMP":ot==="decisive"?"CLEAR VICTORY":ot==="competitive"?"COMPETITIVE BATTLE":ot==="close"?"RAZOR CLOSE":"BATTLE COMPLETE";
@@ -1037,8 +1054,9 @@ function outcomeLabel(ot) {
 
 
 function BattleResults({ alpha1v1, bravo1v1 }) {
-  const alphaName = alpha1v1.replace(/_/g, " ");
-  const bravoName = bravo1v1.replace(/_/g, " ");
+  // Use stored displayName if available (preserves original casing + parentheses)
+  const alphaName = ROSTER[alpha1v1]?.displayName || alpha1v1.replace(/_/g, " ");
+  const bravoName = ROSTER[bravo1v1]?.displayName || bravo1v1.replace(/_/g, " ");
 
   const [outcome, setOutcome] = useState(null);
   const [loading, setLoading] = useState(true);
