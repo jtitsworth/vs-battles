@@ -430,7 +430,6 @@ function useFandomImg(rosterKey) {
 function NavBar({ page, setPage }) {
   const links = [
     { key:"arena",    label:"ARENA" },
-    { key:"recent",   label:"RECENT BATTLES" },
     { key:"rankings", label:"RANKINGS" },
   ];
   return (
@@ -657,51 +656,52 @@ function GridCard({ rosterKey, onSelect, selectedAlpha, selectedBravo, activeSid
 }
 
 /* ─────────────────────────────────────────────
-   SUMMON FIGHTER MODAL
+   FIND FIGHTER MODAL
 ───────────────────────────────────────────── */
-function SummonModal({ onClose, onAdd }) {
+const ALL_FIGHTERS_ALPHA = ["Agumon (Adventure)","Ainz Ooal Gown","Akaza","All Might (Prime)","Alphonse Elric (Brotherhood)","Anos Voldigoad","Angewomon","Ant-Man (Marvel Comics)","Aquaman (Post-Crisis)","Arceus","Ash Ketchum","Asta (Devil Union)","Bandana Waddle Dee","Batman (Post-Crisis)","Battler Ushiromiya (Territory Lord)","Bernkastel","Black Panther (Marvel Comics)","Black Widow (Marvel Comics)","Blacephalon","Bowser","Byakuya Kuchiki","Captain America (Marvel Comics)","Clea (Marvel Comics)","Cloud Strife","Cyborg (Post-Crisis)","Dagoth Ur","Dante (Devil May Cry)","Deadpool (Marvel Comics)","Deku (War Arc)","Discord (My Little Pony)","Doctor Strange (Marvel Comics)","Edward Elric (Brotherhood)","Endeavor (Peak)","Envy (Fullmetal Alchemist)","Father (Fullmetal Alchemist)","Featherine Augustus Aurora","Gaara (Kage Summit)","Galactus (Marvel Comics)","Ganondorf (Tears of the Kingdom)","Gengar","Giorno Giovanna (GER)","Gojo Satoru","Gojo Satoru (Unlimited Void)","Gon Freecss (Adult)","Gorr the God Butcher (Marvel Comics)","Greed (Fullmetal Alchemist)","Green Lantern (Hal Jordan)","Griffith (Femto)","GUNTHER (WWE)","Guts (Berserker Armor)","Hashirama Senju","Hawks (My Hero Academia)","Hiei (Jaganshi)","Hisoka Morow","Homura Akemi (Goddess)","Hulk (Marvel Comics)","Ichigo Kurosaki (Final Getsuga Tensho)","Ichigo Kurosaki (True Bankai)","Iron Man (Marvel Comics)","Isshiki Otsutsuki","Itachi Uchiha","Izuku Midoriya (100% OFA)","Jiraiya","Julius Novachrono","Kaguya Otsutsuki","Kakashi Hatake (Six Paths)","Kefka Palazzo","Kenpachi Zaraki (Bankai)","Killua Zoldyck (Godspeed)","King Dedede","Kirby","Kisuke Urahara","Kratos (God of War 2018)","Kurama (Nine-Tails)","Lambda Delta","Levi Ackerman","Light Yagami","Link (Breath of the Wild)","Madara Uchiha (Rinne-Sharingan)","Madoka Kaname (Goddess)","Mario (Main Series)","Martian Manhunter (Post-Crisis)","Marx (True Form)","Master Chief","Megumi Fushiguro (Ten Shadows)","Meguru Bachira","Meruem","Meta Knight","Mewtwo","Might Guy (8 Gates)","Minato Namikaze","Monkey D. Luffy","Nanami Kento","Naruto Uzumaki (Kaguya Arc, Base)","Naruto Uzumaki (The Last)","Neferpitou","Nero (Devil May Cry 5)","Nobara Kugisaki","Noctis Lucis Caelum","Nosferatu Zodd","Obito Uchiha (Ten Tails)","Obanai Iguro","Omnimon","Orochimaru","Overhaul (Kai Chisaki)","Pain (Nagato)","Pikachu","Princess Peach","Pride (Fullmetal Alchemist)","Rades Spirito","Rangiku Matsumoto","Rayquaza (Pokemon)","Rimuru Tempest (Slime)","Riza Hawkeye","Rock Lee (8 Gates)","Roronoa Zoro (Post-Timeskip)","Rosalina (Mario)","Roy Mustang","Rukia Kuchiki (Bankai)","Ryuk","Saitama","Samus Aran","Sasuke Uchiha (Kaguya Arc)","Scarlet Witch (Marvel Comics)","Sephiroth","Shadow the Hedgehog (Archie Comics)","Shazam (New Earth)","Shigaraki Tomura (Awakened)","Shuma-Gorath","Silver Surfer (Marvel Comics)","Skull Knight","Son Goku (DBS Manga)","Sonic the Hedgehog (Archie Comics)","Sosuke Aizen","Spider-Man (Marvel Comics)","Sukuna (Jujutsu Kaisen)","Sung Jinwoo","Superman (Post-Crisis)","Tanjiro Kamado (Demon Slayer Mark)","Terra Branford","Thanos (Marvel Comics, with Infinity Gauntlet)","The Flash (Barry Allen, Post-Crisis)","The Living Tribunal","The Thought Robot","The Undertaker","Thor (Marvel Comics)","Tidus","Tobirama Senju","Toge Inumaki","Toguro (100%)","Tsunade","Vegeta (Dragon Ball Super, Manga)","Vergil (Devil May Cry)","Vision (Marvel Comics)","Wargreymon","Wolverine (Marvel Comics)","Wonder Woman (Post-Crisis)","Yhwach","Yami Sukehiro","Yuno (Spade Arc)","Yusuke Urameshi (Demon Form)","Yuta Okkotsu","Zelda (Tears of the Kingdom)"].sort((a,b)=>a.localeCompare(b));
+
+function FindFighterModal({ onClose, onSelect, side }) {
   const [query, setQuery] = useState("");
+  const inputRef = useRef(null);
+  useEffect(() => { setTimeout(() => inputRef.current?.focus(), 60); }, []);
+  const filtered = query.trim() ? ALL_FIGHTERS_ALPHA.filter(n => n.toLowerCase().includes(query.toLowerCase())) : ALL_FIGHTERS_ALPHA;
+  const sc = side === "alpha" ? C.alpha : C.bravo;
+  const sb = side === "alpha" ? C.alphaBorder : C.bravoBorder;
   return (
-    <div style={{ position:"fixed", inset:0, zIndex:200, background:"rgba(0,0,0,0.8)",
-      display:"flex", alignItems:"center", justifyContent:"center" }}
-      onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
-      <div style={{ background:"#1a1a22", border:"1px solid rgba(255,255,255,0.1)",
-        width:"min(480px,90vw)", padding:32, position:"relative" }}>
-        {/* Close */}
-        <button onClick={onClose}
-          style={{ position:"absolute", top:16, right:16, background:"none", border:"none",
-            color:C.mutedLight, fontSize:20, cursor:"pointer", lineHeight:1 }}>✕</button>
-
-        <h2 style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:22, fontWeight:900,
-          textTransform:"uppercase", letterSpacing:"0.06em", color:C.onSurface, margin:"0 0 10px" }}>
-          SUMMON NEW FIGHTER
-        </h2>
-        <p style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:14, color:C.mutedLight,
-          margin:"0 0 24px", lineHeight:1.5 }}>
-          Enter the name of any character to summon them into the VS Battle.
-        </p>
-
-        {/* Search input */}
-        <div style={{ display:"flex", alignItems:"center", gap:10,
-          background:C.surfHigh, border:"1px solid rgba(255,255,255,0.12)", padding:"10px 14px", marginBottom:16 }}>
-          <span style={{ color:C.muted, fontSize:16 }}>🔍</span>
-          <input value={query} onChange={e=>setQuery(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&query.trim()&&onAdd(query.trim())}
-            placeholder="Enter a character...."
-            style={{ flex:1, background:"none", border:"none", outline:"none",
-              fontFamily:"'Barlow Condensed',sans-serif", fontSize:15, color:C.onSurface,
-              letterSpacing:"0.02em" }} autoFocus />
+    <div style={{position:"fixed",inset:0,zIndex:200,background:"rgba(0,0,0,0.88)",display:"flex",alignItems:"center",justifyContent:"center"}}
+      onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div style={{background:"#13131c",border:`1px solid ${sb}55`,width:"min(520px,92vw)",maxHeight:"78vh",display:"flex",flexDirection:"column",borderRadius:2}}>
+        <div style={{padding:"20px 24px 14px",borderBottom:"1px solid rgba(255,255,255,0.07)",flexShrink:0}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+            <div>
+              <span style={{fontFamily:"'Teko',sans-serif",fontSize:22,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em",color:C.onSurface}}>SELECT FIGHTER</span>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,color:sc,letterSpacing:"0.12em",marginLeft:10,textTransform:"uppercase"}}>TEAM {side.toUpperCase()}</span>
+            </div>
+            <button onClick={onClose} style={{background:"none",border:"none",color:C.mutedLight,fontSize:20,cursor:"pointer",padding:4}}>✕</button>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10,background:C.surfHigh,border:`1px solid ${sb}55`,padding:"9px 14px",borderRadius:2}}>
+            <span style={{color:C.muted,fontSize:14}}>🔍</span>
+            <input ref={inputRef} value={query} onChange={e=>setQuery(e.target.value)}
+              placeholder={`Search ${ALL_FIGHTERS_ALPHA.length} fighters...`}
+              style={{flex:1,background:"none",border:"none",outline:"none",fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,color:C.onSurface}} />
+            {query && <button onClick={()=>setQuery("")} style={{background:"none",border:"none",color:C.muted,cursor:"pointer",fontSize:13,padding:0}}>✕</button>}
+          </div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,color:C.muted,marginTop:7}}>{filtered.length} fighters — alphabetical</div>
         </div>
-
-        <button onClick={()=>query.trim()&&onAdd(query.trim())}
-          style={{ width:"100%", background:C.alpha, border:"none", cursor:"pointer",
-            padding:"14px 0", fontFamily:"'Barlow Condensed',sans-serif", fontSize:15, fontWeight:900,
-            textTransform:"uppercase", letterSpacing:"0.1em", color:"#fff",
-            transition:"background 0.15s" }}
-          onMouseEnter={e=>e.currentTarget.style.background=C.alphaDim}
-          onMouseLeave={e=>e.currentTarget.style.background=C.alpha}>
-          ADD TO BATTLE
-        </button>
+        <div style={{overflowY:"auto",flex:1}}>
+          {filtered.length===0
+            ? <div style={{padding:"36px 24px",textAlign:"center",fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,color:C.muted}}>No fighters match "{query}"</div>
+            : filtered.map((name,i)=>(
+              <button key={name} onClick={()=>{onSelect(name);onClose();}}
+                style={{width:"100%",background:"none",border:"none",cursor:"pointer",padding:"10px 24px",textAlign:"left",display:"flex",alignItems:"center",gap:12,borderBottom:i<filtered.length-1?"1px solid rgba(255,255,255,0.04)":"none"}}
+                onMouseEnter={e=>e.currentTarget.style.background=`${sc}18`}
+                onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                <span style={{fontFamily:"'Teko',sans-serif",fontSize:12,color:C.muted,width:26,textAlign:"right",flexShrink:0}}>{i+1}</span>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,color:C.onSurface,fontWeight:500}}>{name}</span>
+              </button>
+            ))
+          }
+        </div>
       </div>
     </div>
   );
@@ -721,10 +721,11 @@ function ArenaPage() {
 
 
   const [showModal, setShowModal] = useState(false);
+  const [modalSide, setModalSide]   = useState("alpha");
   const [battleStarted, setBattle] = useState(false);
 
   function handleGridSelect(key) {
-    if (key === "__FIND__") { setShowModal(true); return; }
+    if (key === "__FIND__") { setModalSide(activeSide); setShowModal(true); return; }
     if (key === "__RANDOM__") {
       const keys = Object.keys(ROSTER);
       const rk1 = keys[Math.floor(Math.random()*keys.length)];
@@ -738,13 +739,14 @@ function ArenaPage() {
     setBattle(false);
   }
 
-  function handleAddFighter(name) {
-    const key = name.toUpperCase().replace(/\s+/g,"_");
+  function handleFindSelect(name) {
+    const key = name.toUpperCase().replace(/[\s().,']/g,"_").replace(/_+/g,"_").replace(/_+$/g,"");
     if (!ROSTER[key]) {
-      ROSTER[key] = { img:null, franchise:"CUSTOM", abbr: name.slice(0,2).toUpperCase(), color:"#2a0a2a", wiki:null, page:null };
+      ROSTER[key] = { img:null, franchise:"CUSTOM", abbr:name.slice(0,2).toUpperCase(), color:"#2a0a2a", wiki:null, page:null };
     }
-    handleGridSelect(key);
-    setShowModal(false);
+    if (modalSide === "alpha") setAlpha1v1(key);
+    else setBravo1v1(key);
+    setBattle(false);
   }
 
   function handleReset() {
@@ -885,159 +887,216 @@ function ArenaPage() {
       </div>
 
       {showModal && (
-        <SummonModal onClose={()=>setShowModal(false)} onAdd={handleAddFighter} />
+        <FindFighterModal onClose={()=>setShowModal(false)} onSelect={handleFindSelect} side={modalSide} />
       )}
     </div>
   );
 }
 
+/* Cache so the same matchup doesn't re-fetch */
+const NARRATIVE_CACHE = {};
+const IMAGE_CACHE = {};
+
+async function fetchBattleImage(winnerName, loserName, winnerFlavor, finalBlow) {
+  const cacheKey = `${winnerName}|${loserName}`;
+  if (IMAGE_CACHE[cacheKey]) return IMAGE_CACHE[cacheKey];
+
+  const prompt = `Epic fantasy battle artwork, cinematic wide shot: ${winnerName} standing triumphant over the defeated ${loserName}. ${winnerName} delivers the final blow — ${finalBlow || "a devastating strike"}. Dynamic action pose, dramatic lighting with red and blue energy, dark arena background with smoke and debris. High detail, painterly style, no text, no watermarks.`;
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-image-2",
+        prompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "medium",
+      }),
+    });
+    const data = await res.json();
+    console.log("[VS-Battles] Image response keys:", Object.keys(data), data.data?.[0] ? Object.keys(data.data[0]) : "no data");
+    // gpt-image-2 returns base64 in b64_json, or a url — handle both
+    const b64 = data.data?.[0]?.b64_json || null;
+    const url = data.data?.[0]?.url || null;
+    if (b64) {
+      const dataUrl = `data:image/png;base64,${b64}`;
+      IMAGE_CACHE[cacheKey] = dataUrl;
+      return dataUrl;
+    }
+    if (url) {
+      // Fetch and convert to base64 so it never expires
+      const imgRes = await fetch(url);
+      const blob = await imgRes.blob();
+      const dataUrl = await new Promise(res => {
+        const r = new FileReader();
+        r.onloadend = () => res(r.result);
+        r.readAsDataURL(blob);
+      });
+      IMAGE_CACHE[cacheKey] = dataUrl;
+      return dataUrl;
+    }
+    console.error("[VS-Battles] No image data in response:", JSON.stringify(data).slice(0,300));
+    return null;
+  } catch(e) {
+    console.error("[VS-Battles] Image gen failed:", e);
+    return null;
+  }
+}
+
+async function fetchBattleNarrative(alphaName, bravoName, alphaStats, bravoStats, winner, tab) {
+  const cacheKey = `${alphaName}|${bravoName}|${tab}`;
+  if (NARRATIVE_CACHE[cacheKey]) return NARRATIVE_CACHE[cacheKey];
+
+  const alphaFlavor = alphaStats.flavor || "";
+  const bravoFlavor = bravoStats.flavor || "";
+  const alphaTitle  = alphaStats.title  || "";
+  const bravoTitle  = bravoStats.title  || "";
+
+  const prompt = `You are the narrator for Arena Battles, a fighting simulation app. Write a dramatic 4-round battle breakdown for ${alphaName} (${alphaTitle} — ${alphaFlavor}) vs ${bravoName} (${bravoTitle} — ${bravoFlavor}) in a ${tab} match. The predicted winner is ${winner}.
+
+Return ONLY a JSON object with this exact shape, no markdown, no extra text:
+{
+  "rounds": [
+    { "title": "ROUND TITLE IN CAPS", "winner": "FIGHTER NAME OR DRAW", "winTeam": "alpha|bravo|draw", "narrative": "2-3 sentence vivid combat description referencing each fighter's specific abilities", "reasoning": "1 sentence tactical explanation" },
+    { "title": "...", "winner": "...", "winTeam": "...", "narrative": "...", "reasoning": "..." },
+    { "title": "...", "winner": "...", "winTeam": "...", "narrative": "...", "reasoning": "..." },
+    { "title": "...", "winner": "...", "winTeam": "...", "narrative": "...", "reasoning": "..." }
+  ],
+  "projection": "2-3 sentence final analysis explaining why ${winner} wins, referencing their key abilities and what tipped the balance."
+}
+
+Rules:
+- Round titles should be dramatic and specific to this matchup (e.g. "ULTRA INSTINCT AWAKENS", "HELLFIRE CHAINS", "DIVINE ARMAMENT")
+- winTeam must be "alpha" if ${alphaName} wins that round, "bravo" if ${bravoName} wins, "draw" if tied
+- winner field should be the fighter's name (or "DRAW")
+- The predicted overall winner (${winner}) should win rounds 3 and 4
+- Make the narrative feel like a real Arena Battles wiki debate come to life`;
+
+  const apiKey = import.meta.env.VITE_OPENAI_KEY;
+  console.log("[VS-Battles] API key present:", !!apiKey, "| length:", apiKey?.length);
+
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        max_completion_tokens: 900,
+        temperature: 0.85,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    console.log("[VS-Battles] API status:", res.status);
+    const data = await res.json();
+    console.log("[VS-Battles] API response:", JSON.stringify(data).slice(0, 200));
+    if (!res.ok) {
+      console.error("[VS-Battles] API error:", data);
+      return null;
+    }
+    const text = data.choices?.[0]?.message?.content || "";
+    console.log("[VS-Battles] Raw narrative:", text.slice(0, 200));
+    const clean = text.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(clean);
+    NARRATIVE_CACHE[cacheKey] = parsed;
+    return parsed;
+  } catch(e) {
+    console.error("[VS-Battles] Narrative fetch failed:", e);
+    return null;
+  }
+}
+
 /* ─────────────────────────────────────────────
    PRE-GENERATED OUTCOMES LOOKUP
-   Loads arena_narratives_lookup.json from /public once on startup
 ───────────────────────────────────────────── */
 let OUTCOMES_DB = null;
 let OUTCOMES_LOADING = false;
-let OUTCOMES_CALLBACKS = [];
-
+let OUTCOMES_CBS = [];
 function loadOutcomesDB() {
   if (OUTCOMES_DB) return Promise.resolve(OUTCOMES_DB);
-  if (OUTCOMES_LOADING) {
-    return new Promise(res => OUTCOMES_CALLBACKS.push(res));
-  }
+  if (OUTCOMES_LOADING) return new Promise(r => OUTCOMES_CBS.push(r));
   OUTCOMES_LOADING = true;
   return fetch("/arena_narratives_lookup.json")
     .then(r => r.json())
-    .then(data => {
-      OUTCOMES_DB = data;
-      OUTCOMES_LOADING = false;
-      OUTCOMES_CALLBACKS.forEach(cb => cb(data));
-      OUTCOMES_CALLBACKS = [];
-      return data;
-    })
-    .catch(err => {
-      console.error("[Arena] Failed to load outcomes DB:", err);
-      OUTCOMES_DB = {};
-      OUTCOMES_LOADING = false;
-      return {};
-    });
+    .then(data => { OUTCOMES_DB = data; OUTCOMES_LOADING = false; OUTCOMES_CBS.forEach(cb=>cb(data)); OUTCOMES_CBS=[]; return data; })
+    .catch(() => { OUTCOMES_DB = {}; OUTCOMES_LOADING = false; return {}; });
 }
-
-// Pre-load on app start
 loadOutcomesDB();
-
-function lookupOutcome(alphaName, bravoName) {
+function lookupOutcome(a, b) {
   if (!OUTCOMES_DB) return null;
-  const key1 = `${alphaName}__vs__${bravoName}`;
-  const key2 = `${bravoName}__vs__${alphaName}`;
-  return OUTCOMES_DB[key1] || OUTCOMES_DB[key2] || null;
+  return OUTCOMES_DB[`${a}__vs__${b}`] || OUTCOMES_DB[`${b}__vs__${a}`] || null;
+}
+function outcomeLabel(ot) {
+  return ot==="stomp"?"DECISIVE STOMP":ot==="decisive"?"CLEAR VICTORY":ot==="competitive"?"COMPETITIVE BATTLE":ot==="close"?"RAZOR CLOSE":"BATTLE COMPLETE";
 }
 
-function getOutcomeLabel(ot) {
-  switch(ot) {
-    case 'stomp':       return 'DECISIVE STOMP';
-    case 'decisive':    return 'CLEAR VICTORY';
-    case 'competitive': return 'COMPETITIVE BATTLE';
-    case 'close':       return 'RAZOR CLOSE';
-    default:            return 'BATTLE COMPLETE';
-  }
-}
 
 function BattleResults({ alpha1v1, bravo1v1 }) {
   const battle = computeBattle1v1(alpha1v1, bravo1v1);
   const alphaName = alpha1v1.replace(/_/g," ");
   const bravoName = bravo1v1.replace(/_/g," ");
 
-  const [outcome, setOutcome]   = useState(null);
-  const [loading, setLoading]   = useState(true);
-  const [dbReady, setDbReady]   = useState(!!OUTCOMES_DB);
+  const [outcome, setOutcome] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     setOutcome(null);
     loadOutcomesDB().then(() => {
-      setDbReady(true);
-      const result = lookupOutcome(alphaName, bravoName);
-      setOutcome(result);
+      setOutcome(lookupOutcome(alphaName, bravoName));
       setLoading(false);
     });
   }, [alpha1v1, bravo1v1]);
 
-  // Determine winner from lookup or fall back to computed
-  const lookupWinner  = outcome?.w || null;
-  const lookupLoser   = outcome?.l || null;
-  const outcomeType   = outcome?.ot || null;
-  const roundsWonA    = outcome?.ra ?? battle.rounds.filter(r=>r.winTeam==="alpha").length;
-  const roundsWonB    = outcome?.rb ?? battle.rounds.filter(r=>r.winTeam==="bravo").length;
-  const narrative     = outcome?.n || battle.projection.reason;
-  const winnerFranchise = outcome?.wf || "";
-  const loserFranchise  = outcome?.lf || "";
+  const winner       = outcome?.w || battle.projection.winner.replace(" WINS","").trim();
+  const loser        = outcome?.l || (winner === alphaName ? bravoName : alphaName);
+  const ot           = outcome?.ot || "competitive";
+  const roundsWonA   = outcome?.ra ?? 2;
+  const roundsWonB   = outcome?.rb ?? 2;
+  const narrative    = outcome?.n || battle.projection.reason;
+  const wFranchise   = outcome?.wf || "";
+  const isAlphaWins  = winner.toLowerCase() === alphaName.toLowerCase();
 
-  const displayWinner = lookupWinner || battle.projection.winner.replace(" WINS","").trim();
-  const isAlphaWinner = displayWinner.toLowerCase() === alphaName.toLowerCase();
-
-  // Win probability from computed stats
-  const alphaProb = battle.alphaProb;
-  const bravoProb = battle.bravoProb;
-
-  // Round display — use computed round titles/stats + lookup round scores
-  const ROUND_NAMES = ["OPENING EXCHANGE", "SPEED CLASH", "TACTICAL ESCALATION", "FINAL CLASH"];
+  const ROUND_NAMES  = ["OPENING EXCHANGE","SPEED CLASH","TACTICAL ESCALATION","FINAL CLASH"];
   const displayRounds = ROUND_NAMES.map((title, i) => {
-    const computedRound = battle.rounds[i] || {};
-    // Determine round winner from lookup scores
-    let roundWinTeam = computedRound.winTeam || "alpha";
-    if (outcome) {
-      // Distribute rounds based on ra/rb from lookup
-      const aWins = outcome.ra;
-      const bWins = outcome.rb;
-      if (i < aWins) roundWinTeam = "alpha";
-      else roundWinTeam = "bravo";
-    }
-    const roundWinnerName = roundWinTeam === "alpha" ? alphaName : bravoName;
-    return {
-      ...computedRound,
-      title,
-      winner: roundWinnerName,
-      winTeam: roundWinTeam,
-      narrative: computedRound.narrative || "",
-      reasoning: computedRound.reasoning || "",
-    };
+    const base = battle.rounds[i] || {};
+    const aWins = outcome?.ra ?? 2;
+    const roundWinTeam = i < aWins ? "alpha" : "bravo";
+    return { ...base, title, winTeam: roundWinTeam, winner: roundWinTeam === "alpha" ? alphaName : bravoName };
   });
 
   return (
     <div>
       {/* Win probability banner */}
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", marginBottom:3 }}>
-        <div style={{ background: isAlphaWinner ? C.alpha : C.alphaDim, padding:"12px 20px",
-          borderBottom: isAlphaWinner ? `3px solid #ffe792` : "3px solid transparent" }}>
+        <div style={{ background: isAlphaWins ? C.alpha : C.alphaDim, padding:"12px 20px",
+          borderBottom: isAlphaWins ? "3px solid #ffe792" : "3px solid transparent" }}>
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
             textTransform:"uppercase", letterSpacing:"0.12em", color:"rgba(255,255,255,0.7)", marginBottom:2 }}>
             {alphaName} — WIN PROBABILITY
           </div>
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
-            {alphaProb}
+            {battle.alphaProb}
           </div>
-          {isAlphaWinner && (
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
-              color:"#ffe792", marginTop:2, letterSpacing:"0.08em" }}>
-              ✦ PREDICTED WINNER
-            </div>
-          )}
+          {isAlphaWins && <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"#ffe792", marginTop:2 }}>✦ PREDICTED WINNER</div>}
         </div>
-        <div style={{ background: !isAlphaWinner ? C.bravo : C.bravoDim, padding:"12px 20px", textAlign:"right",
-          borderBottom: !isAlphaWinner ? `3px solid #ffe792` : "3px solid transparent" }}>
+        <div style={{ background: !isAlphaWins ? C.bravo : C.bravoDim, padding:"12px 20px", textAlign:"right",
+          borderBottom: !isAlphaWins ? "3px solid #ffe792" : "3px solid transparent" }}>
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, fontWeight:700,
             textTransform:"uppercase", letterSpacing:"0.12em", color:"rgba(255,255,255,0.7)", marginBottom:2 }}>
             {bravoName} — WIN PROBABILITY
           </div>
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:32, fontWeight:900, color:"#fff" }}>
-            {bravoProb}
+            {battle.bravoProb}
           </div>
-          {!isAlphaWinner && (
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
-              color:"#ffe792", marginTop:2, letterSpacing:"0.08em" }}>
-              ✦ PREDICTED WINNER
-            </div>
-          )}
+          {!isAlphaWins && <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:"#ffe792", marginTop:2, textAlign:"right" }}>✦ PREDICTED WINNER</div>}
         </div>
       </div>
 
@@ -1047,9 +1106,7 @@ function BattleResults({ alpha1v1, bravo1v1 }) {
           textTransform:"uppercase", letterSpacing:"0.08em", margin:"0 0 20px", color:"#ffe792" }}>
           AGGREGATE STATS
         </h3>
-        {battle.stats.map(s=>(
-          <StatBar key={s.label} {...s} />
-        ))}
+        {battle.stats.map(s=>(<StatBar key={s.label} {...s} />))}
       </section>
 
       {/* Rounds */}
@@ -1059,22 +1116,19 @@ function BattleResults({ alpha1v1, bravo1v1 }) {
             textTransform:"uppercase", letterSpacing:"0.12em", color:C.muted, margin:0 }}>
             ROUND BY ROUND
           </h3>
-          {loading && (
-            <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-              <div style={{ width:8, height:8, borderRadius:"50%", background:C.alphaBorder,
-                animation:"pulse 1s infinite" }} />
-              <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
-                color:C.muted, letterSpacing:"0.1em" }}>LOADING...</span>
-            </div>
-          )}
           {!loading && outcome && (
             <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:10,
               color:"#ffe792", letterSpacing:"0.1em", background:"#ffe79222", padding:"2px 8px" }}>
-              ✦ {getOutcomeLabel(outcomeType)}
+              ✦ {outcomeLabel(ot)}
+            </span>
+          )}
+          {loading && (
+            <span style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:C.muted, letterSpacing:"0.08em" }}>
+              LOADING...
             </span>
           )}
         </div>
-        <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }`}</style>
+        <style>{"@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}"}</style>
         {displayRounds.map((r,i)=><RoundRow key={i} round={r} idx={i} />)}
       </section>
 
@@ -1084,69 +1138,50 @@ function BattleResults({ alpha1v1, bravo1v1 }) {
           letterSpacing:"0.2em", color:C.muted, textTransform:"uppercase", marginBottom:12 }}>
           BATTLE ANALYSIS
         </div>
-
-        {/* Narrative */}
         <p style={{ fontFamily:"'Barlow Condensed',sans-serif", color:C.mutedLight, fontSize:15,
-          maxWidth:680, margin:"0 auto 32px", lineHeight:1.7, fontStyle:"italic" }}>
+          maxWidth:680, margin:"0 auto 28px", lineHeight:1.7, fontStyle:"italic" }}>
           {loading ? "Analyzing matchup..." : narrative}
         </p>
-
-        {/* Round score */}
         {!loading && (
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"center",
-            gap:24, marginBottom:32 }}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:24, marginBottom:28 }}>
             <div style={{ textAlign:"center" }}>
-              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:48, fontWeight:700,
-                color: isAlphaWinner ? "#ffe792" : C.mutedLight, lineHeight:1 }}>
-                {roundsWonA}
-              </div>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
-                color:C.muted, letterSpacing:"0.1em", textTransform:"uppercase" }}>
-                {alphaName}
-              </div>
+              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:52, fontWeight:700,
+                color: isAlphaWins ? "#ffe792" : C.mutedLight, lineHeight:1 }}>{roundsWonA}</div>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:C.muted, textTransform:"uppercase" }}>{alphaName}</div>
             </div>
-            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:20,
-              color:C.muted, fontWeight:700 }}>—</div>
+            <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:22, color:C.muted, fontWeight:700 }}>—</div>
             <div style={{ textAlign:"center" }}>
-              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:48, fontWeight:700,
-                color: !isAlphaWinner ? "#ffe792" : C.mutedLight, lineHeight:1 }}>
-                {roundsWonB}
-              </div>
-              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11,
-                color:C.muted, letterSpacing:"0.1em", textTransform:"uppercase" }}>
-                {bravoName}
-              </div>
+              <div style={{ fontFamily:"'Teko',sans-serif", fontSize:52, fontWeight:700,
+                color: !isAlphaWins ? "#ffe792" : C.mutedLight, lineHeight:1 }}>{roundsWonB}</div>
+              <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:11, color:C.muted, textTransform:"uppercase" }}>{bravoName}</div>
             </div>
           </div>
         )}
-
-        {/* Winner reveal */}
         {!loading && (
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif",
-            fontSize:"clamp(48px,10vw,88px)", fontWeight:900, color:"#ffe792",
-            lineHeight:1, textTransform:"uppercase",
-            animation:"fadeIn 0.6s ease-out" }}>
-            {displayWinner} WINS
+            fontSize:"clamp(40px,8vw,80px)", fontWeight:900, color:"#ffe792",
+            lineHeight:1, textTransform:"uppercase", animation:"fadeIn 0.5s ease-out" }}>
+            {winner} WINS
           </div>
         )}
-        {!loading && winnerFranchise && (
+        {!loading && wFranchise && (
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:13,
             color:C.muted, letterSpacing:"0.1em", marginTop:8, textTransform:"uppercase" }}>
-            {winnerFranchise}
+            {wFranchise}
           </div>
         )}
         {loading && (
           <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontSize:16,
-            color:C.muted, letterSpacing:"0.2em", textTransform:"uppercase",
-            animation:"pulse 1.2s infinite" }}>
+            color:C.muted, letterSpacing:"0.2em", textTransform:"uppercase", animation:"pulse 1.2s infinite" }}>
             CALCULATING OUTCOME...
           </div>
         )}
-        <style>{`@keyframes fadeIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }`}</style>
+        <style>{"@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}"}</style>
       </div>
     </div>
   );
 }
+
 
 function StatBar({ label, alphaVal, bravoVal, alpha, bravo, winner }) {
   const wc = winner==="alpha" ? C.alphaBorder : winner==="bravo" ? C.bravoBorder : C.muted;
@@ -1752,7 +1787,6 @@ export default function App() {
       `}</style>
       <NavBar page={page} setPage={setPage} />
       {page==="arena"    && <ArenaPage />}
-      {page==="recent"   && <RecentBattlesPage />}
       {page==="rankings" && <RankingsPage />}
     </div>
   );
