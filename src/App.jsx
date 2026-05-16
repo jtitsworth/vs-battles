@@ -1230,6 +1230,7 @@ function ArenaPage() {
       const rk1 = keys[Math.floor(Math.random()*keys.length)];
       const rk2 = keys[Math.floor(Math.random()*keys.length)];
       setAlpha1v1(rk1); setBravo1v1(rk2);
+      setBattle(false);
       return;
     }
     // Route to active side
@@ -1555,40 +1556,14 @@ function loadOutcomesDB() {
     .catch(() => { OUTCOMES_DB = {}; OUTCOMES_LOADING = false; return {}; });
 }
 loadOutcomesDB();
-// Maps full wiki names used in ROSTER displayNames to short names used in the lookup DB
-const LOOKUP_NAME_MAP = {
-  "Naruto Uzumaki (Part II: Pre-War Arc)": "Naruto",
-  "Monkey D. Luffy (Post-Timeskip)": "Luffy",
-  "Dante (Devil May Cry)": "Dante",
-  "Hanzo Hasashi (Second Timeline)": "Scorpion",
-  "Shaggy Rogers (Cartoon)": "Shaggy Rogers",
-  "Captain America (Marvel Comics)": "Captain America",
-  "Moon Knight (Modern)": "Moon Knight",
-  "Piccolo (Dragon Ball)": "Piccolo",
-  "Storm (Marvel Comics)": "Storm",
-  "Siegfried (Soul Calibur)": "Siegfried",
-  "Akuma (Street Fighter)": "Akuma",
-  "Harley Quinn (Post-Crisis)": "Harley Quinn",
-  "Son Gohan (Dragon Ball Z)": "Gohan",
-  "Lex Luthor (DC Universe)": "Lex Luthor",
-  "Venom (Edward Brock)": "Venom",
-  "Kahhori (Marvel Cinematic Universe: What If...?)": "Kahhori",
-};
-
-function normalizeName(name) {
-  return LOOKUP_NAME_MAP[name] || name;
-}
-
 function lookupOutcome(a, b) {
   if (!OUTCOMES_DB) return null;
-  const na = normalizeName(a);
-  const nb = normalizeName(b);
   // Try exact match first
-  const exact = OUTCOMES_DB[`${na}__vs__${nb}`] || OUTCOMES_DB[`${nb}__vs__${na}`];
+  const exact = OUTCOMES_DB[`${a}__vs__${b}`] || OUTCOMES_DB[`${b}__vs__${a}`];
   if (exact) return exact;
   // Case-insensitive fallback
-  const k1 = `${na}__vs__${nb}`.toLowerCase();
-  const k2 = `${nb}__vs__${na}`.toLowerCase();
+  const k1 = `${a}__vs__${b}`.toLowerCase();
+  const k2 = `${b}__vs__${a}`.toLowerCase();
   const origKey = OUTCOMES_INDEX[k1] || OUTCOMES_INDEX[k2];
   return origKey ? OUTCOMES_DB[origKey] : null;
 }
