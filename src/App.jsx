@@ -1228,6 +1228,26 @@ function ArenaPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalSide, setModalSide]   = useState("alpha");
   const [battleStarted, setBattle] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  function handleShare() {
+    const url = window.location.href;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 3000);
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 3000);
+    }
+  }
 
   function handleGridSelect(key) {
     if (key === "__FIND__") { setModalSide(activeSide); setShowModal(true); return; }
@@ -1408,6 +1428,43 @@ function ArenaPage() {
           </div>
         )}
       </div>
+
+      {/* Share Results bottom bar — only shown after battle */}
+      {battleStarted && (
+        <div style={{
+          position:"fixed", bottom:0, left:0, right:0, zIndex:90,
+          background:"#000000", borderTop:"1px solid #8B8B8A",
+          display:"flex", justifyContent:"center", alignItems:"center",
+          padding:"10px 16px", gap:16, height:80,
+        }}>
+          <button onClick={handleShare} style={{
+            width:290, height:60, background:"none",
+            border:"1px solid #ffffff", cursor:"pointer",
+            fontFamily:"'Teko',sans-serif", fontWeight:600, fontSize:24,
+            letterSpacing:"0.04em", textTransform:"uppercase", color:"#ffffff",
+            transition:"background 0.2s",
+          }}
+            onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}
+            onMouseLeave={e=>e.currentTarget.style.background="none"}
+          >
+            {linkCopied ? "LINK COPIED" : "SHARE RESULTS"}
+          </button>
+          <button onClick={()=>{ setBattle(false); setLinkCopied(false); }} style={{
+            width:290, height:60,
+            background:"linear-gradient(90deg,#FF0030 0.97%,#700015 99.3%)",
+            border:"none", cursor:"pointer",
+            fontFamily:"'Teko',sans-serif", fontWeight:600, fontSize:24,
+            letterSpacing:"0.04em", textTransform:"uppercase", color:"#ffffff",
+            transition:"opacity 0.2s",
+          }}
+            onMouseEnter={e=>e.currentTarget.style.opacity="0.85"}
+            onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+          >
+            START NEW BATTLE
+          </button>
+        </div>
+      )}
+      {battleStarted && <div style={{ height:96 }} />}
 
       {showModal && (
         <FindFighterModal onClose={()=>setShowModal(false)} onSelect={handleFindSelect} side={modalSide} />
