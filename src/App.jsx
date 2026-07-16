@@ -1085,7 +1085,7 @@ Rules:
     }
     const text = data.choices?.[0]?.message?.content || "";
     console.log("[VS-Battles] Raw narrative:", text.slice(0, 200));
-    const clean = text.replace(/```json|```/g, "").trim();
+    const clean = text.replace(/```json[\s\S]*?```|```/g, "").trim();
     const parsed = JSON.parse(clean);
     NARRATIVE_CACHE[cacheKey] = parsed;
     return parsed;
